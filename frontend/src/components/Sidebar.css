@@ -401,14 +401,14 @@
 
 .project-info-row {
   display: flex;
-  gap: 10px;
-  align-items: flex-start;
+  gap: 12px;
+  align-items: center;
 }
 
 .pin-icon {
   color: var(--primary);
-  margin-top: 2px;
   opacity: 0.8;
+  flex-shrink: 0;
 }
 
 .project-name-stack {

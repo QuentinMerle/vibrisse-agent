@@ -65,9 +65,11 @@ const ProjectSection = ({ isIndexing, onUpdateTargetPath, setShowToast, isCollap
         {activePath && !isEditing ? (
           <div className="active-project-card">
             <div className="project-info-row">
-              <MapPin size={12} className="pin-icon" />
+              <MapPin size={14} className="pin-icon" />
               <div className="project-name-stack">
-                <span className="project-folder-name">{activePath.split('/').pop()}</span>
+                <span className="project-folder-name">
+                  {activePath === "." || activePath === "./" ? "Projet Local" : (activePath.split('/').filter(Boolean).pop() || "Racine")}
+                </span>
                 <span className="project-full-path">{activePath}</span>
               </div>
             </div>
