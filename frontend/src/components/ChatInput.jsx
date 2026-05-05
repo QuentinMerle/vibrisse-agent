@@ -65,24 +65,26 @@ const ChatInput = ({
       },
     },
     suggestions: {
+      backgroundColor: 'transparent',
       list: {
-        backgroundColor: 'rgba(30, 41, 59, 0.95)',
-        backdropFilter: 'blur(12px)',
-        border: '1px solid rgba(255,255,255,0.1)',
+        backgroundColor: '#0f172a',
+        backdropFilter: 'blur(16px)',
+        border: '1px solid rgba(255, 255, 255, 0.1)',
         fontSize: 14,
         borderRadius: '12px',
         overflow: 'hidden',
         zIndex: 1000,
-        top: 'auto', // Override top
-        bottom: '100%', // Positionné au-dessus de l'input
+        top: 'auto',
+        bottom: '100%',
         marginBottom: '10px',
-        boxShadow: '0 10px 25px rgba(0,0,0,0.3)',
+        boxShadow: '0 20px 50px rgba(0, 0, 0, 0.5)',
       },
       item: {
-        padding: '8px 12px',
-        borderBottom: '1px solid rgba(255,255,255,0.05)',
+        padding: '10px 14px',
+        borderBottom: '1px solid rgba(255, 255, 255, 0.03)',
+        color: '#94a3b8',
         '&focused': {
-          backgroundColor: '#6366f1',
+          backgroundColor: 'rgba(99, 102, 241, 0.2)',
           color: 'white',
         },
       },
@@ -146,6 +148,7 @@ const ChatInput = ({
             <Mention
               trigger="@"
               data={availableFiles}
+              markup="[[__display__]]"
               displayTransform={(id, display) => `@${display}`}
               className="mention-highlight"
             />

@@ -494,10 +494,13 @@
 
 /* Toast Notification */
 .toast-notification {
-  position: absolute;
-  bottom: 80px;
-  left: 20px;
-  right: 20px;
+  position: fixed !important;
+  top: 30px !important;
+  right: 30px !important;
+  left: auto !important;
+  transform: none !important;
+  width: auto;
+  min-width: 250px;
   background: #10b981;
   color: white;
   padding: 12px 16px;

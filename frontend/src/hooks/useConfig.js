@@ -81,7 +81,10 @@ export const useConfig = () => {
       const data = await api.updateTargetPath(path);
       if (data.status === "success") {
         await fetchConfig();
-        await fetchFiles();
+        // On attend un court instant que l'ingestion commence côté Backend
+        setTimeout(async () => {
+          await fetchFiles();
+        }, 2000);
         return true;
       }
       return false;

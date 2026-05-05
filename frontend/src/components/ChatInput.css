@@ -114,6 +114,22 @@
 }
 
 /* react-mentions overrides */
+.mentions-input-container textarea {
+  background-color: transparent !important;
+  color: white !important;
+}
+
+.mentions-input-container ul {
+  background-color: #0f172a !important;
+  border-radius: 12px !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+/* On force tout ce qui entoure la liste à être transparent */
+.mentions-input-container > div > div {
+  background-color: transparent !important;
+}
+
 .mentions-input-container div[style*="position: absolute"] {
   top: auto !important;
   bottom: 14px !important;

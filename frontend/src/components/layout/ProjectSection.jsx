@@ -5,6 +5,7 @@ const ProjectSection = ({ isIndexing, onUpdateTargetPath, setShowToast, isCollap
   const [pathValue, setPathValue] = useState("");
   const [activePath, setActivePath] = useState(localStorage.getItem("vibrisse_project_path") || "");
   const [isEditing, setIsEditing] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
 
   useEffect(() => {
     const stored = localStorage.getItem("vibrisse_project_path");
@@ -16,6 +17,7 @@ const ProjectSection = ({ isIndexing, onUpdateTargetPath, setShowToast, isCollap
 
   const handleUpdate = async (path) => {
     if (!path) return;
+    setIsUpdating(true);
     const success = await onUpdateTargetPath(path);
     if (success) {
       localStorage.setItem("vibrisse_project_path", path);
@@ -26,6 +28,7 @@ const ProjectSection = ({ isIndexing, onUpdateTargetPath, setShowToast, isCollap
     } else {
       alert("❌ Erreur : Chemin invalide.");
     }
+    setIsUpdating(false);
   };
 
   const handlePickDirectory = async () => {
@@ -127,7 +130,7 @@ const ProjectSection = ({ isIndexing, onUpdateTargetPath, setShowToast, isCollap
 
               <button 
                 onClick={() => handleUpdate(pathValue)}
-                disabled={isIndexing || !pathValue}
+                disabled={isIndexing || isUpdating || !pathValue}
                 className="confirm-project-btn"
                 title="Valider le projet"
                 style={{
@@ -140,11 +143,11 @@ const ProjectSection = ({ isIndexing, onUpdateTargetPath, setShowToast, isCollap
                   background: 'var(--primary)',
                   color: 'white',
                   border: 'none',
-                  cursor: (isIndexing || !pathValue) ? 'not-allowed' : 'pointer',
+                  cursor: (isIndexing || isUpdating || !pathValue) ? 'not-allowed' : 'pointer',
                   flexShrink: 0
                 }}
               >
-                <Check size={16} />
+                {isUpdating ? <div className="spinner-small" style={{ borderLeftColor: 'white' }}></div> : <Check size={16} />}
               </button>
             </div>
             {activePath && (
