@@ -67,14 +67,35 @@ class ProjectWatcherHandler(FileSystemEventHandler):
             print(f"--- ❌ WATCHDOG ERROR ({file_path}): {e} ---", flush=True)
             logger.error(f"❌ Erreur ingestion {file_path}: {e}")
 
+class WatcherService:
+    def __init__(self):
+        self.observer = None
+        self.current_path = None
+
+    def start(self, path: str):
+        """Démarre le thread de surveillance des fichiers."""
+        if self.observer:
+            self.stop()
+            
+        self.current_path = path
+        event_handler = ProjectWatcherHandler(vs)
+        self.observer = Observer()
+        self.observer.schedule(event_handler, path, recursive=True)
+        self.observer.start()
+        print(f"--- 👀 WATCHDOG DÉMARRÉ SUR: {path} ---", flush=True)
+
+    def stop(self):
+        """Arrête le thread de surveillance."""
+        if self.observer:
+            self.observer.stop()
+            self.observer.join()
+            self.observer = None
+            print(f"--- 🛑 WATCHDOG ARRÊTÉ ---", flush=True)
+
+# Instance globale
+watcher_service = WatcherService()
+
 def start_watcher():
-    """Démarre le thread de surveillance des fichiers en utilisant l'instance globale vs."""
-    path = settings.TARGET_PROJECT_PATH
-    
-    event_handler = ProjectWatcherHandler(vs)
-    observer = Observer()
-    observer.schedule(event_handler, path, recursive=True)
-    observer.start()
-    
-    print(f"--- 👀 WATCHDOG DÉMARRÉ SUR: {path} ---", flush=True)
-    return observer
+    """Fonction de compatibilité pour le démarrage initial."""
+    watcher_service.start(settings.TARGET_PROJECT_PATH)
+    return watcher_service

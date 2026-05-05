@@ -4,9 +4,10 @@ import psutil
 import httpx
 import logging
 from typing import Optional
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, Request, BackgroundTasks
 from app.core.config import settings
 from app.services.llm.model_service import fetch_model_context_limit, get_available_models
+from app.services.core.watcher_service import watcher_service
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
@@ -101,18 +102,34 @@ class TargetPathRequest(BaseModel):
     path: str
 
 @router.post("/config/target")
-async def update_target_path(request: Request, req: TargetPathRequest):
+async def update_target_path(request: Request, req: TargetPathRequest, background_tasks: BackgroundTasks):
     """Change le dossier de travail de l'agent et relance l'onboarding."""
     new_path = req.path
     if not os.path.exists(new_path):
         return {"status": "error", "message": f"Le chemin {new_path} n'existe pas."}
     
-    # Mise à jour des settings en mémoire
+    # 1. Arrêter la surveillance actuelle
+    watcher_service.stop()
+
+    # 2. Mise à jour des settings en mémoire
     settings.TARGET_PROJECT_PATH = new_path
     
-    # On relance l'onboarding pour digérer le nouveau projet
+    # 3. Vider l'index vectoriel
+    try:
+        request.app.state.vs.clear_cache()
+    except Exception as e:
+        logger.warning(f"Could not clear cache during project switch: {e}")
+
+    # 4. Relancer l'onboarding (Manifeste)
     try:
         await settings.load_manifest()
+        
+        # 5. Lancer la ré-indexation complète en arrière-plan
+        background_tasks.add_task(request.app.state.vs.reindex_project, new_path)
+        
+        # 6. Relancer la surveillance sur le nouveau dossier
+        watcher_service.start(new_path)
+
         return {
             "status": "success", 
             "new_path": new_path,
