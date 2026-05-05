@@ -46,8 +46,9 @@ frontend/.cache/
 
 # --- Databases & Data ---
 # Ignorer les fichiers lourds et regénérables
-data/chroma_db/
-data/parent_documents/
+**/data/chroma_db/
+**/data/parent_documents/
+**/*.db*
 data/accounting_test/
 data/.DS_Store
 *.db
