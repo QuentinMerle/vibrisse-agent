@@ -1,0 +1,121 @@
+/* ApprovalModal.css */
+.approval-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.approval-card {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 24px;
+  width: 100%;
+  max-width: 500px;
+  padding: 32px;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(40px);
+  animation: modalIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes modalIn {
+  from { opacity: 0; transform: scale(0.9) translateY(20px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.approval-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.warning-icon {
+  color: #fbbf24;
+  filter: drop-shadow(0 0 10px rgba(251, 191, 36, 0.3));
+}
+
+.approval-header h3 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: white;
+}
+
+.approval-body p {
+  color: var(--text-main);
+  line-height: 1.6;
+  margin-bottom: 20px;
+  font-size: 0.95rem;
+}
+
+.command-preview {
+  background: #121214;
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  font-family: var(--font-mono);
+  color: #a78bfa;
+  font-size: 0.9rem;
+}
+
+.warning-text {
+  color: #fca5a5 !important;
+  font-size: 0.85rem !important;
+  background: rgba(248, 113, 113, 0.05);
+  padding: 12px;
+  border-radius: 8px;
+  border-left: 3px solid #f87171;
+}
+
+.approval-footer {
+  display: flex;
+  gap: 16px;
+  margin-top: 32px;
+}
+
+.approval-footer button {
+  flex: 1;
+  padding: 14px;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s;
+}
+
+.cancel-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--glass-border);
+  color: var(--text-main);
+}
+
+.cancel-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.approve-btn {
+  background: var(--primary);
+  border: none;
+  color: white;
+  box-shadow: 0 8px 20px rgba(123, 57, 237, 0.3);
+}
+
+.approve-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 25px rgba(123, 57, 237, 0.4);
+}

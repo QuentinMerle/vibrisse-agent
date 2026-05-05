@@ -1,0 +1,10 @@
+[
+  {
+    "question": "Comment est configuré le système de hashing pour l'ingestion ?",
+    "ground_truth": "Le système utilise SHA-256 pour générer des empreintes digitales des fichiers. Ces hashes sont stockés dans hashes.json pour permettre une ingestion incrémentale et éviter de ré-indexer les fichiers non modifiés."
+  },
+  {
+    "question": "Quelle est la stack technique du projet ?",
+    "ground_truth": "La stack comprend Python 3.11, FastAPI, Ollama pour les LLM locaux, et ChromaDB pour la base de données vectorielle."
+  }
+]

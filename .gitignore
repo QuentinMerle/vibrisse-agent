@@ -1,0 +1,79 @@
+# --- OS ---
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+.venv/
+venv/
+ENV/
+
+# --- Environment Variables (CRITICAL) ---
+.env
+.env.native
+.env.local
+.env.*.local
+frontend/.env
+frontend/.env.local
+
+# --- Frontend ---
+frontend/node_modules/
+frontend/dist/
+frontend/build/
+frontend/.cache/
+
+# --- Databases & Data ---
+# Ignorer les fichiers lourds et regénérables
+data/chroma_db/
+data/parent_documents/
+data/accounting_test/
+data/.DS_Store
+*.db
+*.sqlite3
+utilisateurs.db
+
+# Ignorer les données d'activité et de cache (peuvent contenir des chemins locaux ou secrets)
+data/hashes.json
+data/eval_dataset.json
+
+# Préserver la structure des dossiers vitaux (nécessaire au démarrage)
+!data/chroma_db/.gitkeep
+!data/parent_documents/.gitkeep
+
+# --- IDEs ---
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# --- Misc ---
+docs/
+tests/
+archives/
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

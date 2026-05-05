@@ -1,0 +1,45 @@
+# requirements.txt
+fastapi[all]       # Framework web (comme Express/NestJS)
+pydantic-settings  # Gestion des variables d'env
+litellm            # L'abstraction LLM
+uvicorn            # Le serveur ASGI (comme l'exécutable de Node)
+
+# --- Core RAG & LangChain ---
+langchain>=0.3.0,<0.4.0
+langchain-core>=0.3.0,<0.4.0
+langchain-community>=0.3.0,<0.4.0
+langchain-text-splitters>=0.3.0,<0.4.0
+langchain-chroma>=0.2.0,<0.3.0
+langchain-openai>=0.3.0,<0.4.0
+langchain-ollama>=0.3.0,<0.4.0
+
+
+
+# --- Parsing & AST ---
+tree-sitter==0.21.3
+tree-sitter-languages
+unstructured[local-inference]
+
+# --- Search & Math ---
+rank_bm25
+duckduckgo-search==6.3.0
+tavily-python
+numpy<2.0.0
+
+
+# --- Guardrails & Direct Ollama ---
+instructor
+ollama
+eval_type_backport
+langsmith>=0.4.0,<0.5.0
+langgraph>=0.6.0,<0.7.0
+redis
+langgraph-checkpoint-redis
+
+# RAGAS & Evaluation
+ragas>=0.2.0,<0.3.0
+deepeval
+langchain-google-genai
+PyYAML
+watchdog
+psutil

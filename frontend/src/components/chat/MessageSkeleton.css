@@ -1,0 +1,61 @@
+.skeleton-wrapper {
+  display: flex;
+  gap: 16px;
+  padding: 0 20px;
+  max-width: 850px;
+  margin: 0 auto 24px;
+  width: 100%;
+}
+
+.skeleton-avatar {
+  width: 36px;
+  height: 36px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.skeleton-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.skeleton-line {
+  height: 14px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+  position: relative;
+  overflow: hidden;
+}
+
+.skeleton-line.short { width: 30%; }
+.skeleton-line.medium { width: 60%; }
+.skeleton-line.long { width: 90%; }
+
+.skeleton-avatar::after,
+.skeleton-line::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.03),
+    transparent
+  );
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}

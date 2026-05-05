@@ -1,0 +1,122 @@
+/* ChatInput.css */
+.input-area {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 30px 40px 40px;
+  background: linear-gradient(to top, var(--bg-dark) 50%, transparent 100%);
+  z-index: 10;
+  pointer-events: none;
+}
+
+.input-wrapper {
+  pointer-events: auto;
+  max-width: 850px;
+  margin: 0 auto;
+  background: rgba(24, 24, 27, 0.8);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  padding: 10px 18px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+  transition: all 0.3s;
+  backdrop-filter: blur(24px);
+}
+
+.mentions-input-container {
+  flex: 1;
+  min-width: 0;
+}
+
+.mention-highlight {
+  background-color: rgba(99, 102, 241, 0.3);
+  padding: 2px 0;
+  border-radius: 4px;
+}
+
+.send-btn {
+  background: var(--primary);
+  color: white;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.send-btn:hover:not(:disabled) {
+  transform: scale(1.05);
+  background: var(--secondary);
+}
+
+.send-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.send-btn.stop-btn {
+  background: rgba(220, 38, 38, 0.4) !important;
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(220, 38, 38, 0.3) !important;
+  box-shadow: 0 4px 15px rgba(220, 38, 38, 0.2) !important;
+  animation: pulse-soft-red 3s infinite ease-in-out;
+}
+
+@keyframes pulse-soft-red {
+  0% { transform: scale(1); opacity: 0.9; }
+  50% { transform: scale(1.02); opacity: 1; box-shadow: 0 4px 20px rgba(220, 38, 38, 0.4); }
+  100% { transform: scale(1); opacity: 0.9; }
+}
+
+.mic-btn {
+  margin-right: 8px;
+  transition: all 0.3s ease;
+}
+
+.mic-btn.listening {
+  background: rgba(239, 68, 68, 0.1);
+  box-shadow: 0 0 15px rgba(239, 68, 68, 0.2);
+  animation: pulse-red 1.5s infinite;
+}
+
+@keyframes pulse-red {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); box-shadow: 0 0 20px rgba(239, 68, 68, 0.3); }
+  100% { transform: scale(1); }
+}
+
+.icon-btn {
+  background: transparent;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+  color: var(--text-muted);
+}
+
+.icon-btn:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--primary);
+}
+
+/* react-mentions overrides */
+.mentions-input-container div[style*="position: absolute"] {
+  top: auto !important;
+  bottom: 14px !important;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+}

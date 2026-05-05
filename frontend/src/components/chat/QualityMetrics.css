@@ -1,0 +1,85 @@
+.quality-metrics-container {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.4);
+  display: flex;
+  align-items: center;
+}
+
+.eval-trigger-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(139, 92, 246, 0.1);
+  border: 1px solid rgba(139, 92, 246, 0.2);
+  color: #a78bfa;
+  padding: 4px 10px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.eval-trigger-btn:hover {
+  background: rgba(139, 92, 246, 0.2);
+  border-color: rgba(139, 92, 246, 0.4);
+  transform: translateY(-1px);
+}
+
+.eval-loading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #8b5cf6;
+  font-style: italic;
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .5; }
+}
+
+.metrics-row {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.metric-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.metric-item .label {
+  opacity: 0.7;
+}
+
+.metric-item .value {
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.eval-error {
+  color: #ef4444;
+  display: flex;
+  gap: 8px;
+}
+
+.eval-error button {
+  background: none;
+  border: none;
+  color: #8b5cf6;
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: inherit;
+}
