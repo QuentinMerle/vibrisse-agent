@@ -83,3 +83,74 @@ def write_file(filename: str, content: str):
         return f"Succès : Le fichier '{filename}' a été écrit avec succès ({len(content)} caractères)."
     except Exception as e:
         return f"Erreur lors de l'écriture du fichier : {str(e)}"
+
+@tool
+def list_dir(directory: str = "."):
+    """Liste les fichiers et dossiers dans un répertoire spécifique. Utile pour comprendre la structure du projet."""
+    from pathlib import Path
+    try:
+        from app.core.config import settings
+        target_dir = Path(settings.TARGET_PROJECT_PATH).absolute()
+        path = (target_dir / directory).absolute()
+        
+        if not str(path).startswith(str(target_dir)):
+            return "Erreur : Accès hors du dossier projet interdit."
+            
+        if not path.exists():
+            return f"Erreur : Le dossier '{directory}' n'existe pas."
+            
+        items = os.listdir(path)
+        # On ignore les dossiers cachés et les trucs lourds
+        items = [i for i in items if not i.startswith('.') and i != "node_modules" and i != "__pycache__"]
+        
+        return f"Contenu de {directory} :\n" + "\n".join(sorted(items))
+    except Exception as e:
+        return f"Erreur lors du listage : {str(e)}"
+
+@tool
+def read_file(filename: str):
+    """Lit le contenu complet d'un fichier. À utiliser quand le RAG ne donne pas assez de détails sur un fichier spécifique."""
+    from pathlib import Path
+    try:
+        from app.core.config import settings
+        target_dir = Path(settings.TARGET_PROJECT_PATH).absolute()
+        path = (target_dir / filename).absolute()
+        
+        if not str(path).startswith(str(target_dir)):
+            return "Erreur : Accès hors du dossier projet interdit."
+            
+        if not path.is_file():
+            return f"Erreur : '{filename}' n'est pas un fichier valide."
+            
+        with open(path, "r", encoding="utf-8") as f:
+            content = f.read(5000) # Limite de sécurité pour le contexte
+            if len(content) >= 5000:
+                content += "\n... [Fichier tronqué à 5000 caractères]"
+            return content
+    except Exception as e:
+        return f"Erreur lors de la lecture : {str(e)}"
+
+@tool
+def grep_search(pattern: str, directory: str = "."):
+    """Cherche une chaîne de caractères ou un pattern dans les fichiers du projet. Idéal pour trouver des variables ou des appels de fonctions précis."""
+    import subprocess
+    from pathlib import Path
+    try:
+        from app.core.config import settings
+        target_dir = Path(settings.TARGET_PROJECT_PATH).absolute()
+        
+        # On utilise grep -r (récursif), -l (juste les noms de fichiers) ou sans -l pour voir les lignes
+        cmd = f"grep -rnI --exclude-dir={{node_modules,__pycache__,.git}} \"{pattern}\" {target_dir / directory}"
+        
+        result = subprocess.run(cmd, shell=True, capture_output=True, text=True, timeout=15)
+        output = result.stdout
+        
+        if not output:
+            return f"Aucun résultat trouvé pour '{pattern}'."
+            
+        if len(output) > 3000:
+            output = output[:3000] + "\n... [Trop de résultats, tronqué]"
+            
+        return output
+    except Exception as e:
+        return f"Erreur lors du grep : {str(e)}"

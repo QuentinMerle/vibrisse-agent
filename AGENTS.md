@@ -33,6 +33,15 @@ Le backend suit une structure par domaine (Domain-Driven Design léger) :
     - `core/` : Services transverses (SSE streaming, onboarding manifest, watchers, evaluation/Ragas).
 - `app/schemas/` : Définitions Pydantic centralisées.
 
+### 🛠️ Inventaire des Outils (Capabilities)
+L'agent dispose d'un kit d'outils pour interagir avec le système :
+- **`list_dir`** : Exploration de la structure du projet.
+- **`read_file`** : Lecture chirurgicale de fichiers (RAG complémentaire).
+- **`grep_search`** : Recherche exacte (Regex/Termes) dans la base de code.
+- **`write_file`** : Création et mise à jour de fichiers (Mode Maker).
+- **`run_terminal_command`** : Exécution de commandes système (**HITL obligatoire**).
+- **`web_search`** : Accès aux données temps réel via Tavily/DuckDuckGo.
+
 ### 🧠 Logiciel de Raisonnement (Cerveau)
 
 1. **Génération de Manifeste (Onboarding)** :

@@ -97,6 +97,15 @@ Vibrisse est conçu avec une approche **Security-by-Design** pour protéger ton 
 
 ---
 
+## 🛠️ Capacités de l'Agent (Outils)
+Vibrisse n'est pas qu'un chatbot ; c'est un agent orienté action doté de :
+- **Explorateur Système** : `list_dir`, `read_file`, `grep_search` pour comprendre votre code.
+- **Mode Maker** : `write_file` pour créer ou mettre à jour votre documentation et votre code.
+- **Puissance Système** : `run_terminal_command` pour exécuter des commandes (nécessite votre approbation).
+- **Accès Web** : `web_search` pour les informations en temps réel.
+
+---
+
 ## 🏗️ Architecture & 📂 Arborescence
 
 Vibrisse suit une architecture modulaire pour séparer l'intelligence (LLM) de l'infrastructure (API/UI).

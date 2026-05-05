@@ -16,9 +16,9 @@ def load_skill(name: str) -> str:
         return ""
 
 async def get_active_tools():
-    from app.agents.tools import web_search, run_terminal_command, write_file
+    from app.agents.tools import web_search, run_terminal_command, write_file, list_dir, read_file, grep_search
     from app.services.mcp.mcp_client import mcp_manager
-    tools = [run_terminal_command, write_file] # Outils locaux prioritaires
+    tools = [run_terminal_command, write_file, list_dir, read_file, grep_search] # Outils locaux prioritaires
     if settings.ENABLE_WEB_SEARCH:
         tools.append(web_search)
         

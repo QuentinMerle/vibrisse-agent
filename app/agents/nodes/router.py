@@ -26,36 +26,45 @@ async def router_node(state: AgentState):
         # On informe l'utilisateur qu'on analyse son intention
         yield {"detail": "Analyse de l'intention et choix de la stratégie technique...", "steps": ["router_started"]}
         
-        # On tente le routage structuré pour une fiabilité maximale
-        structured_llm = llm.with_structured_output(RouteQuery)
-        
         content = f"QUESTION : {question}"
         if vision_desc:
             content = f"ANALYSE VISUELLE : {vision_desc}\n\nQUESTION DE L'UTILISATEUR : {question}"
 
-        result = await structured_llm.ainvoke([
-            SystemMessage(content=skill_prompt),
+        # On demande du texte brut avec un format strict pour éviter les délires du JSON natif sur petits modèles
+        response = await llm.ainvoke([
+            SystemMessage(content=skill_prompt + "\n\nIMPORTANT: RÉPONDS UNIQUEMENT AU FORMAT JSON. PAS DE TEXTE AVANT OU APRÈS."),
             HumanMessage(content=content)
         ])
         
+        # Extraction robuste du JSON (même s'il y a du texte autour ou s'il est tronqué)
+        text = response.content
+        import json
+        import re
+        
+        # Tentative 1 : Regex pour trouver un bloc JSON
+        match = re.search(r'\{.*\}', text, re.DOTALL)
+        if match:
+            try:
+                data = json.loads(match.group(0))
+                datasource = data.get("datasource", "direct_response")
+                reasoning = data.get("reasoning", "Analyse sémantique")
+            except:
+                raise ValueError("JSON mal formé")
+        else:
+            # Tentative 2 : Fallback texte direct si le modèle n'a pas mis d'accolades
+            if "web_and_tools" in text.lower(): datasource = "web_and_tools"
+            elif "vectorstore" in text.lower(): datasource = "vectorstore"
+            else: datasource = "direct_response"
+            reasoning = "Extraction par mots-clés"
+
         yield {
-            "decision": result.datasource, 
-            "steps": [f"router: {result.datasource}"],
-            "thoughts": [f"**Intention :** {result.reasoning}"]
+            "decision": datasource, 
+            "steps": [f"router: {datasource}"],
+            "thoughts": [f"**Intention :** {reasoning}"]
         }
         return
+        
     except Exception as e:
-        print(f"⚠️ Router Structured Output failed: {e}. Falling back to text parsing.", flush=True)
-        # Fallback : Mode texte classique si le modèle ne supporte pas le mode structuré
-        response = await llm.ainvoke([
-            SystemMessage(content=skill_prompt + "\n\nRÉPONDS PAR UN SEUL MOT : 'vectorstore', 'web_and_tools', ou 'direct_response'."),
-            HumanMessage(content=content)
-        ])
-        decision = response.content.strip().lower()
-        if "vectorstore" in decision:
-            yield {"decision": "vectorstore", "steps": ["router: technical text"]}
-        elif "web_and_tools" in decision:
-            yield {"decision": "web_and_tools", "steps": ["router: force tools"]}
-        else:
-            yield {"decision": "direct_response", "steps": ["router: direct response"]}
+        print(f"⚠️ Router failed: {e}. Defaulting to direct response.", flush=True)
+        yield {"decision": "direct_response", "steps": ["router: error fallback"]}
         return

@@ -97,6 +97,15 @@ Vibrisse is built with a **Security-by-Design** approach to protect your code an
 
 ---
 
+## 🛠️ Agent Capabilities (Tools)
+Vibrisse is not just a chatbot; it's an action-oriented agent with:
+- **System Explorer** : `list_dir`, `read_file`, `grep_search` to understand your code.
+- **Maker Mode** : `write_file` to create or update your documentation and code.
+- **System Power** : `run_terminal_command` to execute commands (requires your approval).
+- **Web Access** : `web_search` for real-time information.
+
+---
+
 ## 🏗️ Architecture & 📂 Structure
 
 Vibrisse follows a modular architecture to separate intelligence (LLM) from infrastructure (API/UI).
