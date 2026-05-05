@@ -45,7 +45,7 @@ Vibrisse intègre le framework **RAGAS** pour évaluer la fidélité (anti-hallu
 ### Installation & Lancement
 ```bash
 # Cloner le projet
-git clone https://github.com/vibrisse-studio/vibrisse-agent.git
+git clone https://github.com/QuentinMerle/vibrisse-agent.git
 cd vibrisse-agent
 
 # Lancement automatique (Onboarding & Install)
@@ -67,7 +67,7 @@ Vibrisse se configure via un fichier `.env`. Voici les variables clés :
 | Variable | Défaut | Description |
 | :--- | :--- | :--- |
 | `TARGET_PROJECT_PATH` | `.` | Chemin du dossier de code à analyser |
-| `LLM_PROVIDER` | `ollama` | `ollama`, `openai`, `google` ou `openrouter` |
+| `LLM_PROVIDER` | `ollama` | `ollama` (local), `ollama_cloud`, `groq` ou `openrouter` |
 | `LLM_MODEL` | `gemma4:e2b` | Modèle principal pour le chat |
 | `ENABLE_WEB_SEARCH` | `true` | Autorise l'agent à chercher sur le web (Tavily/DDG) |
 | `TAVILY_API_KEY` | - | Clé API pour la recherche web (optionnel, fallback DDG) |
@@ -136,6 +136,14 @@ Vibrisse n'est pas qu'un outil, c'est une étude sur la collaboration. Nous croy
 ## ⚖️ Clause de non-responsabilité
 
 Vibrisse Agent est un outil expérimental utilisant des modèles de langage (LLM) pour générer et exécuter du code. Bien qu'il intègre des mécanismes de sécurité (HITL), l'utilisateur reste seul responsable des commandes validées et des modifications apportées à son système. Vibrisse Studio ne pourra être tenu responsable d'aucune perte de données ou dommage causé par l'utilisation de cet assistant.
+
+---
+
+## 📚 Sources & Inspiration
+*   [IBM Technology](https://www.youtube.com/@IBMTechnology) — Pour les concepts fondamentaux d'architecture IA.
+*   [Google Cloud: What is Prompt Engineering?](https://cloud.google.com/discover/what-is-prompt-engineering) — Principes de base du prompting.
+*   [Gemini API: Prompting Strategies](https://ai.google.dev/gemini-api/docs/prompting-strategies) — Stratégies de raisonnement avancées.
+*   [Agents.md](https://agents.md/) — Le standard pour la mémoire technique des agents IA.
 
 ---
 

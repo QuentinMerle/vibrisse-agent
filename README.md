@@ -45,7 +45,7 @@ Vibrisse integrates the **RAGAS** framework to evaluate faithfulness (anti-hallu
 ### Installation & Launch
 ```bash
 # Clone the project
-git clone https://github.com/vibrisse-studio/vibrisse-agent.git
+git clone https://github.com/QuentinMerle/vibrisse-agent.git
 cd vibrisse-agent
 
 # Automatic Launch (Onboarding & Install)
@@ -67,7 +67,7 @@ Vibrisse is configured via a `.env` file. Key variables:
 | Variable | Default | Description |
 | :--- | :--- | :--- |
 | `TARGET_PROJECT_PATH` | `.` | Path to the codebase to analyze |
-| `LLM_PROVIDER` | `ollama` | `ollama`, `openai`, `google`, or `openrouter` |
+| `LLM_PROVIDER` | `ollama` | `ollama` (local), `ollama_cloud`, `groq` or `openrouter` |
 | `LLM_MODEL` | `gemma4:e2b` | Primary model for chat |
 | `ENABLE_WEB_SEARCH` | `true` | Allows the agent to search the web (Tavily/DDG) |
 | `TAVILY_API_KEY` | - | API Key for web search (optional, falls back to DDG) |
@@ -136,6 +136,14 @@ Vibrisse Agent is an experimental tool using Large Language Models (LLMs) to gen
 Vibrisse is not just a tool; it's a study in collaboration. We believe AI excels at algorithms and parsing, while humans bring systemic intuition. 
 
 > *Dev note: Vibrisse was designed by an AI and a human working in tight-knit synergy. This partnership is at the core of every line of code.*
+
+---
+
+## 📚 Sources & Inspiration
+*   [IBM Technology](https://www.youtube.com/@IBMTechnology) — For deep architectural insights.
+*   [Google Cloud: What is Prompt Engineering?](https://cloud.google.com/discover/what-is-prompt-engineering) — Foundational principles.
+*   [Gemini API: Prompting Strategies](https://ai.google.dev/gemini-api/docs/prompting-strategies) — Advanced reasoning and prompting techniques.
+*   [Agents.md](https://agents.md/) — The standard for AI agent technical memory.
 
 ---
 
