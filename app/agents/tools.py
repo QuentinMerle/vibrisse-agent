@@ -59,3 +59,27 @@ def run_terminal_command(command: str):
         return "Erreur : La commande a dépassé le délai de 30 secondes."
     except Exception as e:
         return f"Erreur d'exécution : {str(e)}"
+
+@tool
+def write_file(filename: str, content: str):
+    """Crée ou met à jour un fichier avec le contenu spécifié. Utile pour sauvegarder des articles, du code ou de la documentation."""
+    from pathlib import Path
+    try:
+        # On s'assure que le chemin est relatif au projet cible
+        from app.core.config import settings
+        target_dir = Path(settings.TARGET_PROJECT_PATH).absolute()
+        file_path = (target_dir / filename).absolute()
+        
+        # Sécurité : on empêche d'écrire en dehors du dossier projet
+        if not str(file_path).startswith(str(target_dir)):
+            return f"Erreur : Tentative d'écriture en dehors du dossier projet autorisé ({target_dir})."
+
+        # Création des dossiers parents si besoin
+        file_path.parent.mkdir(parents=True, exist_ok=True)
+        
+        with open(file_path, "w", encoding="utf-8") as f:
+            f.write(content)
+            
+        return f"Succès : Le fichier '{filename}' a été écrit avec succès ({len(content)} caractères)."
+    except Exception as e:
+        return f"Erreur lors de l'écriture du fichier : {str(e)}"

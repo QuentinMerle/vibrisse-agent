@@ -26,7 +26,10 @@ export const useConfig = () => {
     try {
       const data = await api.getFiles();
       if (data && data.files) {
-        setAvailableFiles(data.files.map(f => ({ id: f, display: f })));
+        setAvailableFiles(data.files.map(f => ({ 
+          id: f.replace(/\(/g, '%28').replace(/\)/g, '%29'), 
+          display: f 
+        })));
       }
     } catch (err) {
       console.error("Erreur files:", err);

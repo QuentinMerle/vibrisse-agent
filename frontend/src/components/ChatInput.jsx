@@ -148,7 +148,6 @@ const ChatInput = ({
             <Mention
               trigger="@"
               data={availableFiles}
-              markup="[[__display__]]"
               displayTransform={(id, display) => `@${display}`}
               className="mention-highlight"
             />
