@@ -194,41 +194,41 @@
 }
 
 .text-li {
-  display: flex;
-  align-items: flex-start; /* Changé de baseline à flex-start pour les textes longs */
-  gap: 12px;
+  position: relative;
+  padding-left: 24px; /* Espace pour la puce */
   line-height: 1.7;
   color: var(--text-main);
-  padding: 2px 0;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  display: block; /* On repasse en block pour laisser couler le contenu */
 }
 
 /* Retrait pour les listes imbriquées */
 .text-ul .text-ul, .text-ol .text-ol, .text-ul .text-ol, .text-ol .text-ul {
-  margin: 8px 0 8px 24px;
+  margin: 10px 0 10px 4px; /* Moins de marge car le padding-left de la li fait déjà le job */
 }
 
 /* Puce personnalisée pour ul */
 .text-ul > .text-li::before {
   content: '';
-  display: block;
+  position: absolute;
+  left: 4px;
+  top: 0.65em; /* Aligné sur la première ligne */
   width: 6px;
   height: 6px;
-  min-width: 6px;
   border-radius: 50%;
   background: var(--primary);
   box-shadow: 0 0 10px var(--primary-glow);
-  margin-top: 0.65em; /* Positionnement précis par rapport à la ligne de texte */
-  flex-shrink: 0;
 }
 
-/* Puce pour les listes imbriquées (carrée ou vide pour différencier) */
+/* Puce pour les listes imbriquées */
 .text-ul .text-ul > .text-li::before {
   background: transparent;
   border: 1.5px solid var(--primary);
   box-shadow: none;
   width: 5px;
   height: 5px;
-  min-width: 5px;
+  left: 4px;
 }
 
 /* Numérotation pour ol */
@@ -242,11 +242,14 @@
 
 .text-ol > .text-li::before {
   content: counter(list-counter);
+  position: absolute;
+  left: -4px;
+  top: 4px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 22px;
-  height: 22px;
+  min-width: 20px;
+  height: 20px;
   border-radius: 6px;
   background: rgba(123, 57, 237, 0.15);
   border: 1px solid rgba(123, 57, 237, 0.3);
@@ -254,7 +257,6 @@
   font-size: 0.7rem;
   font-weight: 700;
   font-family: var(--font-mono);
-  flex-shrink: 0;
 }
 
 .text table {
