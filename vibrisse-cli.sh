@@ -42,7 +42,7 @@ echo "--- 🚀 LANCEMENT DE VIBRISSE (Mode Unifié) ---"
 echo "📂 Dossier : $ROOT_DIR"
 
 # Lancement du Backend (qui sert aussi le Frontend)
-python3 -m uvicorn app.main:app --host 0.0.0.0 --port 8001 --reload &
+"$ROOT_DIR/.venv/bin/python3" -m uvicorn app.main:app --host 0.0.0.0 --port 8001 --reload &
 BACKEND_PID=$!
 
 # Fonction de nettoyage à l'arrêt
@@ -68,7 +68,7 @@ trap cleanup SIGINT SIGTERM
 # Ouvertures selon le mode
 if [[ "$ARGS" == *"--tui"* ]]; then
     sleep 3 # On attend que le backend soit prêt
-    python3 vibrisse_tui.py
+    "$ROOT_DIR/.venv/bin/python3" vibrisse_tui.py
     cleanup
 elif [[ "$ARGS" != *"--no-ui"* ]]; then
     sleep 2
