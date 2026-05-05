@@ -41,6 +41,7 @@ L'agent dispose d'un kit d'outils pour interagir avec le système :
 - **`write_file`** : Création et mise à jour de fichiers (Mode Maker).
 - **`run_terminal_command`** : Exécution de commandes système (**HITL obligatoire**).
 - **`web_search`** : Accès aux données temps réel via Tavily/DuckDuckGo.
+- **`Vision Analysis`** : Capacité native à analyser les images (screenshots, diagrammes) via modèles multimodaux.
 
 ### 🧠 Logiciel de Raisonnement (Cerveau)
 
@@ -50,7 +51,9 @@ L'agent dispose d'un kit d'outils pour interagir avec le système :
     Vibrisse combine deux moteurs via `rank_bm25` :
     - **Dense (ChromaDB)** : Pour le sens sémantique et conceptuel.
     - **Sparse (BM25)** : Pour les correspondances de termes exacts (ex: noms de fonctions, IDs).
-3. **SSE Streaming Protocol** :
+3. **Double-Pass Reasoning (Expert Review)** :
+    Toute réponse technique complexe passe par un nœud de révision (`expert_review_node`). Un second LLM analyse le brouillon pour en extraire la quintessence technique et s'assurer du respect des standards.
+4. **SSE Streaming Protocol** :
     Toute communication agent -> client passe par `StreamService`. Les événements sont typés : `token` (texte), `thought` (raisonnement), `status` (badges UI), `metadata` (contexte).
 
 ### 🧠 Système de Raisonnement & Prompts
