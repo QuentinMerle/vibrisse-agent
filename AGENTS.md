@@ -119,6 +119,33 @@ Le **routeur** est le composant le plus fragile et le plus important du système
 
 ---
 
+## 🛠️ Extension : Ajouter un Outil (Tool)
+
+Pour ajouter une nouvelle capacité à Vibrisse Agent, suivez ces 4 étapes :
+
+1.  **Définir l'outil (`app/agents/tools.py`)** :
+    Créez une fonction décorée avec `@tool`. Soyez précis dans la docstring, car c'est elle qui aide le LLM à comprendre quand l'appeler.
+    ```python
+    @tool
+    def mon_nouvel_outil(param: str):
+        \"\"\"Description précise de ce que fait l'outil.\"\"\"
+        # Logique métier ici
+        return "Résultat"
+    ```
+
+2.  **Enregistrer l'outil (`app/agents/nodes/utils.py`)** :
+    Ajoutez votre outil à la liste retournée par `get_active_tools()`.
+
+3.  **Gérer la sécurité (`app/agents/graph.py`)** :
+    - Si l'outil est **Lecture seule** (safe) : Rien à faire, il sera exécuté automatiquement dans `safe_tools`.
+    - Si l'outil est **Écriture/Sensible** (sensitive) : Ajoutez son nom dans `custom_tools_condition` et dans le `tool_map` de `call_sensitive_tools` pour forcer la validation utilisateur.
+
+4.  **Éduquer l'Agent (`app/agents/skills/`)** :
+    - Mettez à jour `tool_expert.md` pour décrire le nouvel outil.
+    - Mettez à jour `orchestrator.md` pour que le routeur sache orienter les requêtes vers `web_and_tools`.
+
+---
+
 ## 🛠️ Standards de Développement
 
 1. **Modularité** : Pas de "God Objects". Fichiers < 300 lignes privilégiés.

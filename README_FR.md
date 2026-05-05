@@ -147,6 +147,16 @@ Vibrisse Agent est un outil expérimental utilisant des modèles de langage (LLM
 
 ---
 
+## 🛠️ Personnalisation & Extensibilité
+
+Vibrisse est conçu pour évoluer avec vos besoins. Vous pouvez facilement ajouter de nouvelles "mains" (Outils) à l'agent :
+- **Outils Personnalisés** : Ajoutez vos propres fonctions Python pour interagir avec des APIs spécialisées ou des services locaux.
+- **Serveurs MCP** : Connectez n'importe quel serveur Model Context Protocol pour donner instantanément de nouvelles capacités à Vibrisse.
+
+Consultez le **[Guide de création d'outils dans AGENTS.md](./AGENTS.md#️-extension--ajouter-un-outil-tool)** pour un tutoriel étape par étape.
+
+---
+
 ## 🎯 Roadmap
 - [x] Interface Studio "Obsidian Glass" (Violet/Indigo)
 - [x] Mode Terminal (TUI) haute performance

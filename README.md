@@ -147,6 +147,16 @@ Vibrisse is not just a tool; it's a study in collaboration. We believe AI excels
 
 ---
 
+## 🛠️ Customization & Extensibility
+
+Vibrisse is designed to grow with your needs. You can easily add new "Hands" (Tools) to the agent:
+- **Custom Tools** : Add your own Python functions to interact with specialized APIs or local services.
+- **MCP Servers** : Connect any Model Context Protocol server to instantly give Vibrisse new capabilities.
+
+Refer to the **[Tool Creation Guide in AGENTS.md](./AGENTS.md#️-extension--ajouter-un-outil-tool)** for a step-by-step tutorial.
+
+---
+
 ## 🎯 Roadmap
 - [x] Studio Interface "Obsidian Glass" (Purple/Indigo)
 - [x] High-performance Terminal Mode (TUI)
