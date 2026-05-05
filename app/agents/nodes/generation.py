@@ -3,13 +3,23 @@ from langchain_core.messages import SystemMessage, HumanMessage, AIMessage
 from app.agents.state import AgentState
 from app.core.config import settings
 from app.services.llm.llm_factory import get_llm
-from app.agents.nodes.utils import extract_thought
+from app.agents.nodes.utils import extract_thought, clean_mentions
 
 async def generate_answer(state: AgentState):
     context = state.get("context", "")
     messages = state.get("messages", [])
     vision_desc = state.get("vision_description")
     
+    # On nettoie les messages pour le LLM (mentions @[display](id) -> @display)
+    cleaned_messages = []
+    for m in messages:
+        if hasattr(m, "content") and isinstance(m.content, str):
+            # On crée une copie du message avec le contenu nettoyé via .copy()
+            msg_copy = m.copy(update={"content": clean_mentions(m.content)})
+            cleaned_messages.append(msg_copy)
+        else:
+            cleaned_messages.append(m)
+
     llm = get_llm(
         provider=state.get("llm_provider", "ollama"),
         model=state.get("selected_model"),
@@ -54,7 +64,8 @@ RÈGLES CRITIQUES :
     }
 
     full_message = ""
-    async for chunk in llm.astream([SystemMessage(content=instruction)] + messages):
+    # On utilise cleaned_messages au lieu de messages
+    async for chunk in llm.astream([SystemMessage(content=instruction)] + cleaned_messages):
         content = chunk.content if hasattr(chunk, "content") else str(chunk)
         full_message += content
         yield chunk

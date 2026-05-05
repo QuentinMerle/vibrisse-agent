@@ -1,13 +1,22 @@
 from langchain_core.messages import SystemMessage
 from app.agents.state import AgentState
 from app.services.llm.llm_factory import get_llm
-from app.agents.nodes.utils import load_skill, get_active_tools
+from app.agents.nodes.utils import load_skill, get_active_tools, clean_mentions
 
 async def tool_agent_node(state: AgentState):
     """Nœud utilisé si le routeur décide d'utiliser des outils."""
     messages = state.get("messages", [])
     active_tools = await get_active_tools()
     
+    # On nettoie les messages pour le LLM (mentions @[display](id) -> @display)
+    cleaned_messages = []
+    for m in messages:
+        if hasattr(m, "content") and isinstance(m.content, str):
+            msg_copy = m.copy(update={"content": clean_mentions(m.content)})
+            cleaned_messages.append(msg_copy)
+        else:
+            cleaned_messages.append(m)
+
     llm = get_llm(
         provider=state.get("llm_provider", "ollama"),
         model=state.get("selected_model"),
@@ -20,9 +29,9 @@ async def tool_agent_node(state: AgentState):
         "detail": "Planification de l'exécution des outils...",
         "steps": ["tool_agent_planned"]
     }
-
+    
     try:
-        response = await llm.ainvoke([SystemMessage(content=load_skill("tool_expert"))] + messages)
+        response = await llm.ainvoke([SystemMessage(content=load_skill("tool_expert"))] + cleaned_messages)
     except Exception as e:
         print(f"⚠️ Erreur critique du LLM (Tool Parser) : {e}", flush=True)
         from langchain_core.messages import AIMessage

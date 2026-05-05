@@ -55,15 +55,22 @@ async def call_safe_tools(state: AgentState):
     }
 
 async def call_sensitive_tools(state: AgentState):
-    """Exécute l'outil terminal (sensible)."""
+    """Exécute les outils sensibles (terminal, écriture)."""
     messages = state.get("messages", [])
     last_message = messages[-1]
     
+    from app.agents.tools import run_terminal_command, write_file
+    tool_map = {
+        "run_terminal_command": run_terminal_command,
+        "write_file": write_file
+    }
+    
     responses = []
     for tool_call in last_message.tool_calls:
-        if tool_call["name"] == "run_terminal_command":
-            print(f"⚠️ Exécution SENSITIVE : {tool_call['name']}", flush=True)
-            result = await run_terminal_command.ainvoke(tool_call["args"])
+        name = tool_call["name"]
+        if name in tool_map:
+            print(f"⚠️ Exécution SENSITIVE : {name}", flush=True)
+            result = await tool_map[name].ainvoke(tool_call["args"])
             responses.append(ToolMessage(
                 tool_call_id=tool_call["id"],
                 content=str(result)
@@ -77,7 +84,7 @@ def custom_tools_condition(state: AgentState):
     if hasattr(last_message, "tool_calls") and last_message.tool_calls:
         # Si un des appels concerne le terminal, on va vers le nœud sensitive
         for tc in last_message.tool_calls:
-            if tc["name"] == "run_terminal_command": 
+            if tc["name"] in ["run_terminal_command", "write_file"]: 
                 return "sensitive_tools"
         return "safe_tools"
     return "generate_answer"

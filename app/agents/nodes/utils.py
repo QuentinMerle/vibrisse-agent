@@ -16,9 +16,9 @@ def load_skill(name: str) -> str:
         return ""
 
 async def get_active_tools():
-    from app.agents.tools import web_search, run_terminal_command
+    from app.agents.tools import web_search, run_terminal_command, write_file
     from app.services.mcp.mcp_client import mcp_manager
-    tools = [run_terminal_command] # On le met en premier pour lui donner la priorité
+    tools = [run_terminal_command, write_file] # Outils locaux prioritaires
     if settings.ENABLE_WEB_SEARCH:
         tools.append(web_search)
         
@@ -75,3 +75,9 @@ def get_project_context():
     profile = settings.get_project_profile()
     skill_code = load_skill("code_expert")
     return f"{skill_code}\n\n--- INFORMATIONS SUR LE PROJET ANALYSÉ ---\n{profile}\n"
+
+def clean_mentions(text: str) -> str:
+    """Remplace le format technique @[display](id) par @display pour le LLM."""
+    if not isinstance(text, str):
+        return text
+    return re.sub(r"@\[(.*?)\]\(.*?\)", r"@\1", text)

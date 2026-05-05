@@ -8,9 +8,8 @@ async def router_node(state: AgentState):
     vision_desc = state.get("vision_description")
     
     # 2. Heuristiques (Uniquement pour les déclencheurs ÉVIDENTS)
-    # On ne met ici que ce qui DOIT absolument passer par les outils sans réfléchir
-    if question.startswith("/") or any(k in question for k in ["météo", "actualités", "news"]):
-        yield {"decision": "web_and_tools", "steps": ["router: force tools"]}
+    if question.startswith("/") or any(k in question for k in ["météo", "actualités", "news", "sauvegarde", "enregistre", "écris", "write"]):
+        yield {"decision": "web_and_tools", "steps": ["router: fast-track tools"]}
         return
 
     # 3. Appel LLM pour une décision sémantique fine
