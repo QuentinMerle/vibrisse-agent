@@ -177,32 +177,57 @@ class VectorService:
         self._cached_hybrid_retriever = None
 
     def reindex_project(self, target_path: str):
-        """Scan intelligent : ignore les dossiers inutiles (node_modules, .git, etc.)"""
+        """Scan intelligent : traite les fichiers par batchs pour éviter l'explosion de RAM."""
         from langchain_community.document_loaders import TextLoader
-        print(f"--- 📂 RE-INDEXATION INTELLIGENTE : {target_path} ---", flush=True)
+        print(f"--- 📂 RE-INDEXATION SÉCURISÉE : {target_path} ---", flush=True)
         
         valid_extensions = {".py", ".js", ".jsx", ".ts", ".tsx", ".css", ".html", ".md", ".json", ".yaml", ".yml"}
-        ignore_dirs = {"node_modules", ".git", ".gemini", "__pycache__", "dist", "build", "venv", ".venv", "data"}
+        ignore_dirs = {
+            "node_modules", ".git", ".gemini", "__pycache__", "dist", "build", 
+            "venv", ".venv", "data", "out", ".next", ".cache", "logs", "temp", "tmp"
+        }
         
-        all_docs = []
+        BATCH_SIZE = 50 # On indexe par paquets de 50 fichiers pour préserver la RAM
+        MAX_FILE_SIZE = 1 * 1024 * 1024 # 1 Mo max par fichier
+        
+        current_batch = []
+        total_indexed = 0
+        
         for root, dirs, files in os.walk(target_path):
-            # Filtrage des dossiers
-            dirs[:] = [d for d in dirs if d not in ignore_dirs]
+            # Filtrage préventif des dossiers lourds
+            dirs[:] = [d for d in dirs if d not in ignore_dirs and not d.startswith('.')]
             
             for file in files:
-                ext = os.path.splitext(file)[1]
+                ext = os.path.splitext(file)[1].lower()
                 if ext in valid_extensions:
                     file_path = os.path.join(root, file)
+                    
+                    # Sécurité : Limite de taille individuelle
                     try:
+                        if os.path.getsize(file_path) > MAX_FILE_SIZE:
+                            continue
+                        
                         loader = TextLoader(file_path, encoding='utf-8')
-                        all_docs.extend(loader.load())
-                    except: pass
+                        current_batch.extend(loader.load())
+                        
+                        # Si le batch est plein, on indexe et on vide la RAM
+                        if len(current_batch) >= BATCH_SIZE:
+                            self.add_documents(current_batch)
+                            total_indexed += len(current_batch)
+                            current_batch = [] # Libération immédiate
+                    except Exception as e:
+                        print(f"⚠️ Erreur sur {file}: {e}")
+                        continue
         
-        if all_docs:
-            self.add_documents(all_docs)
-            print(f"✅ RE-INDEXATION RÉUSSIE : {len(all_docs)} fichiers sources indexés.", flush=True)
+        # On indexe le dernier batch restant
+        if current_batch:
+            self.add_documents(current_batch)
+            total_indexed += len(current_batch)
+        
+        if total_indexed > 0:
+            print(f"✅ RE-INDEXATION RÉUSSIE : {total_indexed} fichiers sources indexés.", flush=True)
         else:
-            print("⚠️ Aucun fichier source trouvé.", flush=True)
+            print("⚠️ Aucun fichier source trouvé ou trop gros.", flush=True)
 
     async def list_indexed_files(self):
         def _scan():

@@ -104,6 +104,7 @@ Vibrisse est conçu avec une approche **Security-by-Design** pour protéger ton 
 *   **Contrôle Total (Human-in-the-Loop)** : L'agent a l'interdiction d'exécuter des commandes système (`run_terminal_command`) sans une validation explicite de ta part dans l'interface.
 *   **Masquage des Secrets (Scrubbing)** : Un système de filtrage automatique masque les clés API, tokens et mots de passe qui pourraient apparaître accidentellement dans les logs de l'agent.
 *   **Isolation des Données** : Ton historique de chat et tes index vectoriels sont stockés localement dans le dossier `/data`, lequel est strictement exclu de tout tracking Git.
+*   **Bouclier d'Ingestion Sécurisé** : Pour protéger votre machine, Vibrisse indexe les projets par lots (50 fichiers à la fois) et ignore automatiquement les fichiers de plus d'1 Mo pour éviter l'épuisement de la RAM (swap).
 
 ---
 

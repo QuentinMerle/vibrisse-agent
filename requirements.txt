@@ -1,10 +1,14 @@
 # requirements.txt
-fastapi[all]       # Framework web (comme Express/NestJS)
-pydantic-settings  # Gestion des variables d'env
-litellm            # L'abstraction LLM
-uvicorn            # Le serveur ASGI (comme l'exécutable de Node)
+# Vibrisse Agent - Python 3.12 Validated Stack
 
-# --- Core RAG & LangChain ---
+# --- Web & Core ---
+fastapi[all]
+pydantic-settings>=2.4.0
+litellm>=1.40.0
+uvicorn>=0.30.0
+uvloop>=0.20.0; sys_platform != 'win32'
+
+# --- Core RAG & LangChain (v0.3 Stable) ---
 langchain>=0.3.0,<0.4.0
 langchain-core>=0.3.0,<0.4.0
 langchain-community>=0.3.0,<0.4.0
@@ -12,34 +16,42 @@ langchain-text-splitters>=0.3.0,<0.4.0
 langchain-chroma>=0.2.0,<0.3.0
 langchain-openai>=0.3.0,<0.4.0
 langchain-ollama>=0.3.0,<0.4.0
+langchain-google-genai>=2.0.0
+langchain-groq>=0.1.0
+langchain-classic>=0.1.0
 
+# --- Agentic Graph & Persistence ---
+langgraph>=0.2.30
+langgraph-prebuilt>=0.6.0
+langsmith>=0.4.0
+langgraph-checkpoint-sqlite>=3.0.0
+langgraph-checkpoint-redis>=0.4.0
+langgraph-checkpoint-postgres>=0.4.0
+aiosqlite>=0.21.0
+redis>=5.0.0
 
+# --- Tool Protocols ---
+mcp>=1.0.0
 
 # --- Parsing & AST ---
 tree-sitter==0.21.3
 tree-sitter-languages
 unstructured[local-inference]
 
-# --- Search & Math ---
+# --- Search & Intelligence ---
 rank_bm25
 duckduckgo-search==6.3.0
 tavily-python
 numpy<2.0.0
-
-
-# --- Guardrails & Direct Ollama ---
 instructor
 ollama
 eval_type_backport
-langsmith>=0.4.0,<0.5.0
-langgraph>=0.6.0,<0.7.0
-redis
-langgraph-checkpoint-redis
 
-# RAGAS & Evaluation
+# --- RAGAS & Evaluation ---
 ragas>=0.2.0,<0.3.0
 deepeval
-langchain-google-genai
+
+# --- System & Monitoring ---
 PyYAML
 watchdog
 psutil

@@ -42,6 +42,20 @@ export const useChatState = () => {
     }
   }, []);
 
+  const deleteThread = useCallback(async (tid) => {
+    try {
+      await api.deleteThread(tid);
+      setThreads(prev => prev.filter(t => t.id !== tid));
+      if (currentThread === tid) {
+        setCurrentThread(null);
+        setMessages([]);
+        localStorage.removeItem("vibrisse_thread_id");
+      }
+    } catch (err) {
+      console.error("Erreur suppression thread:", err);
+    }
+  }, [currentThread]);
+
   return {
     messages, setMessages,
     isLoading, setIsLoading,
@@ -53,6 +67,7 @@ export const useChatState = () => {
     isWaitingForApproval, setIsWaitingForApproval,
     pendingApprovalData, setPendingApprovalData,
     fetchThreads,
-    fetchThreadHistory
+    fetchThreadHistory,
+    deleteThread
   };
 };

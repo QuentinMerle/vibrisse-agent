@@ -1,7 +1,6 @@
-import React from 'react';
-import { MessageSquare, History } from 'lucide-react';
+import { MessageSquare, History, X } from 'lucide-react';
 
-const ThreadList = ({ isLoadingThreads, threads, currentThread, onSelectThread, isCollapsed }) => {
+const ThreadList = ({ isLoadingThreads, threads, currentThread, onSelectThread, onDeleteThread, isCollapsed }) => {
   return (
     <nav className={`sidebar-section ${isCollapsed ? 'collapsed' : ''}`} aria-label="Historique des discussions">
       {!isCollapsed && (
@@ -21,7 +20,7 @@ const ThreadList = ({ isLoadingThreads, threads, currentThread, onSelectThread, 
         ) : (
           <ul className="thread-list">
             {threads.map((thread) => (
-              <li key={thread.id}>
+              <li key={thread.id} className="thread-item-container">
                 <button 
                   className={`thread-item ${currentThread === thread.id ? 'active' : ''}`}
                   onClick={() => onSelectThread(thread.id)}
@@ -31,6 +30,18 @@ const ThreadList = ({ isLoadingThreads, threads, currentThread, onSelectThread, 
                   <MessageSquare size={16} aria-hidden="true" />
                   {!isCollapsed && <span className="thread-label">{thread.title}</span>}
                 </button>
+                {!isCollapsed && (
+                  <button 
+                    className="delete-thread-btn"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onDeleteThread(thread.id);
+                    }}
+                    title="Supprimer la session"
+                  >
+                    <X size={14} />
+                  </button>
+                )}
               </li>
             ))}
           </ul>

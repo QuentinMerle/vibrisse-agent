@@ -115,3 +115,24 @@ async def get_thread_history(request: Request, thread_id: str):
     except Exception as e:
         logger.error(f"Error in get_thread_history: {e}")
         return {"messages": [], "context_usage": 0}
+
+@router.delete("/{thread_id}")
+async def delete_thread(thread_id: str):
+    """Supprime une conversation de la base de données."""
+    import aiosqlite
+    from pathlib import Path
+    
+    db_path = Path(__file__).parent.parent.parent.parent / "data" / "checkpoints.db"
+    
+    try:
+        async with aiosqlite.connect(db_path) as db:
+            # On supprime des deux tables liées au thread
+            await db.execute("DELETE FROM checkpoints WHERE thread_id = ?", (thread_id,))
+            await db.execute("DELETE FROM writes WHERE thread_id = ?", (thread_id,))
+            await db.commit()
+            
+        logger.info(f"🗑️ Session supprimée : {thread_id}")
+        return {"status": "success", "message": f"Session {thread_id} supprimée."}
+    except Exception as e:
+        logger.error(f"Erreur lors de la suppression du thread {thread_id}: {e}")
+        return {"status": "error", "message": str(e)}

@@ -10,6 +10,7 @@ import { useConfig } from './hooks/useConfig';
 import { useSettings } from './hooks/useSettings';
 import { useChatScroll } from './hooks/useChatScroll';
 import SettingsModal from './components/SettingsModal';
+import ConfirmModal from './components/layout/ConfirmModal';
 import { processImageFile } from './utils/fileUtils';
 import './App.css';
 
@@ -38,7 +39,8 @@ function App() {
     handleWipeIndex,
     sendMessage,
     stopGeneration,
-    handleApproval
+    handleApproval,
+    deleteThread
   } = useChat(settings);
 
   const {
@@ -63,10 +65,15 @@ function App() {
   const [input, setInput] = useState("");
   const [image, setImage] = useState(null);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(localStorage.getItem("vibrisse_sidebar_collapsed") === "true");
+  const [confirmModal, setConfirmModal] = useState({ isOpen: false, threadId: null });
   
   const fileInputRef = useRef(null);
   const inputRef = useRef(null);
   const hasInitialized = useRef(false);
+
+  const openDeleteModal = (tid) => {
+    setConfirmModal({ isOpen: true, threadId: tid });
+  };
 
   const toggleSidebar = () => {
     const newState = !isSidebarCollapsed;
@@ -137,6 +144,7 @@ function App() {
             localStorage.setItem("vibrisse_thread_id", tid);
             fetchThreadHistory(tid);
           }}
+          onDeleteThread={openDeleteModal}
           onNewChat={handleNewSession}
           onWipeIndex={handleWipeIndex}
           isLoadingThreads={isThreadsLoading}
@@ -206,6 +214,15 @@ function App() {
         onClose={() => setIsSettingsOpen(false)} 
         settings={settings}
         onSave={updateSettings}
+      />
+
+      <ConfirmModal 
+        isOpen={confirmModal.isOpen}
+        title="Supprimer la session"
+        message="Êtes-vous sûr de vouloir supprimer définitivement cette conversation ? Cette action est irréversible."
+        confirmText="Supprimer"
+        onClose={() => setConfirmModal({ ...confirmModal, isOpen: false })}
+        onConfirm={() => deleteThread(confirmModal.threadId)}
       />
     </div>
   );

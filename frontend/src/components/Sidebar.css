@@ -176,9 +176,41 @@
 }
 
 .thread-item:hover,
-.thread-item:focus-visible {
-  background: rgba(255, 255, 255, 0.05);
-  color: var(--text-main);
+.thread-item:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.thread-item-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.thread-item-container:hover .delete-thread-btn {
+  opacity: 1;
+}
+
+.delete-thread-btn {
+  position: absolute;
+  right: 12px;
+  opacity: 0;
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+.delete-thread-btn:hover {
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
 }
 
 .thread-item.active {
@@ -212,6 +244,12 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
+}
+
+.sidebar.collapsed .sidebar-pulse {
+  padding: 12px 0;
+  align-items: center;
+  justify-content: center;
 }
 
 .pulse-header {

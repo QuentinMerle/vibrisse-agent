@@ -66,7 +66,7 @@ This document tracks the long-term vision and specific ideas for evolving Vibris
 ---
 
 ## ⚙️ Maintenance & Hardening
-- [ ] **Python 3.12.4 Migration**: Performance and type-safety upgrade.
+- [x] **Python 3.12.4 Migration**: Performance and type-safety upgrade.
 - [ ] **CI/CD Pipeline**: Automated testing for the router and tool execution nodes.
 - [ ] **Ragas Industrialization**: Real-time evaluation dashboard in the Studio UI.
 

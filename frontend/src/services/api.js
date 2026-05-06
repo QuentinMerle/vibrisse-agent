@@ -100,6 +100,10 @@ export const api = {
     const res = await fetch(`${API_ROOT}/threads/${threadId}`);
     return res.json();
   },
+  deleteThread: async (threadId) => {
+    const res = await fetch(`${API_ROOT}/threads/${threadId}`, { method: "DELETE" });
+    return res.json();
+  },
 
   // CHAT
   chat: (payload, signal, llmSettings = {}) => {

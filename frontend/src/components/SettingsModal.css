@@ -19,9 +19,11 @@
   border-radius: 20px;
   border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-  overflow: visible; /* Permet au dropdown de sortir de la modale sans être coupé */
+  overflow: visible;
+  /* Permet au dropdown de sortir de la modale sans être coupé */
   animation: scaleUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  background: #0f0f12; /* Fond pour éviter la transparence avec overflow visible */
+  background: #0f0f12;
+  /* Fond pour éviter la transparence avec overflow visible */
 }
 
 .modal-header {
@@ -170,12 +172,17 @@
   left: 14px;
   top: 50%;
   transform: translateY(-50%);
-  color: #64748b;
+  color: var(--primary);
+  opacity: 0.8;
   display: flex;
   align-items: center;
   justify-content: center;
   pointer-events: none;
-  z-index: 2;
+  z-index: 5;
+}
+
+.input-wrapper .input-icon {
+  left: 36px;
 }
 
 .select-trigger {
@@ -183,7 +190,7 @@
   background: rgba(0, 0, 0, 0.2);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 10px;
-  padding: 10px 12px 10px 42px; /* Augmenté aussi ici */
+  padding: 10px 12px 10px 42px;
   color: #f1f5f9;
   font-size: 14px;
   cursor: pointer;
@@ -263,7 +270,8 @@
 
 .models-list {
   overflow-y: auto;
-  max-height: 200px; /* Réduit pour éviter de déborder trop de la modale */
+  max-height: 200px;
+  /* Réduit pour éviter de déborder trop de la modale */
   padding: 6px;
 }
 
@@ -337,7 +345,7 @@
   background: rgba(0, 0, 0, 0.2);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 10px;
-  padding: 10px 12px 10px 42px; /* Augmenté pour laisser de la place à l'icône */
+  padding: 10px 12px 10px 48px;
   color: #f1f5f9;
   font-size: 14px;
   outline: none;
@@ -684,6 +692,29 @@
   border-color: var(--primary);
   color: var(--primary);
   box-shadow: 0 0 15px rgba(123, 57, 237, 0.1);
+}
+
+.lang-iso {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  color: var(--text-muted);
+  transition: all 0.2s;
+}
+
+.lang-btn.active .lang-iso {
+  background: rgba(123, 57, 237, 0.2);
+  border-color: rgba(123, 57, 237, 0.4);
+  color: var(--primary);
+}
+
+.lang-name {
+  font-family: var(--font-display);
+  font-weight: 600;
 }
 
 .setting-label {

@@ -64,7 +64,14 @@ The agent is equipped with a toolset to interact with the system:
     - **Dense (ChromaDB)**: For semantic and conceptual meaning.
     - **Sparse (BM25)**: For exact term matching (e.g., function names, IDs).
     - *Why?* Semantic search is great for "What is this about?", but BM25 is essential for "Find the function `on_click_handler`".
-3. **Double-Pass Reasoning (Expert Review)**:
+
+3. **Safety Ingestion Shield (Resource Management)**:
+    To prevent memory exhaustion (swapping) during large project indexing, Vibrisse implements:
+    - **Batch Processing**: Files are loaded and indexed in small groups (50 files) to keep RAM usage constant.
+    - **Size Filtering**: Individual files larger than 1MB are automatically skipped from the vector index.
+    - **Intelligent Exclusions**: Common heavy folders (`node_modules`, `.next`, `dist`, `build`, etc.) and hidden directories are ignored by default.
+
+4. **Double-Pass Reasoning (Expert Review)**:
     Every complex technical response passes through an `expert_review_node`. A second LLM analyzes the draft to ensure technical excellence and adherence to standards.
 4. **SSE Streaming Protocol**:
     All agent -> client communication uses `StreamService`. Events are typed: `token`, `thought`, `status`, `tool_calls`.

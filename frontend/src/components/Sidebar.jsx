@@ -7,7 +7,7 @@ import ProjectSection from './layout/ProjectSection';
 import './Sidebar.css';
 
 const Sidebar = ({ 
-  threads, currentThread, onSelectThread, onNewChat, onWipeIndex, isLoadingThreads,
+  threads, currentThread, onSelectThread, onDeleteThread, onNewChat, onWipeIndex, isLoadingThreads,
   healthStatus, contextUsage, contextLimit, onUpdateTargetPath, onOpenSettings, llmSettings,
   isCollapsed, onToggle
 }) => {
@@ -72,6 +72,7 @@ const Sidebar = ({
           threads={threads} 
           currentThread={currentThread} 
           onSelectThread={onSelectThread}
+          onDeleteThread={onDeleteThread}
           isCollapsed={isCollapsed}
         />
       )}

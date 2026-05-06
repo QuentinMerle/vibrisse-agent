@@ -29,6 +29,7 @@ wheels/
 .venv/
 venv/
 ENV/
+.venv_old_311/
 
 # --- Environment Variables (CRITICAL) ---
 .env

@@ -104,6 +104,7 @@ Vibrisse is built with a **Security-by-Design** approach to protect your code an
 *   **Human-in-the-Loop (HITL)** : The agent is forbidden from executing system commands (`run_terminal_command`) without explicit validation from you in the UI.
 *   **Secret Scrubbing** : An automatic filtering system masks API keys, tokens, and passwords that might accidentally appear in agent logs.
 *   **Data Isolation** : Your chat history and vector indices are stored locally in the `/data` folder, which is strictly excluded from Git tracking.
+*   **Safety Ingestion Shield** : To protect your machine, Vibrisse indexes projects using batch processing (50 files at a time) and automatically ignores files larger than 1MB to prevent RAM exhaustion (swapping).
 
 ---
 

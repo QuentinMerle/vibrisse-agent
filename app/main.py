@@ -62,7 +62,6 @@ async def lifespan(app: FastAPI):
         print("--- ✅ BACKEND READY ---", flush=True)
         yield
         watcher.stop()
-        watcher.join()
 
 app = FastAPI(lifespan=lifespan)
 

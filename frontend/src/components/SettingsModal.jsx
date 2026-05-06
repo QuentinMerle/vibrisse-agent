@@ -148,13 +148,15 @@ const SettingsModal = ({ isOpen, onClose, settings, onSave }) => {
                     className={`lang-btn ${i18n.language === 'fr' ? 'active' : ''}`}
                     onClick={() => i18n.changeLanguage('fr')}
                   >
-                    🇫🇷 {t('settings.language_fr')}
+                    <span className="lang-iso">FR</span>
+                    <span className="lang-name">{t('settings.language_fr')}</span>
                   </button>
                   <button 
                     className={`lang-btn ${i18n.language === 'en' ? 'active' : ''}`}
                     onClick={() => i18n.changeLanguage('en')}
                   >
-                    🇺🇸 {t('settings.language_en')}
+                    <span className="lang-iso">EN</span>
+                    <span className="lang-name">{t('settings.language_en')}</span>
                   </button>
                 </div>
               </div>
