@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { X, Cpu, ShieldCheck, Plug } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { X, Cpu, ShieldCheck, Plug, Globe } from 'lucide-react';
 import { api } from '../services/api';
 import LLMTab from './settings/LLMTab';
 import MCPTab from './settings/MCPTab';
 import './SettingsModal.css';
 
 const SettingsModal = ({ isOpen, onClose, settings, onSave }) => {
+  const { t, i18n } = useTranslation();
   const [localSettings, setLocalSettings] = useState(settings);
   const [isValidating, setIsValidating] = useState(false);
   const [validationStatus, setValidationStatus] = useState(null);
@@ -98,19 +100,22 @@ const SettingsModal = ({ isOpen, onClose, settings, onSave }) => {
         <div className="modal-header">
           <div className="header-title">
             <ShieldCheck className="header-icon" />
-            <h2>Configuration</h2>
+            <h2>{t('settings.title')}</h2>
           </div>
-          <button className="close-btn" onClick={onClose} aria-label="Fermer">
+          <button className="close-btn" onClick={onClose} aria-label={t('common.close')}>
             <X size={20} />
           </button>
         </div>
 
         <div className="tabs-container">
           <button className={`tab-btn ${activeTab === 'llm' ? 'active' : ''}`} onClick={() => setActiveTab('llm')}>
-            <Cpu size={14} /> Cerveaux IA
+            <Cpu size={14} /> {t('settings.tabs_llm')}
           </button>
           <button className={`tab-btn ${activeTab === 'mcp' ? 'active' : ''}`} onClick={() => setActiveTab('mcp')}>
-            <Plug size={14} /> Extensions MCP
+            <Plug size={14} /> {t('settings.tabs_mcp')}
+          </button>
+          <button className={`tab-btn ${activeTab === 'general' ? 'active' : ''}`} onClick={() => setActiveTab('general')}>
+            <Globe size={14} /> {t('settings.tabs_general')}
           </button>
         </div>
 
@@ -120,7 +125,7 @@ const SettingsModal = ({ isOpen, onClose, settings, onSave }) => {
               localSettings={localSettings} 
               setLocalSettings={setLocalSettings} 
             />
-          ) : (
+          ) : activeTab === 'mcp' ? (
             <MCPTab 
               mcpServers={mcpServers}
               fetchMcpStatus={fetchMcpStatus}
@@ -131,29 +136,52 @@ const SettingsModal = ({ isOpen, onClose, settings, onSave }) => {
               newMcpCmd={newMcpCmd} setNewMcpCmd={setNewMcpCmd}
               newMcpArgs={newMcpArgs} setNewMcpArgs={setNewMcpArgs}
             />
+          ) : (
+            <div className="settings-tab-content">
+              <div className="setting-group">
+                <label className="setting-label">
+                  <Globe size={14} style={{ marginRight: '8px' }} />
+                  {t('settings.language')}
+                </label>
+                <div className="language-selector-grid">
+                  <button 
+                    className={`lang-btn ${i18n.language === 'fr' ? 'active' : ''}`}
+                    onClick={() => i18n.changeLanguage('fr')}
+                  >
+                    🇫🇷 {t('settings.language_fr')}
+                  </button>
+                  <button 
+                    className={`lang-btn ${i18n.language === 'en' ? 'active' : ''}`}
+                    onClick={() => i18n.changeLanguage('en')}
+                  >
+                    🇺🇸 {t('settings.language_en')}
+                  </button>
+                </div>
+              </div>
+            </div>
           )}
         </div>
 
         <div className="modal-footer">
           {activeTab === 'llm' && (
             <div className="validation-info">
-              {isValidating && <span className="validating-text"><div className="spinner-mini" /> Vérification...</span>}
-              {validationStatus === 'success' && <span className="success-text">✓ Connexion OK</span>}
-              {validationStatus === 'error' && <span className="error-text">✗ Échec</span>}
+              {isValidating && <span className="validating-text"><div className="spinner-mini" /> {t('settings.status_verifying')}</span>}
+              {validationStatus === 'success' && <span className="success-text">✓ {t('settings.status_success')}</span>}
+              {validationStatus === 'error' && <span className="error-text">✗ {t('settings.status_error')}</span>}
             </div>
           )}
           <div style={{flex: 1}}></div>
-          <button className="secondary-btn" onClick={onClose}>Annuler</button>
+          <button className="secondary-btn" onClick={onClose}>{t('settings.btn_cancel')}</button>
           {activeTab === 'llm' && (
             <button 
               className="test-btn" 
               onClick={handleTestConnection} 
               disabled={isValidating || (localSettings.provider !== 'ollama' && !localSettings.apiKey)}
             >
-              Tester l'IA
+              {t('settings.btn_test')}
             </button>
           )}
-          <button className="primary-btn" onClick={handleSave}>Sauvegarder</button>
+          <button className="primary-btn" onClick={handleSave}>{t('settings.btn_save')}</button>
         </div>
       </div>
     </div>

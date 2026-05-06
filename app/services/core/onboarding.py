@@ -51,23 +51,23 @@ class OnboardingService:
         
         raw_text = context_data.get('description', '')
         prompt = (
-            "Tu es un expert en onboarding de projet. Ta mission est de transformer la documentation brute "
-            "d'un projet en un manifeste structuré pour un autre agent IA.\n\n"
-            "DOC BRUTE :\n"
+            "You are a project onboarding expert. Your mission is to transform raw documentation "
+            "into a structured manifest for another AI agent.\n\n"
+            "RAW DOCUMENTATION :\n"
             f"{raw_text}\n\n"
-            f"STACK DÉTECTÉE : {', '.join(tech_stack)}\n\n"
-            "Génère un manifeste condensé (max 10 lignes) avec :\n"
-            "1. NOM DU PROJET\n"
-            "2. CLIENT & CONTEXTE\n"
-            "3. STACK TECHNIQUE (sois précis)\n"
-            "4. OBJECTIF PRINCIPAL\n"
-            "5. RÈGLES DE CODE CLÉS (si trouvées)\n\n"
-            "Réponds uniquement avec le manifeste structuré."
+            f"DETECTED STACK : {', '.join(tech_stack)}\n\n"
+            "Generate a condensed manifest (max 10 lines) with:\n"
+            "1. PROJECT NAME\n"
+            "2. CLIENT & CONTEXT\n"
+            "3. TECHNICAL STACK (be precise)\n"
+            "4. MAIN GOAL\n"
+            "5. KEY CODING RULES (if found)\n\n"
+            "Respond ONLY with the structured manifest."
         )
         
         try:
             response = await llm.ainvoke([
-                SystemMessage(content="Tu es un assistant technique efficace."),
+                SystemMessage(content="You are an efficient technical assistant."),
                 HumanMessage(content=prompt)
             ])
             return response.content

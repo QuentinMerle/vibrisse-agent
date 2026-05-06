@@ -19,14 +19,9 @@
 }
 
 .logo-wrap {
-  background: var(--primary);
-  color: white;
-  padding: 8px;
-  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 0 15px rgba(123, 57, 237, 0.3);
 }
 
 .brand-name {

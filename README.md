@@ -6,7 +6,7 @@
 [![Local First](https://img.shields.io/badge/Local--First-Ollama-10b981)](https://ollama.com)
 [![MCP Powered](https://img.shields.io/badge/MCP-Extensible-yellow)](https://modelcontextprotocol.io)
 
-**Vibrisse Agent** is a "Studio-Grade" agentic AI assistant designed by **Vibrisse Studio**. Born from the curiosity of a web developer turned AI engineer, this tool transforms your local codebases into intelligent conversation partners. Built on a **LangGraph** architecture and optimized for **100% local** execution, it embodies the expertise and vision of our **Vibrisse AI** service.
+**Vibrisse Agent** is a "Studio-Grade" agentic AI assistant designed by **Vibrisse Studio**. Built on the conviction that **"Small models + Great tools = Professional performance"**, it transforms local codebases into intelligent conversation partners. Using a **LangGraph** architecture and optimized for **100% local** execution, it embodies the expertise and vision of our **Vibrisse AI** engineering team.
 
 <p align="center">
   <img src="./docs/assets/vibrisse-agent-ui.png" alt="Vibrisse Studio UI" width="100%">
@@ -21,12 +21,14 @@ Vibrisse integrates the **RAGAS** framework to evaluate faithfulness (anti-hallu
 
 ### 🎨 Dual Control Interface
 *   **Studio Web UI (Cockpit)** : An immersive "Obsidian Glass" interface featuring an intelligent sidebar, real-time context monitoring, and high-definition Markdown rendering.
+*   **Accessibility & UX** : Built with accessibility in mind, using semantic HTML, ARIA labels, and full keyboard navigation support (`CMD+K`, `CMD+B`).
 *   **Hacker TUI (Terminal)** : A blazing-fast textual interface in indigo purple to control the agent without leaving your terminal.
-*   **Total Fluidity** : Keyboard shortcuts (`CMD+K`, `CMD+B`), skeleton loading, and precision animations.
 
 ### 🧠 Contextual Intelligence
 *   **Hybrid RAG** : Vector search (semantic) coupled with BM25 search (keywords) for surgical precision on your code.
 *   **Project Onboarding** : Automatic architecture scan, reading manifests (`README.md`, `CONTEXT.md`) for immediate project awareness.
+*   **English Core Reasoning** : Built on a hybrid linguistic model—the agent processes technical instructions in English for peak precision while communicating fluently in multiple languages.
+*   **Vibrisse Identity** : A unique personality with a custom AI avatar that reacts visually to the agent's internal reasoning steps.
 *   **Modular Skills** : Expertise instructions isolated in Markdown files (`app/agents/skills/`), allowing you to modify agent behavior without changing a single line of code.
 
 ### 🔌 Extensibility (MCP)
@@ -173,8 +175,10 @@ Refer to the **[Tool Creation Guide in AGENTS.md](./AGENTS.md#️-extension--ajo
 - [x] High-performance Terminal Mode (TUI)
 - [x] Native MCP Integration
 - [x] Evaluation Framework (Ragas / LangSmith)
+- [ ] Multi-Agent Architecture (Supervisor/Worker structure)
+- [x] Persistence & Caching (Manifest & Project path)
 - [ ] Native Packaging (Electron / Tauri)
-- [ ] Full Internationalization (i18n) & English Prompts
+- [x] Full Internationalization (i18n) & English Prompts
 - [ ] Context Optimization (Prompt Compression)
 - [ ] Vibrisse Tool Marketplace
 

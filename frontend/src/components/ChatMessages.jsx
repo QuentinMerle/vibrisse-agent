@@ -26,15 +26,8 @@ const ChatMessages = ({
       ref={virtuosoRef}
       className="messages-container"
       data={messages}
-      followOutput={autoScrollEnabled ? 'smooth' : false}
-      totalListHeightChanged={(height) => {
-        if (autoScrollEnabled && virtuosoRef.current && messages.length > 0) {
-          virtuosoRef.current.scrollToIndex({ 
-            index: messages.length - 1, 
-            align: 'end', 
-            behavior: 'auto' 
-          });
-        }
+      followOutput={(isAtBottom) => {
+        return autoScrollEnabled ? 'auto' : false;
       }}
       increaseViewportBy={800} // Pré-rendu pour éviter les saccades
       atBottomStateChange={(atBottom) => {

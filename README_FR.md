@@ -6,7 +6,7 @@
 [![Local First](https://img.shields.io/badge/Local--First-Ollama-10b981)](https://ollama.com)
 [![MCP Powered](https://img.shields.io/badge/MCP-Extensible-yellow)](https://modelcontextprotocol.io)
 
-**Vibrisse Agent** est un assistant IA agentique "Studio-Grade" conçu par **Vibrisse Studio**. Aboutissement de la curiosité d'un développeur originaire du Web, cet outil transforme tes bases de code locales en partenaires de conversation intelligents. Construit sur une architecture **LangGraph** et optimisé pour le **100% local**, il incarne l'expertise de notre service **Vibrisse AI**.
+**Vibrisse Agent** est un assistant IA agentique de qualité "Studio" conçu par **Vibrisse Studio**. Bâti sur la conviction que **"Petits modèles + Grands outils = Performance professionnelle"**, cet outil transforme vos bases de code locales en partenaires de conversation intelligents. Utilisant une architecture **LangGraph** et optimisé pour une exécution **100% locale**, il incarne l'expertise et la vision de l'ingénierie **Vibrisse AI**.
 
 <p align="center">
   <img src="./docs/assets/vibrisse-agent-ui.png" alt="Vibrisse Studio UI" width="100%">
@@ -20,13 +20,15 @@
 Vibrisse intègre le framework **RAGAS** pour évaluer la fidélité (anti-hallucination) et la pertinence des réponses en temps réel.
 
 ### 🎨 Double Interface de Contrôle
-*   **Studio Web UI (Cockpit)** : Une interface "Obsidian Glass" immersive avec sidebar intelligente, monitoring du contexte en temps réel et rendu Markdown haute définition.
-*   **Hacker TUI (Terminal)** : Une interface textuelle ultra-rapide en violet indigo pour piloter l'agent sans quitter ton terminal.
-*   **Fluidité Totale** : Raccourcis clavier (`CMD+K`, `CMD+B`), skeleton loading et animations de précision.
+*   **Studio Web UI (Cockpit)** : Une interface immersive "Obsidian Glass" avec sidebar intelligente, monitoring du contexte en temps réel et rendu Markdown haute définition.
+*   **Accessibilité & UX** : Conçu pour être inclusif avec du HTML sémantique, des labels ARIA complets et un support total de la navigation au clavier (`CMD+K`, `CMD+B`).
+*   **Hacker TUI (Terminal)** : Une interface textuelle ultra-rapide en violet indigo pour piloter l'agent sans quitter votre terminal.
 
 ### 🧠 Intelligence Contextuelle
 *   **RAG Hybride** : Recherche vectorielle (sens) couplée à une recherche BM25 (mots-clés) pour une précision chirurgicale sur le code.
 *   **Project Onboarding** : Scan automatique de l'architecture, lecture des manifestes (`README.md`, `CONTEXT.md`) pour une prise de conscience immédiate du projet.
+*   **English Core Reasoning** : Basé sur un modèle linguistique hybride — l'agent traite les instructions techniques en anglais pour une précision maximale tout en communiquant fluidement en français.
+*   **Identité Vibrisse** : Une personnalité unique avec un avatar IA personnalisé qui réagit visuellement aux étapes de réflexion de l'agent.
 *   **Modular Skills** : Instructions d'expertise isolées dans des fichiers Markdown (`app/agents/skills/`), permettant de modifier le comportement de l'agent sans changer une seule ligne de code.
 
 ### 🔌 Extensibilité (MCP)
@@ -173,8 +175,9 @@ Consultez le **[Guide de création d'outils dans AGENTS.md](./AGENTS.md#️-exte
 - [x] Mode Terminal (TUI) haute performance
 - [x] Intégration native MCP
 - [x] Framework d'Évaluation (Ragas / LangSmith)
-- [ ] Internationalisation complète (i18n) & Prompts en Anglais
-- [ ] Multi-Agent Architecture (Orchestration spécialisée)
+- [ ] Multi-Agent Architecture (Structure Supervisor/Worker)
+- [x] Persistance & Caching (Manifeste & Projet)
+- [x] Internationalisation complète (i18n)
 - [ ] Optimisation Contextuelle (Prompt Compression)
 - [ ] Marketplace d'outils Vibrisse
 

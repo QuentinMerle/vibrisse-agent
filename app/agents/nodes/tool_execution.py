@@ -25,8 +25,8 @@ async def tool_agent_node(state: AgentState):
     ).bind_tools(active_tools)
     
     yield {
-        "thoughts": ["**Planification :** Je vais utiliser les outils à ma disposition pour récupérer les informations demandées."],
-        "detail": "Planification de l'exécution des outils...",
+        "thoughts": ["**Planning:** I will use the available tools to retrieve the requested information."],
+        "detail": "Planning tool execution...",
         "steps": ["tool_agent_planned"]
     }
     

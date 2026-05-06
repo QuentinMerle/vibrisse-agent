@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { History, FolderOpen, MapPin, Check } from 'lucide-react';
 
 const ProjectSection = ({ isIndexing, onUpdateTargetPath, setShowToast, isCollapsed }) => {
+  const { t } = useTranslation();
   const [pathValue, setPathValue] = useState("");
   const [activePath, setActivePath] = useState(localStorage.getItem("vibrisse_project_path") || "");
   const [isEditing, setIsEditing] = useState(false);
@@ -26,7 +28,7 @@ const ProjectSection = ({ isIndexing, onUpdateTargetPath, setShowToast, isCollap
       setShowToast(true);
       setTimeout(() => setShowToast(false), 3000);
     } else {
-      alert("❌ Erreur : Chemin invalide.");
+      alert("❌ " + t('project.error_invalid'));
     }
     setIsUpdating(false);
   };
@@ -46,7 +48,7 @@ const ProjectSection = ({ isIndexing, onUpdateTargetPath, setShowToast, isCollap
 
   if (isCollapsed) {
     return (
-      <div className="project-section collapsed" title={`Projet: ${activePath}`}>
+      <div className="project-section collapsed" title={t('project.project_label', { path: activePath })}>
         <div className="active-project-card collapsed">
           <MapPin size={18} className="pin-icon" />
         </div>
@@ -59,7 +61,7 @@ const ProjectSection = ({ isIndexing, onUpdateTargetPath, setShowToast, isCollap
       <div className="section-header">
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <History size={14} />
-          <span>Projet Cible</span>
+          <span>{t('project.target_title')}</span>
         </div>
         {isIndexing && <div className="spinner-small"></div>}
       </div>
@@ -71,7 +73,7 @@ const ProjectSection = ({ isIndexing, onUpdateTargetPath, setShowToast, isCollap
               <MapPin size={14} className="pin-icon" />
               <div className="project-name-stack">
                 <span className="project-folder-name">
-                  {activePath === "." || activePath === "./" ? "Projet Local" : (activePath.split('/').filter(Boolean).pop() || "Racine")}
+                  {activePath === "." || activePath === "./" ? t('project.local_project') : (activePath.split('/').filter(Boolean).pop() || t('project.root'))}
                 </span>
                 <span className="project-full-path">{activePath}</span>
               </div>
@@ -81,7 +83,7 @@ const ProjectSection = ({ isIndexing, onUpdateTargetPath, setShowToast, isCollap
               onClick={() => setIsEditing(true)}
               disabled={isIndexing}
             >
-              Modifier le projet
+              {t('project.modify_btn')}
             </button>
           </div>
         ) : (
@@ -89,7 +91,7 @@ const ProjectSection = ({ isIndexing, onUpdateTargetPath, setShowToast, isCollap
             <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
               <input 
                 type="text" 
-                placeholder="Chemin absolu..."
+                placeholder={t('project.path_placeholder')}
                 value={pathValue}
                 onChange={(e) => setPathValue(e.target.value)}
                 disabled={isIndexing}
@@ -114,7 +116,7 @@ const ProjectSection = ({ isIndexing, onUpdateTargetPath, setShowToast, isCollap
                 onClick={handlePickDirectory}
                 disabled={isIndexing}
                 className="pick-dir-btn"
-                title="Parcourir..."
+                title={t('project.browse_tooltip')}
                 style={{
                   borderRadius: '8px',
                   width: '32px',
@@ -132,7 +134,7 @@ const ProjectSection = ({ isIndexing, onUpdateTargetPath, setShowToast, isCollap
                 onClick={() => handleUpdate(pathValue)}
                 disabled={isIndexing || isUpdating || !pathValue}
                 className="confirm-project-btn"
-                title="Valider le projet"
+                title={t('project.confirm_tooltip')}
                 style={{
                   borderRadius: '8px',
                   width: '32px',
@@ -152,7 +154,7 @@ const ProjectSection = ({ isIndexing, onUpdateTargetPath, setShowToast, isCollap
             </div>
             {activePath && (
               <button className="cancel-edit-btn" onClick={() => setIsEditing(false)}>
-                Annuler
+                {t('project.cancel')}
               </button>
             )}
           </div>

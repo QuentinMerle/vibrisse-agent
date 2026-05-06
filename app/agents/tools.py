@@ -112,9 +112,12 @@ def read_file(filename: str):
     """Lit le contenu complet d'un fichier. À utiliser quand le RAG ne donne pas assez de détails sur un fichier spécifique."""
     from pathlib import Path
     try:
+        # Nettoyage du nom de fichier (on enlève le @ de mention ou le ./ si présents)
+        clean_name = filename.lstrip("@").lstrip("./")
+        
         from app.core.config import settings
         target_dir = Path(settings.TARGET_PROJECT_PATH).absolute()
-        path = (target_dir / filename).absolute()
+        path = (target_dir / clean_name).absolute()
         
         if not str(path).startswith(str(target_dir)):
             return "Erreur : Accès hors du dossier projet interdit."

@@ -1,6 +1,8 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 const SystemPulse = ({ healthStatus, contextUsage, contextLimit, llmSettings, isCollapsed }) => {
+  const { t } = useTranslation();
   const ramPercent = healthStatus?.ram?.percent || 0;
   const contextPercent = contextLimit > 0 ? (contextUsage / contextLimit) * 100 : 0;
   const isOllamaConnected = healthStatus?.ollama === 'connected';
@@ -22,7 +24,7 @@ const SystemPulse = ({ healthStatus, contextUsage, contextLimit, llmSettings, is
 
   if (isCollapsed) {
     return (
-      <div className="sidebar-pulse collapsed" title={llmSettings?.provider || 'System Status'}>
+      <div className="sidebar-pulse collapsed" title={llmSettings?.provider ? llmSettings.provider.toUpperCase() : t('system.pulse_title')}>
         <div className="status-dot-pulse" style={{ 
           backgroundColor: statusColor, 
           boxShadow: `0 0 10px ${statusColor}` 
@@ -34,7 +36,7 @@ const SystemPulse = ({ healthStatus, contextUsage, contextLimit, llmSettings, is
   return (
     <div className="sidebar-pulse">
       <div className="pulse-header">
-        <span className="pulse-title">System Pulse</span>
+        <span className="pulse-title">{t('system.pulse_title')}</span>
         <div className="ollama-status" style={{ color: statusColor }}>
           <div className="status-dot-pulse" style={{ 
             backgroundColor: statusColor, 
@@ -47,10 +49,10 @@ const SystemPulse = ({ healthStatus, contextUsage, contextLimit, llmSettings, is
       <div className="pulse-metrics">
         <div 
           className="metric-item" 
-          data-tooltip={`Plus la mémoire est pleine, plus l'agent risque d'oublier les premiers détails de la conversation.`}
+          data-tooltip={t('system.context_tooltip')}
         >
           <div className="metric-label">
-            <span>Context Usage</span>
+            <span>{t('system.context_usage')}</span>
             <span className="metric-value">{formatValue(contextUsage)} / {formatValue(contextLimit)}</span>
           </div>
           <div className="metric-bar-bg">
@@ -65,10 +67,10 @@ const SystemPulse = ({ healthStatus, contextUsage, contextLimit, llmSettings, is
           <>
             <div 
               className="metric-item"
-              data-tooltip={healthStatus?.ram ? `Détail : ${healthStatus.ram.used} GB utilisés sur ${healthStatus.ram.total} GB au total.` : "Chargement..."}
+              data-tooltip={healthStatus?.ram ? t('system.ram_tooltip', { used: healthStatus.ram.used, total: healthStatus.ram.total }) : t('system.ram_loading')}
             >
               <div className="metric-label">
-                <span>(V)RAM Usage</span>
+                <span>{t('system.ram_usage')}</span>
                 <span className="metric-value">{healthStatus?.ram?.used || 0} / {healthStatus?.ram?.total || 0} GB</span>
               </div>
               <div className="metric-bar-bg">
@@ -82,10 +84,10 @@ const SystemPulse = ({ healthStatus, contextUsage, contextLimit, llmSettings, is
             {healthStatus?.ram?.swap_used > 0.1 && (
               <div 
                 className="metric-item"
-                data-tooltip={`Attention : Ton Mac utilise le disque (Swap) car la RAM est saturée. Performance réduite.`}
+                data-tooltip={t('system.swap_tooltip')}
               >
                 <div className="metric-label">
-                  <span style={{ color: '#fb7185' }}>⚠️ Swap Usage</span>
+                  <span style={{ color: '#fb7185' }}>⚠️ {t('system.swap_usage')}</span>
                   <span className="metric-value" style={{ color: '#fb7185' }}>{healthStatus.ram.swap_used} GB</span>
                 </div>
                 <div className="metric-bar-bg" style={{ height: '2px' }}>

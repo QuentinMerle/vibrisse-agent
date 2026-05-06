@@ -6,10 +6,10 @@ from app.agents.nodes.utils import load_skill, calculate_context_usage
 async def vision_node(state: AgentState):
     image_b64 = state.get("image")
     if not image_b64:
-        yield {"vision_description": "Aucune image n'a été fournie pour l'analyse.", "steps": ["vision_skipped"]}
+        yield {"vision_description": "No image was provided for analysis.", "steps": ["vision_skipped"]}
         return
     
-    question = state.get("question", "Décris cette image en détail.")
+    question = state.get("question", "Describe this image in detail.")
     model = state.get("selected_model")
     
     llm = get_llm(
@@ -28,8 +28,8 @@ async def vision_node(state: AgentState):
     ]
     
     try:
-        print(f"--- 👁️ VISION : Analyse en cours avec {model} ---", flush=True)
-        yield {"detail": "Analyse visuelle de l'image (composition, style, composants)...", "steps": ["vision_analysis_started"]}
+        print(f"--- 👁️ VISION: Analysis in progress with {model} ---", flush=True)
+        yield {"detail": "Visual analysis of image (composition, style, components)...", "steps": ["vision_analysis_started"]}
         
         response = await llm.ainvoke(prompt)
         print(f"--- 👁️ VISION : Résultat : {response.content[:100]}...", flush=True)
@@ -38,9 +38,9 @@ async def vision_node(state: AgentState):
         temp_state = state.copy()
         temp_state.update(new_state)
         new_state["context_usage"] = calculate_context_usage(temp_state)
-        new_state["detail"] = "Vision : Analyse terminée."
-        new_state["thoughts"] = [f"**Analyse Visuelle :** {response.content}"]
+        new_state["detail"] = "Vision: Analysis completed."
+        new_state["thoughts"] = ["__RESET__", f"**Visual Analysis:** {response.content}"]
         yield new_state
     except Exception as e:
         print(f"⚠️ Vision Error: {e}")
-        yield {"vision_description": f"Erreur technique lors de l'analyse d'image : {str(e)}", "steps": ["vision_error"]}
+        yield {"vision_description": f"Technical error during image analysis: {str(e)}", "steps": ["vision_error"]}

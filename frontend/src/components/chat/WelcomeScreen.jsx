@@ -1,26 +1,30 @@
 import React from 'react';
-import { Sparkles, MessageSquare, Code, Search, Zap } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { Code, Search, Zap } from 'lucide-react';
+import VibrisseAvatar from './VibrisseAvatar';
 import './WelcomeScreen.css';
 
 const WelcomeScreen = ({ onSuggestionClick }) => {
+  const { t } = useTranslation();
+  
   const suggestions = [
     {
       icon: <Code size={18} />,
-      title: "Analyse de code",
-      text: "Analyse l'architecture de ce projet et explique-moi les choix techniques.",
-      action: "Analyse l'architecture de ce projet et explique-moi les choix techniques."
+      title: t('welcome.suggestion_code_title'),
+      text: t('welcome.suggestion_code_text'),
+      action: t('welcome.suggestion_code_text')
     },
     {
       icon: <Search size={18} />,
-      title: "Recherche de bugs",
-      text: "Trouve des bugs potentiels ou des failles de sécurité dans le dossier src.",
-      action: "Trouve des bugs potentiels ou des failles de sécurité dans le dossier src."
+      title: t('welcome.suggestion_bug_title'),
+      text: t('welcome.suggestion_bug_text'),
+      action: t('welcome.suggestion_bug_text')
     },
     {
       icon: <Zap size={18} />,
-      title: "Optimisation",
-      text: "Comment pourrais-je optimiser les performances de ce frontend ?",
-      action: "Comment pourrais-je optimiser les performances de ce frontend ?"
+      title: t('welcome.suggestion_opt_title'),
+      text: t('welcome.suggestion_opt_text'),
+      action: t('welcome.suggestion_opt_text')
     }
   ];
 
@@ -29,12 +33,12 @@ const WelcomeScreen = ({ onSuggestionClick }) => {
       <div className="welcome-content">
         <div className="welcome-logo">
           <div className="logo-glow"></div>
-          <Sparkles size={64} className="logo-icon" />
+          <VibrisseAvatar size={64} containerSize={110} />
         </div>
         
-        <h1 className="welcome-title">Bienvenue sur Vibrisse Agent</h1>
+        <h1 className="welcome-title">{t('welcome.title')}</h1>
         <p className="welcome-subtitle">
-          Votre agent expert en code est prêt. Que souhaitez-vous accomplir aujourd'hui ?
+          {t('welcome.subtitle')}
         </p>
 
         <div className="suggestions-grid">

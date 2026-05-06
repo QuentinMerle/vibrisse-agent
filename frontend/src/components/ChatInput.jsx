@@ -1,18 +1,72 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Send, Image as ImageIcon, Mic, MicOff, Square, X } from 'lucide-react';
 import { MentionsInput, Mention } from 'react-mentions';
 import './ChatInput.css';
+
+// Style spécifique pour react-mentions
+const mentionsStyle = {
+  control: {
+    fontSize: '15px',
+    fontWeight: 'normal',
+    lineHeight: '1.5',
+  },
+  '&multiLine': {
+    control: {
+      fontFamily: 'inherit',
+    },
+    highlighter: {
+      padding: '12px 0',
+      border: '1px solid transparent',
+      lineHeight: '1.5',
+    },
+    input: {
+      padding: '12px 0',
+      border: '1px solid transparent', // Match highlighter border
+      outline: 'none',
+      lineHeight: '1.5',
+      color: '#f1f5f9',
+    },
+  },
+  suggestions: {
+    backgroundColor: 'transparent',
+    list: {
+      backgroundColor: '#0f172a',
+      backdropFilter: 'blur(16px)',
+      border: '1px solid rgba(255, 255, 255, 0.1)',
+      fontSize: 14,
+      borderRadius: '12px',
+      overflowY: 'auto',
+      maxHeight: '300px',
+      zIndex: 1000,
+      top: 'auto',
+      bottom: '100%',
+      marginBottom: '10px',
+      boxShadow: '0 20px 50px rgba(0, 0, 0, 0.5)',
+    },
+    item: {
+      padding: '10px 14px',
+      borderBottom: '1px solid rgba(255, 255, 255, 0.03)',
+      color: '#94a3b8',
+      '&focused': {
+        backgroundColor: 'rgba(99, 102, 241, 0.2)',
+        color: 'white',
+      },
+    },
+  },
+};
 
 const ChatInput = ({ 
   input, setInput, image, setImage, isLoading, sendMessage, onStop,
   availableFiles, handleFileClick, fileInputRef, inputRef, handleFileUpload 
 }) => {
+  const { t } = useTranslation();
   const [isListening, setIsListening] = useState(false);
 
   const toggleListening = () => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) {
-      alert("La reconnaissance vocale n'est pas supportée sur ce navigateur.");
+      alert(t('input.mic_not_supported'));
       return;
     }
 
@@ -40,64 +94,13 @@ const ChatInput = ({
     recognition.start();
   };
 
-  // Style spécifique pour react-mentions
-  const mentionsStyle = {
-    control: {
-      fontSize: '15px',
-      fontWeight: 'normal',
-      lineHeight: '1.5',
-    },
-    '&multiLine': {
-      control: {
-        fontFamily: 'inherit',
-      },
-      highlighter: {
-        padding: '12px 0',
-        border: '1px solid transparent',
-        lineHeight: '1.5',
-      },
-      input: {
-        padding: '12px 0',
-        border: '1px solid transparent', // Match highlighter border
-        outline: 'none',
-        lineHeight: '1.5',
-        color: '#f1f5f9',
-      },
-    },
-    suggestions: {
-      backgroundColor: 'transparent',
-      list: {
-        backgroundColor: '#0f172a',
-        backdropFilter: 'blur(16px)',
-        border: '1px solid rgba(255, 255, 255, 0.1)',
-        fontSize: 14,
-        borderRadius: '12px',
-        overflow: 'hidden',
-        zIndex: 1000,
-        top: 'auto',
-        bottom: '100%',
-        marginBottom: '10px',
-        boxShadow: '0 20px 50px rgba(0, 0, 0, 0.5)',
-      },
-      item: {
-        padding: '10px 14px',
-        borderBottom: '1px solid rgba(255, 255, 255, 0.03)',
-        color: '#94a3b8',
-        '&focused': {
-          backgroundColor: 'rgba(99, 102, 241, 0.2)',
-          color: 'white',
-        },
-      },
-    },
-  };
-
   return (
     <div className="input-area">
       {image && (
         <div className="image-preview-container">
           <div className="image-preview-badge">
             <ImageIcon size={12} />
-            <span>Image jointe</span>
+            <span>{t('input.image_attached')}</span>
             <button 
               className="remove-image-btn"
               type="button"
@@ -107,7 +110,7 @@ const ChatInput = ({
                 setImage(null);
                 if (fileInputRef.current) fileInputRef.current.value = "";
               }} 
-              aria-label="Supprimer l'image jointe"
+              aria-label={t('input.remove_image')}
               style={{ position: 'relative', zIndex: 100 }}
             >
               <X size={12} strokeWidth={3} />
@@ -125,7 +128,7 @@ const ChatInput = ({
           style={{ display: 'none' }} 
         />
         
-        <button className="icon-btn" onClick={handleFileClick} title="Ajouter une image" aria-label="Joindre une image">
+        <button className="icon-btn" onClick={handleFileClick} title={t('input.attach_image')} aria-label={t('input.attach_image')}>
           <ImageIcon size={20} color={image ? "#a78bfa" : "#94a3b8"} aria-hidden="true" />
         </button>
 
@@ -134,10 +137,10 @@ const ChatInput = ({
             inputRef={inputRef}
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Posez une question ou tapez @ pour citer un fichier..."
+            placeholder={t('input.placeholder')}
             style={mentionsStyle}
-            a11ySuggestionsListLabel="Fichiers disponibles"
-            aria-label="Votre message pour l'agent"
+            a11ySuggestionsListLabel={t('input.files_label')}
+            aria-label={t('input.input_label')}
             onKeyDown={(e) => {
               if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
@@ -157,8 +160,8 @@ const ChatInput = ({
         <button 
           className={`icon-btn mic-btn ${isListening ? 'listening' : ''}`}
           onClick={toggleListening}
-          title="Parler au lieu de taper"
-          aria-label={isListening ? "Arrêter la reconnaissance vocale" : "Démarrer la reconnaissance vocale"}
+          title={t('input.mic_tooltip')}
+          aria-label={isListening ? t('input.mic_stop') : t('input.mic_start')}
         >
           {isListening ? <MicOff size={20} color="#ef4444" aria-hidden="true" /> : <Mic size={20} color="#94a3b8" aria-hidden="true" />}
         </button>
@@ -167,7 +170,7 @@ const ChatInput = ({
           <button 
             className="send-btn stop-btn" 
             onClick={onStop} 
-            aria-label="Arrêter la génération"
+            aria-label={t('input.stop_generation')}
           >
             <Square size={20} fill="currentColor" aria-hidden="true" />
           </button>
@@ -176,7 +179,7 @@ const ChatInput = ({
             className="send-btn" 
             onClick={() => sendMessage()} 
             disabled={!input.trim() && !image}
-            aria-label="Envoyer le message"
+            aria-label={t('input.send_message')}
           >
             <Send size={20} aria-hidden="true" />
           </button>

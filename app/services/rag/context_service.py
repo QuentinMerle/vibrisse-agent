@@ -41,25 +41,25 @@ class ContextService:
             # Si c'est une ligne cible, on la garde intacte
             if i in target_indices:
                 if is_hiding:
-                    compressed_lines.append("    # ... [implémentation masquée pour économiser du contexte] ...")
+                    compressed_lines.append("    # ... [implementation hidden to save context] ...")
                     is_hiding = False
                 compressed_lines.append(line)
                 continue
             
-            # Vérifier si la ligne est une signature ou une structure importante
+            # Check if line is a signature or important structure
             is_signature = any(re.search(p, line) for p in signature_patterns)
             
             if is_signature:
                 if is_hiding:
-                    compressed_lines.append("    # ... [implémentation masquée] ...")
+                    compressed_lines.append("    # ... [implementation hidden] ...")
                     is_hiding = False
                 compressed_lines.append(line)
             else:
-                # C'est du corps de fonction/classe non pertinent
+                # Non-relevant function/class body
                 is_hiding = True
                 
         if is_hiding:
-            compressed_lines.append("    # ... [implémentation masquée] ...")
+            compressed_lines.append("    # ... [implementation hidden] ...")
 
         return "\n".join(compressed_lines)
 

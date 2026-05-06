@@ -1,0 +1,98 @@
+.vibrisse-avatar-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: var(--primary);
+  border-radius: 10px;
+  color: white;
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.bot-icon-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+
+/* On utilise le conteneur des oreilles comme masque pour l'antenne */
+.cat-ears {
+  position: absolute;
+  top: 2px; 
+  left: 50%;
+  transform: translateX(-50%);
+  width: 14px;
+  height: 4px;
+  background: var(--primary);
+  display: flex;
+  justify-content: space-between;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.ear {
+  width: 5px;
+  height: 5px;
+  background: white;
+  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+  border-radius: 1px;
+}
+
+.left-ear { transform: rotate(-15deg); }
+.right-ear { transform: rotate(15deg); }
+
+/* Moustaches Blanches sur les côtés du robot */
+.whiskers {
+  position: absolute;
+  top: 55%;
+  left: -2px;
+  right: -2px;
+  display: flex;
+  justify-content: space-between;
+  pointer-events: none;
+}
+
+.whisker-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.w-line {
+  width: 5px;
+  height: 1px;
+  background: white;
+  opacity: 0.9;
+  border-radius: 1px;
+}
+
+.left .w-line:first-child { transform: rotate(15deg); }
+.left .w-line:last-child { transform: rotate(-15deg); }
+
+.right .w-line:first-child { transform: rotate(-15deg); }
+.right .w-line:last-child { transform: rotate(15deg); }
+
+/* Animation quand il réfléchit */
+.thinking .w-line {
+  animation: twitch 0.5s infinite alternate ease-in-out;
+  opacity: 1;
+}
+
+@keyframes twitch {
+  0% { transform: scaleX(1) rotate(15deg); }
+  100% { transform: scaleX(1.4) rotate(10deg); }
+}
+
+.thinking .right .w-line {
+  animation: twitch-right 0.5s infinite alternate ease-in-out;
+}
+
+@keyframes twitch-right {
+  0% { transform: scaleX(1) rotate(-15deg); }
+  100% { transform: scaleX(1.4) rotate(-10deg); }
+}

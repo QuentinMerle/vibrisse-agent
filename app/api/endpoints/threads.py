@@ -75,15 +75,41 @@ async def get_thread_history(request: Request, thread_id: str):
         
         history = []
         for msg in messages:
-            # On ignore les réponses des outils (succès ou erreurs), ce sont des échanges internes
+            # On ignore les réponses des outils (succès ou erreurs)
             if isinstance(msg, ToolMessage) or (isinstance(msg, dict) and msg.get("type") == "tool"):
                 continue
                 
             role = "user" if isinstance(msg, HumanMessage) or (isinstance(msg, dict) and msg.get("type") == "human") else "agent"
             content = getattr(msg, "content", "") or (msg.get("content") if isinstance(msg, dict) else "")
             
-            if content and isinstance(content, str):
-                history.append({"role": role, "content": content})
+            # Extraction des métadonnées
+            thoughts = []
+            tool_calls = []
+            if hasattr(msg, "additional_kwargs"):
+                thoughts = msg.additional_kwargs.get("thoughts_history", [])
+                tool_calls = msg.additional_kwargs.get("tool_calls", [])
+            elif isinstance(msg, dict) and "additional_kwargs" in msg:
+                thoughts = msg["additional_kwargs"].get("thoughts_history", [])
+                tool_calls = msg["additional_kwargs"].get("tool_calls", [])
+
+            if role == "agent" and history and history[-1]["role"] == "agent":
+                # Fusion avec le message précédent si c'est aussi l'agent
+                prev = history[-1]
+                if content and content != prev["content"]:
+                    prev["content"] = (prev["content"] + "\n\n" + content).strip()
+                if thoughts:
+                    prev_thoughts = prev.get("thoughts_history", [])
+                    prev["thoughts_history"] = list(dict.fromkeys(prev_thoughts + thoughts))
+                if tool_calls:
+                    prev_tool_calls = prev.get("tool_calls", [])
+                    prev["tool_calls"] = prev_tool_calls + tool_calls
+            else:
+                history.append({
+                    "role": role, 
+                    "content": content,
+                    "thoughts_history": thoughts,
+                    "tool_calls": tool_calls
+                })
                 
         return {"messages": history, "context_usage": usage}
     except Exception as e:

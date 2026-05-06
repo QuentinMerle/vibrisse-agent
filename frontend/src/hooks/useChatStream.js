@@ -105,19 +105,18 @@ export const useChatStream = (state, settings) => {
               if (!isApproval && data.tool_calls) {
                 const sensitiveTool = data.tool_calls.find(tc =>
                   tc.name === "run_terminal_command" ||
-                  (tc.function && tc.name === "run_terminal_command")
+                  tc.name === "write_file" ||
+                  (tc.function && (tc.function.name === "run_terminal_command" || tc.function.name === "write_file"))
                 );
                 if (sensitiveTool) {
                   let cmd = "";
-                  if (sensitiveTool.args?.command) {
-                    cmd = sensitiveTool.args.command;
-                  } else if (sensitiveTool.function?.arguments) {
-                    try {
-                      const args = JSON.parse(sensitiveTool.function.arguments);
-                      cmd = args.command;
-                    } catch (e) {
-                      cmd = sensitiveTool.function.arguments;
-                    }
+                  const args = sensitiveTool.args || (sensitiveTool.function?.arguments ? JSON.parse(sensitiveTool.function.arguments) : {});
+                  
+                  if (sensitiveTool.name === "run_terminal_command" || sensitiveTool.function?.name === "run_terminal_command") {
+                    cmd = args.command || "";
+                  } else if (sensitiveTool.name === "write_file" || sensitiveTool.function?.name === "write_file") {
+                    const preview = args.content ? (args.content.length > 100 ? args.content.substring(0, 100) + "..." : args.content) : "";
+                    cmd = `FILE: ${args.filename}\nCONTENT: ${preview}`;
                   }
 
                   setPendingApprovalData({

@@ -1,10 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Bot, ChevronDown, HelpCircle, Eye, Globe, ShieldCheck, Check } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { ChevronDown, HelpCircle, Eye, Globe, ShieldCheck, Check } from 'lucide-react';
+import VibrisseAvatar from './chat/VibrisseAvatar';
 import { api } from '../services/api';
 import './ChatHeader.css';
 
 
 const ChatHeader = ({ config, availableModels, selectedModel, contextUsage, contextLimit, onSelectModel, onResetSession, llmSettings }) => {
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const [dynamicFeatures, setDynamicFeatures] = useState({ vision: false, search: false, expert_review: true });
   const dropdownRef = useRef(null);
@@ -79,10 +82,10 @@ const ChatHeader = ({ config, availableModels, selectedModel, contextUsage, cont
     <header className="header">
       <div className="header-left">
         <div className="logo-wrap">
-          <Bot size={20} />
+          <VibrisseAvatar size={20} containerSize={36} />
         </div>
-        <span className="brand-name">Vibrisse</span>
-        <button className="help-trigger" data-tooltip="Documentation et aide" aria-label="Aide et documentation">
+        <span className="brand-name">{t('header.brand')}</span>
+        <button className="help-trigger" data-tooltip={t('header.help_tooltip')} aria-label={t('header.help_tooltip')}>
           <HelpCircle size={14} className="help-icon" aria-hidden="true" />
         </button>
       </div>
@@ -101,7 +104,7 @@ const ChatHeader = ({ config, availableModels, selectedModel, contextUsage, cont
                 onClick={() => setIsOpen(!isOpen)}
                 aria-haspopup="listbox"
                 aria-expanded={isOpen}
-                aria-label={`Changer de modèle. Modèle actuel : ${selectedModel}`}
+                aria-label={t('header.model_label', { model: selectedModel })}
               >
                 <span className="current-model">{displayModel.toUpperCase()}</span>
                 <ChevronDown size={14} className={`dropdown-icon ${isOpen ? 'open' : ''}`} aria-hidden="true" />
@@ -130,17 +133,17 @@ const ChatHeader = ({ config, availableModels, selectedModel, contextUsage, cont
           )}
           
           <div className="capabilities-group">
-            <div className={`capability-dot ${!dynamicFeatures.vision ? 'disabled' : ''}`} data-tooltip={dynamicFeatures.vision ? "Vision active" : "Vision indisponible"}>
+            <div className={`capability-dot ${!dynamicFeatures.vision ? 'disabled' : ''}`} data-tooltip={dynamicFeatures.vision ? t('header.vision_active') : t('header.vision_inactive')}>
               <Eye size={12} />
               {dynamicFeatures.vision && <span className="active-dot" />}
             </div>
             
-            <div className={`capability-dot ${!dynamicFeatures.search ? 'disabled' : ''}`} data-tooltip={dynamicFeatures.search ? "Search actif" : "Search indisponible"}>
+            <div className={`capability-dot ${!dynamicFeatures.search ? 'disabled' : ''}`} data-tooltip={dynamicFeatures.search ? t('header.search_active') : t('header.search_inactive')}>
               <Globe size={12} />
               {dynamicFeatures.search && <span className="active-dot" />}
             </div>
             
-            <div className={`capability-dot ${!dynamicFeatures.expert_review ? 'disabled' : ''}`} data-tooltip={dynamicFeatures.expert_review ? "Expert actif" : "Expert indisponible"}>
+            <div className={`capability-dot ${!dynamicFeatures.expert_review ? 'disabled' : ''}`} data-tooltip={dynamicFeatures.expert_review ? t('header.expert_active') : t('header.expert_inactive')}>
               <ShieldCheck size={12} />
               {dynamicFeatures.expert_review && <span className="active-dot" />}
             </div>
@@ -152,10 +155,10 @@ const ChatHeader = ({ config, availableModels, selectedModel, contextUsage, cont
         <button 
           className="clean-cache-btn" 
           onClick={onResetSession}
-          data-tooltip="Nouvelle session (🧹)"
-          aria-label="Nouvelle session"
+          data-tooltip={t('header.reset_session')}
+          aria-label={t('header.reset_session')}
         >
-          RESET
+          {t('header.reset_btn')}
         </button>
       </div>
     </header>

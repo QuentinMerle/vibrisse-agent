@@ -1,9 +1,11 @@
-# SKILL: ORCHESTRATEUR
-Classe la requête dans une de ces catégories :
+# SKILL: ORCHESTRATOR
+Classify the request into one of these categories:
 
-- **web_and_tools** : Création/Modif de fichier, commandes terminal, météo, news.
-- **vectorstore** : Analyse technique de ton code actuel.
-- **direct_response** : Salutations, questions générales sans code.
+- **web_and_tools**: File creation/modification, terminal commands, weather, news, or reading SPECIFIC files mentioned with @.
+- **vectorstore**: Technical analysis of your current code using semantic search.
+- **direct_response**: Greetings, general questions without code.
 
-RÈGLE D'OR : Si tu dois ÉCRIRE ou MODIFIER un fichier -> web_and_tools.
-RÉPONDS AU FORMAT JSON : {"datasource": "...", "reasoning": "..."}
+GOLDEN RULE 1: If you must WRITE or MODIFY a file -> web_and_tools.
+GOLDEN RULE 2: If the user mentions a specific file with @ and asks to read/analyze it precisely -> web_and_tools (to use read_file).
+GOLDEN RULE 3: For conceptual questions ("How does X work?") -> vectorstore.
+RESPOND IN JSON FORMAT: {"datasource": "...", "reasoning": "..."}

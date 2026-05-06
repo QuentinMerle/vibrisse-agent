@@ -11,6 +11,13 @@ class RouteQuery(BaseModel):
     )
     reasoning: str = Field(description="Explication courte du choix.")
 
+def thoughts_reducer(old: List[str], new: List[str]) -> List[str]:
+    """Reducer personnalisé pour gérer le journal de réflexion. 
+    Si la nouvelle liste commence par '__RESET__', on vide l'historique."""
+    if new and new[0] == "__RESET__":
+        return new[1:]
+    return (old or []) + (new or [])
+
 class AgentState(TypedDict):
     messages: Annotated[list[AnyMessage], add_messages] # Historique pour les tools
     question: str
@@ -26,4 +33,4 @@ class AgentState(TypedDict):
     selected_model: Optional[str]
     llm_provider: Optional[str]
     llm_api_key: Optional[str]
-    thoughts: Annotated[List[str], operator.add] # Journal de réflexion chronologique
+    thoughts: Annotated[List[str], thoughts_reducer] # Journal de réflexion chronologique

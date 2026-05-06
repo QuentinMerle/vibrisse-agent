@@ -1,0 +1,4 @@
+{
+    "last_project_path": "/Users/quentin/Documents/projets/dimitri/frontend",
+    "last_manifest": "=== PROJECT MANIFEST (Digested) ===\nPROJECT NAME: Next.js Application\nCLIENT & CONTEXT: Web application bootstrapped using Next.js.\nTECHNICAL STACK: Next.js, TypeScript, Node/JS.\nMAIN GOAL: Develop, run, and deploy a Next.js project.\nKEY CODING RULES: Development server runs via `npm run dev` (or equivalent).\nCONTENT EDITING: Modify content in `app/page.tsx`.\nOPTIMIZATION: Uses `next/font` for font optimization (Geist).\nDEPLOYMENT: Recommended deployment target is Vercel.\n===================================="
+}

@@ -3,7 +3,7 @@ from langchain_core.messages import SystemMessage, HumanMessage, AIMessage
 from app.agents.state import AgentState
 from app.core.config import settings
 from app.services.llm.llm_factory import get_llm
-from app.agents.nodes.utils import extract_thought, clean_mentions
+from app.agents.nodes.utils import extract_thought, clean_mentions, load_skill
 
 async def generate_answer(state: AgentState):
     context = state.get("context", "")
@@ -26,40 +26,49 @@ async def generate_answer(state: AgentState):
         api_key=state.get("llm_api_key")
     )
     
-    # Construction du prompt ultra-précis
-    vision_context = f"\n--- ANALYSE VISUELLE DE L'IMAGE ---\n{vision_desc}\n" if vision_desc else ""
-    rag_context = f"\n--- CONTEXTE DU PROJET (SOURCE DE VÉRITÉ) ---\n{context}\n" if context else ""
+    # Building the precision prompt
+    vision_context = f"\n--- IMAGE VISUAL ANALYSIS ---\n{vision_desc}\n" if vision_desc else ""
+    rag_context = f"\n--- PROJECT CONTEXT (SOURCE OF TRUTH) ---\n{context}\n" if context else ""
     
-    # Récupération du profil du projet (Manifeste généré à l'ingestion)
+    # Getting project profile (Manifest generated on ingestion)
     project_profile = settings.get_project_profile()
     
-    instruction = f"""Tu es l'Expert Technique Senior de Vibrisse.
-Ta mission est de répondre à la question de l'utilisateur avec précision et professionnalisme.
+    instruction = f"""You are the Senior Technical Expert of Vibrisse.
+Your mission is to answer the user's question with precision and professionalism.
 
-SOURCES DISPONIBLES :
-1. ANALYSE VISUELLE : {vision_desc if vision_desc else "Aucune image fournie."}
-2. CONTEXTE DU PROJET (RAG) : {context if context else "Aucun fichier source pertinent trouvé dans le code."}
-3. OUTILS & WEB : Si des messages de type 'tool' sont présents dans l'historique, utilise-les comme source de vérité pour les données temps réel ou externes.
+CRITICAL: You must respond in the SAME LANGUAGE as the user's last message. 
+If the user speaks English, respond in English. If the user speaks French, respond in French.
 
---- PROFIL DU PROJET ANALYSÉ ---
+AVAILABLE SOURCES:
+1. VISUAL ANALYSIS: {vision_desc if vision_desc else "No image provided."}
+2. PROJECT CONTEXT (RAG): {context if context else "No relevant source files found in code."}
+3. TOOLS & WEB: If 'tool' type messages are present in history, use them as the source of truth for real-time or external data.
+
+--- ANALYZED PROJECT PROFILE ---
 {project_profile}
 
-RÈGLES CRITIQUES :
-- Priorité aux sources : Utilise les sources ci-dessus pour répondre. Si l'information vient d'une recherche web, synthétise-la.
-- Fidélité Technique : Si la question concerne le code, adopte strictement la stack et les conventions décrites dans le PROFIL DU PROJET.
-- Expertise Polyvalente : Bien que ton expertise soit technique, tu dois répondre aux questions générales (météo, actualité) si et seulement si les outils de recherche t'ont fourni les données.
-- COMMENCE TOUJOURS par une balise <thought> pour détailler ton raisonnement technique ou ta stratégie de synthèse en français.
+CRITICAL RULES:
+- Priority to sources: Use the sources above to answer. If info comes from web search, synthesize it.
+- Technical Fidelity: If the question concerns code, strictly adopt the stack and conventions described in the PROJECT PROFILE.
+- Versatile Expertise: While your expertise is technical, you must answer general questions (weather, news) if and only if research tools provided the data.
+- ALWAYS START with a <thought> tag to detail your technical reasoning or synthesis strategy in English.
 """
 
-    # Analyse de la source pour la pensée initiale
-    source_info = "fichiers locaux" if context else "connaissances générales"
-    if vision_desc: source_info = "analyse visuelle"
-    if any(msg.type == 'tool' or (isinstance(msg, AIMessage) and msg.tool_calls) for msg in messages):
-        source_info = "résultats de recherche web/outils"
+    # Source analysis for initial thought
+    source_info = "general knowledge"
+    if context:
+        source_info = "project context"
+    elif vision_desc:
+        source_info = "visual analysis"
+    
+    # On ne considère les outils que s'ils sont récents dans l'historique ou si c'est la raison de la réponse
+    recent_messages = messages[-3:] if len(messages) >= 3 else messages
+    if any(msg.type == 'tool' or (isinstance(msg, AIMessage) and hasattr(msg, "tool_calls") and msg.tool_calls) for msg in recent_messages):
+        source_info = "web search/tool results"
     
     yield {
-        "thoughts": [f"**Rédaction :** Je synthétise une réponse basée sur les {source_info}."],
-        "detail": "Rédaction de la réponse finale...",
+        "thoughts": [f"**Drafting:** Synthesizing a response based on {source_info}."],
+        "detail": "Drafting final response...",
         "steps": ["generation_started"]
     }
 
@@ -77,12 +86,12 @@ RÈGLES CRITIQUES :
         full_message = fallback_resp.content
         # On n'émet pas de chunk ici car le stream est fini, mais on remplit 'generation'
     
-    # On stocke le résultat final dans 'generation' pour la synthèse finale
+    # Store final result in 'generation' for final synthesis
     thought = extract_thought(full_message)
     yield {
         "generation": full_message, 
         "steps": ["generation_complete"],
-        "thoughts": [f"**Analyse :** {thought}"] if thought else ["**Analyse :** La réponse a été générée et structurée."]
+        "thoughts": [f"**Analysis:** {thought}"] if thought else ["**Analysis:** Response generated and structured."]
     }
 
 async def finalize_answer(state: AgentState):
@@ -98,7 +107,7 @@ async def finalize_answer(state: AgentState):
         content = content["content"]
         
     if not content:
-        content = "Désolé, je n'ai pas pu générer de réponse."
+        content = "Sorry, I could not generate a response."
     
     # Nettoyage final des balises résiduelles dans le corps du message
     clean_content = content
@@ -108,7 +117,7 @@ async def finalize_answer(state: AgentState):
         
     if not clean_content:
         # Fallback si le modèle a absolument tout écrit à l'intérieur de ses balises de pensée
-        clean_content = "✅ Opération terminée. (Résultat technique dans les logs)"
+        clean_content = "✅ Operation complete. (Technical details in logs)"
         
     # Construction d'une chronologie de pensée élégante et structurée
     # On filtre les doublons ou pensées vides
@@ -120,7 +129,10 @@ async def finalize_answer(state: AgentState):
     # On transmet la chronologie via les métadonnées, pas dans le texte
     final_message = AIMessage(
         content=clean_content,
-        additional_kwargs={"thoughts_history": unique_thoughts}
+        additional_kwargs={
+            "thoughts_history": unique_thoughts,
+            "context": state.get("context", "")
+        }
     )
     
     return {"messages": [final_message], "steps": ["final_response"]}
@@ -141,21 +153,21 @@ async def expert_review_node(state: AgentState):
         temperature=0.1
     )
     
-    expert_prompt = """Tu es l'Ingénieur de Contrôle Qualité de Vibrisse.
-Ta mission : Renvoyer UNIQUEMENT le CODE et les explications techniques, comme si tu étais le premier à parler.
+    expert_prompt = """You are the Quality Control Engineer of Vibrisse.
+Your mission: Return ONLY the CODE and technical explanations, as if you were the first to speak.
 
-INTERDICTIONS FORMELLES (SOUS PEINE D'ERREUR CRITIQUE) :
-- Ne fais JAMAIS référence à "la proposition précédente" ou "le brouillon".
-- Ne commence JAMAIS par "Absolument", "Voici", "La proposition", etc.
-- Produis UNIQUEMENT le contenu final utile (Titre, Explication, Code).
-- Tu DOIS inclure une balise <thought> au début pour ton raisonnement.
+FORMAL PROHIBITIONS (CRITICAL ERROR OTHERWISE):
+- NEVER refer to "the previous proposal" or "the draft".
+- NEVER start with "Absolutely", "Here is", "The proposal", etc.
+- Produce ONLY the useful final content (Title, Explanation, Code).
+- You MUST include a <thought> tag at the beginning for your reasoning.
 """
     
-    print(f"--- 🛡️ EXPERT : Revue en cours ---", flush=True)
-    # On informe l'utilisateur qu'on passe en revue la réponse
-    yield {"detail": "Analyse critique et optimisation technique de la réponse...", "steps": ["expert_review_started"]}
+    print(f"--- 🛡️ EXPERT: Review in progress ---", flush=True)
+    # Inform user about expert review
+    yield {"detail": "Critical analysis and technical optimization of the response...", "steps": ["expert_review_started"]}
     
-    response = await llm.ainvoke([SystemMessage(content=expert_prompt)] + messages + [HumanMessage(content=f"Brouillon à réviser :\n{draft_answer}")])
+    response = await llm.ainvoke([SystemMessage(content=expert_prompt)] + messages + [HumanMessage(content=f"Draft to review:\n{draft_answer}")])
     
     # L'expert ne doit pas polluer la réponse avec du meta-talk
     thought = extract_thought(response.content)
@@ -167,6 +179,6 @@ INTERDICTIONS FORMELLES (SOUS PEINE D'ERREUR CRITIQUE) :
     yield {
         "generation": clean_expert_content, 
         "steps": ["expert_review_passed"], 
-        "detail": "Optimisation technique terminée.",
-        "thoughts": [f"**Optimisation Expert :** {thought}"] if thought else ["**Optimisation Expert :** La réponse a été validée et optimisée pour la stack technique."]
+        "detail": "Technical optimization completed.",
+        "thoughts": [f"**Expert Optimization:** {thought}"] if thought else ["**Expert Optimization:** Response validated and optimized for the technical stack."]
     }

@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import ChatHeader from './components/ChatHeader';
 import ChatMessages from './components/ChatMessages';
 import ChatInput from './components/ChatInput';
@@ -13,6 +14,7 @@ import { processImageFile } from './utils/fileUtils';
 import './App.css';
 
 function App() {
+  const { t } = useTranslation();
   const {
     settings,
     updateSettings,

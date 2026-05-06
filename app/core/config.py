@@ -11,6 +11,25 @@ class Settings(BaseSettings):
     SECURITY_SCRUBBING_ENABLED: bool = True
     TARGET_PROJECT_PATH: str = "." # Dossier à analyser (ex: data/source_code)
     
+    def __init__(self, **values):
+        super().__init__(**values)
+        self._load_session_if_exists()
+
+    def _load_session_if_exists(self):
+        """Tente de restaurer le dernier projet utilisé."""
+        try:
+            # Import local pour éviter les imports circulaires
+            from app.services.core.session_service import session_service
+            session = session_service.load_session()
+            if session.get("last_project_path"):
+                self.TARGET_PROJECT_PATH = session["last_project_path"]
+                print(f"--- 📂 SESSION: Restored project path: {self.TARGET_PROJECT_PATH} ---", flush=True)
+            if session.get("last_manifest"):
+                self.PROJECT_MANIFEST = session["last_manifest"]
+                print(f"--- 🧠 SESSION: Restored manifest from cache ---", flush=True)
+        except Exception:
+            pass # Silencieux au démarrage
+    
     # LLM Config
     LLM_PROVIDER: str = "ollama" # ollama, openai, google
     LLM_MODEL: str = "ollama/gemma4:e2b"  # Modèle par défaut
@@ -89,10 +108,18 @@ class Settings(BaseSettings):
         return ", ".join(profile) if profile else "STACK STANDARD"
 
     async def load_manifest(self):
-        """Initialise le manifeste au démarrage."""
+        """Initialise le manifeste au démarrage ou lors d'un changement de dossier."""
         from app.services.core.onboarding import onboarding_service
+        from app.services.core.session_service import session_service
+        
         # On passe le path cible au service d'onboarding
         target_path = Path(self.TARGET_PROJECT_PATH)
         self.PROJECT_MANIFEST = await onboarding_service.scan_project(root_path=target_path)
+        
+        # Sauvegarde en session pour le prochain redémarrage
+        session_service.save_session(
+            project_path=str(target_path),
+            manifest=self.PROJECT_MANIFEST
+        )
 
 settings = Settings()

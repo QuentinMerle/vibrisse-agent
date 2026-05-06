@@ -1,9 +1,11 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Brain, ChevronDown, ChevronUp, Sparkles } from "lucide-react";
 import ReactMarkdown from 'react-markdown';
 import './ThinkingConsole.css';
 
 export default function ThinkingConsole({ content, isComplete }) {
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(true);
 
   if (!content) return null;
@@ -22,7 +24,7 @@ export default function ThinkingConsole({ content, isComplete }) {
         className="accordion-header" 
         onClick={() => setIsOpen(!isOpen)}
         aria-expanded={isOpen}
-        aria-label={isComplete ? "Voir la réflexion technique (Terminée)" : "Voir l'analyse technique (En cours)"}
+        aria-label={isComplete ? t('chat.thinking.complete') : t('chat.thinking.active')}
       >
         <div className="accordion-header-left">
           <div className={`think-icon-wrap ${!isComplete ? "spin" : ""}`}>
@@ -32,7 +34,7 @@ export default function ThinkingConsole({ content, isComplete }) {
             }
           </div>
           <span className="think-label">
-            {isComplete ? "Réflexion technique terminée" : "Analyse technique en cours"}
+            {isComplete ? t('chat.thinking.complete') : t('chat.thinking.active')}
           </span>
           {!isComplete && (
             <div className="dots" aria-hidden="true">

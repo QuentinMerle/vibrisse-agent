@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Plus, Trash2, CheckCircle2, Settings, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
 import ThreadList from './layout/ThreadList';
 import SystemPulse from './layout/SystemPulse';
@@ -10,6 +11,7 @@ const Sidebar = ({
   healthStatus, contextUsage, contextLimit, onUpdateTargetPath, onOpenSettings, llmSettings,
   isCollapsed, onToggle
 }) => {
+  const { t } = useTranslation();
   const sidebarRef = useRef(null);
   const [isIndexing, setIsIndexing] = useState(false);
   const [showToast, setShowToast] = useState(false);
@@ -52,16 +54,16 @@ const Sidebar = ({
         <button 
           className="collapse-btn" 
           onClick={onToggle} 
-          title={isCollapsed ? "Développer" : "Réduire"}
+          title={isCollapsed ? t('sidebar.expand') : t('sidebar.collapse')}
         >
           {isCollapsed ? <PanelLeftOpen size={18} /> : <PanelLeftClose size={18} />}
         </button>
-        {!isCollapsed && <span className="sidebar-title">DISCUSSIONS</span>}
+        {!isCollapsed && <span className="sidebar-title">{t('sidebar.discussions')}</span>}
       </div>
 
-      <button className="new-chat-btn" onClick={onNewChat} title="Démarrer une nouvelle discussion">
+      <button className="new-chat-btn" onClick={onNewChat} title={t('sidebar.new_chat')}>
         <Plus size={18} aria-hidden="true" />
-        {!isCollapsed && <span>Nouvelle discussion</span>}
+        {!isCollapsed && <span>{t('sidebar.new_chat')}</span>}
       </button>
 
       {!isCollapsed && (
@@ -96,18 +98,18 @@ const Sidebar = ({
       {showToast && !isCollapsed && (
         <div className="toast-notification">
           <CheckCircle2 size={18} />
-          Projet indexé !
+          {t('sidebar.toast_indexed')}
         </div>
       )}
 
       <div className="sidebar-footer">
-        <button className="sidebar-footer-btn" onClick={onOpenSettings} title="Paramètres Multi-LLM">
+        <button className="sidebar-footer-btn" onClick={onOpenSettings} title={t('sidebar.settings_btn')}>
           <Settings size={16} />
-          {!isCollapsed && <span>Réglages</span>}
+          {!isCollapsed && <span>{t('sidebar.settings_btn')}</span>}
         </button>
-        <button className="sidebar-footer-btn danger" onClick={onWipeIndex} title="Réinitialiser l'index">
+        <button className="sidebar-footer-btn danger" onClick={onWipeIndex} title={t('sidebar.reset_btn')}>
           <Trash2 size={16} />
-          {!isCollapsed && <span>Réinitialiser</span>}
+          {!isCollapsed && <span>{t('sidebar.reset_btn')}</span>}
         </button>
       </div>
     </aside>

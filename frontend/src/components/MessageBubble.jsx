@@ -1,7 +1,9 @@
 import React from "react";
+import { useTranslation } from 'react-i18next';
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { Bot, User, RotateCcw } from "lucide-react";
+import { User, RotateCcw } from "lucide-react";
+import VibrisseAvatar from "./chat/VibrisseAvatar";
 import ThinkingConsole from "./ThinkingConsole";
 import CodeBlock from "./chat/CodeBlock";
 import MessageSteps from "./chat/MessageSteps";
@@ -11,6 +13,7 @@ import './Messages.css';
 import QualityMetrics from "./chat/QualityMetrics";
 
 export default function MessageBubble({ message, isLatest, onRetry, question }) {
+  const { t } = useTranslation();
   const isUser = message.role === "user";
   const showRetry = isLatest && isUser && !message.isLoading;
 
@@ -25,17 +28,22 @@ export default function MessageBubble({ message, isLatest, onRetry, question }) 
   }
   const finalThoughts = message.thoughts_history ? message.thoughts_history.join('\n\n') : (liveThoughts || thinking);
 
+  // On cache le corps du message s'il s'agit d'un appel d'outil (étape intermédiaire)
+  // pour éviter les doublons si le modèle a mis du texte avant son appel.
+  const isToolCall = !!(message.tool_calls && message.tool_calls.length > 0);
+  const shouldShowAnswer = answer && !isToolCall;
+
   return (
     <div className={`message-wrapper ${isUser ? "user" : "agent"} ${message.isLoading ? "loading" : ""}`} style={{ paddingBottom: '24px' }}>
       <div className="avatar">
-        {isUser ? <User size={20} /> : <Bot size={20} />}
+        {isUser ? <User size={20} /> : <VibrisseAvatar size={20} isThinking={message.isLoading} />}
       </div>
       
       <div className="message-body">
         <div className="message-content">
           {isUser && message.image && (
             <div className="message-image">
-              <img src={`data:image/png;base64,${message.image}`} alt="Visual context" />
+              <img src={`data:image/png;base64,${message.image}`} alt={t('chat.visual_context_alt')} />
             </div>
           )}
           
@@ -43,7 +51,7 @@ export default function MessageBubble({ message, isLatest, onRetry, question }) 
             <ThinkingConsole content={finalThoughts} isComplete={isComplete || !!message.thoughts_history} />
           )}
 
-          {answer && (
+          {shouldShowAnswer && (
             <div className="text">
               <ReactMarkdown
                 children={answer}
@@ -78,7 +86,7 @@ export default function MessageBubble({ message, isLatest, onRetry, question }) 
                 <div className="dots">
                   <span></span><span></span><span></span>
                 </div>
-                <span className="thinking-text">Vibrisse travaille sur la réponse...</span>
+                <span className="thinking-text">{t('chat.working')}</span>
               </div>
               {message.detail && (
                 <p className="thinking-detail-subtext">
@@ -91,7 +99,7 @@ export default function MessageBubble({ message, isLatest, onRetry, question }) 
           {showRetry && (
             <button className="retry-btn" onClick={() => onRetry(message.content)}>
               <RotateCcw size={14} />
-              <span>Relancer la question</span>
+              <span>{t('chat.retry_btn')}</span>
             </button>
           )}
         </div>

@@ -8,7 +8,16 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: {
-          vendor: ['react', 'react-dom', 'lucide-react'],
+          vendor: [
+            'react', 
+            'react-dom', 
+            'lucide-react', 
+            'react-markdown', 
+            'remark-gfm', 
+            'i18next', 
+            'react-i18next',
+            'i18next-browser-languagedetector'
+          ],
         },
       },
     },

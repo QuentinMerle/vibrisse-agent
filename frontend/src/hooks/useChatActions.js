@@ -1,18 +1,20 @@
 import { useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { api } from '../services/api';
 
 export const useChatActions = (state) => {
+  const { t } = useTranslation();
   const { setMessages, setContextUsage, setCurrentThread, fetchThreads } = state;
 
   const handleNewSession = useCallback(() => {
-    setMessages([{ role: "agent", content: "Nouvelle session démarrée. Comment puis-je t'aider ?", steps: [] }]);
+    setMessages([{ role: "agent", content: t('chat.new_session_msg'), steps: [] }]);
     setContextUsage(0);
     setCurrentThread(null);
     localStorage.removeItem("vibrisse_thread_id");
-  }, [setMessages, setContextUsage, setCurrentThread]);
+  }, [setMessages, setContextUsage, setCurrentThread, t]);
 
   const handleWipeIndex = useCallback(async () => {
-    if (window.confirm("Voulez-vous vraiment vider l'indexation (RAG) et tout l'historique ? Cette action est irréversible.")) {
+    if (window.confirm(t('sidebar.wipe_confirm'))) {
       try {
         await api.clearCache();
         handleNewSession();

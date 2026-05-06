@@ -7,9 +7,13 @@ async def router_node(state: AgentState):
     question = state.get("question", "").lower()
     vision_desc = state.get("vision_description")
     
-    # 2. Heuristiques (Uniquement pour les déclencheurs ÉVIDENTS)
-    if question.startswith("/") or any(k in question for k in ["météo", "actualités", "news", "sauvegarde", "enregistre", "écris", "write"]):
-        yield {"decision": "web_and_tools", "steps": ["router: fast-track tools"]}
+    # 2. Heuristics (Only for OBVIOUS triggers)
+    if question.startswith("/") or any(k in question for k in ["weather", "météo", "actualités", "news", "save", "sauvegarde", "enregistre", "écris", "write"]):
+        yield {
+            "decision": "web_and_tools", 
+            "steps": ["router: fast-track tools"],
+            "thoughts": ["__RESET__", "**Intent:** Priority fast-track to system tools triggered by keywords."]
+        }
         return
 
     # 3. Appel LLM pour une décision sémantique fine
@@ -23,16 +27,16 @@ async def router_node(state: AgentState):
     skill_prompt = load_skill("orchestrator")
     
     try:
-        # On informe l'utilisateur qu'on analyse son intention
-        yield {"detail": "Analyse de l'intention et choix de la stratégie technique...", "steps": ["router_started"]}
+        # Inform user about intent analysis
+        yield {"detail": "Analyzing intent and choosing technical strategy...", "steps": ["router_started"]}
         
-        content = f"QUESTION : {question}"
+        content = f"QUESTION: {question}"
         if vision_desc:
-            content = f"ANALYSE VISUELLE : {vision_desc}\n\nQUESTION DE L'UTILISATEUR : {question}"
+            content = f"VISUAL ANALYSIS: {vision_desc}\n\nUSER QUESTION: {question}"
 
-        # On demande du texte brut avec un format strict pour éviter les délires du JSON natif sur petits modèles
+        # We request raw text with a strict format to avoid JSON hallucination on small models
         response = await llm.ainvoke([
-            SystemMessage(content=skill_prompt + "\n\nIMPORTANT: RÉPONDS UNIQUEMENT AU FORMAT JSON. PAS DE TEXTE AVANT OU APRÈS."),
+            SystemMessage(content=skill_prompt + "\n\nIMPORTANT: RESPOND ONLY IN JSON FORMAT. NO TEXT BEFORE OR AFTER."),
             HumanMessage(content=content)
         ])
         
@@ -47,7 +51,7 @@ async def router_node(state: AgentState):
             try:
                 data = json.loads(match.group(0))
                 datasource = data.get("datasource", "direct_response")
-                reasoning = data.get("reasoning", "Analyse sémantique")
+                reasoning = data.get("reasoning", "Semantic analysis")
             except:
                 raise ValueError("JSON mal formé")
         else:
@@ -55,12 +59,18 @@ async def router_node(state: AgentState):
             if "web_and_tools" in text.lower(): datasource = "web_and_tools"
             elif "vectorstore" in text.lower(): datasource = "vectorstore"
             else: datasource = "direct_response"
-            reasoning = "Extraction par mots-clés"
+            reasoning = "Keyword extraction"
+
+        # Validation du datasource pour éviter de casser le graphe LangGraph
+        ALLOWED_DATASOURCES = ["vectorstore", "direct_response", "web_and_tools"]
+        if datasource not in ALLOWED_DATASOURCES:
+            print(f"⚠️ Router hallucination: '{datasource}' is not allowed. Falling back to direct_response.", flush=True)
+            datasource = "direct_response"
 
         yield {
             "decision": datasource, 
             "steps": [f"router: {datasource}"],
-            "thoughts": [f"**Intention :** {reasoning}"]
+            "thoughts": ["__RESET__", f"**Intent:** {reasoning}"]
         }
         return
         
