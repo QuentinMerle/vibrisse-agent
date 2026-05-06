@@ -5,7 +5,11 @@ This file serves as the technical memory for AI agents working on this project. 
 ## 🧠 Philosophy & Core Concept
 
 **"Small models, Great tools."**  
-Vibrisse is built on a core conviction: a "small" local model (7B-8B), when equipped with high-precision tools and a robust reasoning structure, can outperform larger, generic cloud models for specific engineering tasks. Our goal is to demonstrate that **sovereignty and performance** are not mutually exclusive. By providing the LLM with a "Studio-Grade" cockpit and surgical access to the codebase, we transform a simple chatbot into a professional engineering partner.
+Vibrisse is built on a core conviction: a "small" local model (7B-8B), when equipped with high-precision tools and a robust reasoning structure, can outperform larger, generic cloud models for specific engineering tasks. 
+
+> **Vibrisse (Concept)**: Named after the sensory whiskers of cats, these surgical tactile organs allow navigation in complex environments with extreme precision. The agent acts as the tactile sensory organ for your codebase.
+
+Our goal is to demonstrate that **sovereignty and performance** are not mutually exclusive. By providing the LLM with a "Studio-Grade" cockpit and surgical access to the codebase, we transform a simple chatbot into a professional engineering partner.
 
 ## 🚀 Technical Overview
 
@@ -122,6 +126,21 @@ The **router** is the most sensitive component. It makes the initial decision th
 - [ ] **Multi-Agent Architecture**: Transition to "Supervisor/Worker" structure.
 - [x] **Context Persistence**: Cache system for manifest and project path.
 - [x] **Evaluation Framework**: Local RAG precision measurement (Ragas).
+
+---
+
+## 📦 Distribution & Maintenance Strategy
+
+Vibrisse uses a **Hybrid Infrastructure** to balance accessibility and sovereignty:
+
+1. **One-Liner Installer (`install.sh`)**:
+   - Hosted on **Vercel** (`vibrisse-studio.dev`).
+   - Automates environment isolation (venv), dependency syncing, and shell alias registration (`vibrisse` command).
+2. **Update Mechanism**:
+   - Maintenance is handled via `vibrisse update` (planned).
+   - This command pulls the latest core from **GitHub** and re-triggers the onboarding/sync process.
+3. **Data Sovereignty**:
+   - While the landing page and installer are cloud-hosted, **100% of the logic and data** (LLM calls, embeddings, file access) remains strictly on the user's local machine.
 
 ---
 

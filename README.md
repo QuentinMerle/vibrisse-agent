@@ -6,7 +6,9 @@
 [![Local First](https://img.shields.io/badge/Local--First-Ollama-10b981)](https://ollama.com)
 [![MCP Powered](https://img.shields.io/badge/MCP-Extensible-yellow)](https://modelcontextprotocol.io)
 
-**Vibrisse Agent** is a "Studio-Grade" agentic AI assistant designed by **Vibrisse Studio**. Built on the conviction that **"Small models + Great tools = Professional performance"**, it transforms local codebases into intelligent conversation partners. Using a **LangGraph** architecture and optimized for **100% local** execution, it embodies the expertise and vision of our **Vibrisse AI** engineering team.
+> **"vi·brisse" (noun):** The long, stiff hairs growing around the face of many mammals, used as organs of touch. Whiskers.
+
+Just as whiskers help cats navigate the dark with surgical precision, **Vibrisse Agent** is your code's tactile system. It senses patterns and navigates complex architectures where others get lost. Built on the conviction that **"Small models + Great tools = Professional performance"**, it transforms local codebases into intelligent conversation partners.
 
 <p align="center">
   <img src="./docs/assets/vibrisse-agent-ui.png" alt="Vibrisse Studio UI" width="100%">
@@ -37,16 +39,25 @@ Vibrisse integrates the **RAGAS** framework to evaluate faithfulness (anti-hallu
 
 ---
 
-## 🚀 Quick Start
+## 🏁 Getting Started
 
-### Prerequisites
-*   [Ollama](https://ollama.com/) installed and running.
-*   Python 3.11+
-*   Node.js & npm (for the frontend)
+Vibrisse is designed to be accessible to everyone, from casual users to hardcore developers. Choose your path:
 
-### Installation & Launch
+### ⚡ Path A: Quick Install (Recommended)
+The fastest way to get Vibrisse running on your machine. Our installer handles the environment setup and adds the `vibrisse` command to your terminal.
+
 ```bash
-# Clone the project
+# Install and bootstrap Vibrisse Agent instantly
+curl -fsSL https://vibrisse-studio.dev/install.sh | bash
+```
+*(Note: Installer is currently in Beta. Ensure Ollama is running before installation.)*
+
+### 🛠️ Path B: Developer Setup (Deep Dive)
+If you want to contribute, modify the agent, or explore the source code:
+
+1. **Prerequisites**: Python 3.11+, Node.js 18+, [Ollama](https://ollama.com/).
+2. **Clone & Setup**:
+```bash
 git clone https://github.com/QuentinMerle/vibrisse-agent.git
 cd vibrisse-agent
 
@@ -55,9 +66,6 @@ cd vibrisse-agent
 
 # Launch Studio Mode (Web UI)
 ./vibrisse-cli.sh
-
-# Launch Hacker Mode (Terminal TUI)
-./vibrisse-cli.sh --tui
 ```
 
 ---
@@ -177,9 +185,10 @@ Refer to the **[Tool Creation Guide in AGENTS.md](./AGENTS.md#️-extension--ajo
 - [x] Evaluation Framework (Ragas / LangSmith)
 - [ ] Multi-Agent Architecture (Supervisor/Worker structure)
 - [x] Persistence & Caching (Manifest & Project path)
-- [ ] Native Packaging (Electron / Tauri)
 - [x] Full Internationalization (i18n) & English Prompts
 - [ ] Context Optimization (Prompt Compression)
+- [ ] Vibrisse "Lite" Mode (Optimized for 7B/8B local models)
+- [ ] Native Packaging (Electron / Tauri)
 - [ ] Vibrisse Tool Marketplace
 
 ---
