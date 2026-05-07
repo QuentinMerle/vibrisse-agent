@@ -92,7 +92,11 @@ def list_dir(directory: str = "."):
             return f"Error: Directory '{directory}' does not exist."
             
         items = os.listdir(path)
-        items = [i for i in items if not i.startswith('.') and i != "node_modules" and i != "__pycache__"]
+        ignore_dirs = {
+            "node_modules", "__pycache__", ".git", ".next", "dist", 
+            "build", ".venv", "venv", ".cache", ".turbo", "out"
+        }
+        items = [i for i in items if not i.startswith('.') and i not in ignore_dirs]
         
         return f"Content of {directory} :\n" + "\n".join(sorted(items))
     except Exception as e:
@@ -130,7 +134,8 @@ def grep_search(pattern: str, directory: str = "."):
     try:
         from app.core.config import settings
         target_dir = Path(settings.TARGET_PROJECT_PATH).absolute()
-        cmd = f"grep -rnI --exclude-dir={{node_modules,__pycache__,.git}} \"{pattern}\" {target_dir / directory}"
+        ignore_dirs = "node_modules,__pycache__,.git,.next,dist,build,.venv,venv,.cache,out"
+        cmd = f"grep -rnI --exclude-dir={{{ignore_dirs}}} \"{pattern}\" {target_dir / directory}"
         
         result = subprocess.run(cmd, shell=True, capture_output=True, text=True, timeout=15)
         output = result.stdout

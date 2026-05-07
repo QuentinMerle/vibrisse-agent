@@ -68,6 +68,7 @@ function App() {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(localStorage.getItem("vibrisse_sidebar_collapsed") === "true");
   const [confirmModal, setConfirmModal] = useState({ isOpen: false, threadId: null });
   const [resetOnboardingConfirm, setResetOnboardingConfirm] = useState({ isOpen: false });
+  const [wipeIndexConfirm, setWipeIndexConfirm] = useState({ isOpen: false });
   
   const fileInputRef = useRef(null);
   const inputRef = useRef(null);
@@ -148,7 +149,7 @@ function App() {
           }}
           onDeleteThread={openDeleteModal}
           onNewChat={handleNewSession}
-          onWipeIndex={handleWipeIndex}
+          onWipeIndex={() => setWipeIndexConfirm({ isOpen: true })}
           isLoadingThreads={isThreadsLoading}
           healthStatus={healthStatus}
           contextUsage={contextUsage}
@@ -243,6 +244,15 @@ function App() {
             console.error("Reset failed", e);
           }
         }}
+      />
+
+      <ConfirmModal 
+        isOpen={wipeIndexConfirm.isOpen}
+        title={t('sidebar.reset_btn')}
+        message={t('sidebar.wipe_confirm')}
+        confirmText={t('common.confirm')}
+        onClose={() => setWipeIndexConfirm({ isOpen: false })}
+        onConfirm={handleWipeIndex}
       />
 
       <OnboardingWizard 

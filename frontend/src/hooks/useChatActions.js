@@ -14,14 +14,12 @@ export const useChatActions = (state) => {
   }, [setMessages, setContextUsage, setCurrentThread, t]);
 
   const handleWipeIndex = useCallback(async () => {
-    if (window.confirm(t('sidebar.wipe_confirm'))) {
-      try {
-        await api.clearCache();
-        handleNewSession();
-        fetchThreads();
-      } catch (err) {
-        console.error("Erreur wipe:", err);
-      }
+    try {
+      await api.clearCache();
+      handleNewSession();
+      fetchThreads();
+    } catch (err) {
+      console.error("Erreur wipe:", err);
     }
   }, [handleNewSession, fetchThreads]);
 

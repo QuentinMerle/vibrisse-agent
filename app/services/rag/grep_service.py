@@ -47,6 +47,11 @@ class GrepService:
                     "-g", "!dist/*", 
                     "-g", "!build/*", 
                     "-g", "!.git/*",
+                    "-g", "!.venv/*",
+                    "-g", "!venv/*",
+                    "-g", "!.cache/*",
+                    "-g", "!.turbo/*",
+                    "-g", "!out/*",
                     term, self.target_path
                 ]
                 process = subprocess.run(cmd, capture_output=True, text=True, timeout=2)

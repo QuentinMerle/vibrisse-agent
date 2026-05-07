@@ -26,6 +26,30 @@ Built on the conviction that **"Small models + Great tools = Professional perfor
 
 ---
 
+## 📸 Visual Tour
+
+<p align="center">
+  <b>Deep Reasoning & Tool Usage</b><br>
+  <i>Watch the agent think, plan, and execute tools in real-time.</i><br>
+  <img src="./docs/assets/vibrisse-agent-thinking.png" alt="Thinking Process" width="80%">
+</p>
+
+<p align="center">
+  <br>
+  <b>Hybrid Intelligence Control</b><br>
+  <i>Seamlessly switch between Local (Ollama), Groq, and OpenRouter.</i><br>
+  <img src="./docs/assets/vibrisse-agent-model-configuration.png" alt="Model Configuration" width="80%">
+</p>
+
+<p align="center">
+  <br>
+  <b>MCP Ecosystem Ready</b><br>
+  <i>Extend your agent's capabilities with standardized Model Context Protocol servers.</i><br>
+  <img src="./docs/assets/vibrisse-agent-mcp-ready.png" alt="MCP Integration" width="80%">
+</p>
+
+---
+
 ## 🌐 Hybrid Model Support
 While Vibrisse is built for **privacy-first local execution**, it also supports high-performance cloud providers for scenarios where you need extra speed or larger models:
 - **Groq**: Extreme inference speed for real-time coding assistance.

@@ -109,10 +109,22 @@ class VectorService:
     def add_documents(self, documents):
         if not documents: return
         
+        # Filtre de sécurité global pour éviter d'indexer du bruit par erreur
+        ignore_patterns = {".next/", "node_modules/", "dist/", "build/", ".venv/", "venv/", ".git/", "__pycache__/"}
+        
+        filtered_docs = []
+        for doc in documents:
+            source = doc.metadata.get("source", "")
+            if any(p in source for p in ignore_patterns):
+                continue
+            filtered_docs.append(doc)
+            
+        if not filtered_docs: return
+        
         try:
             # On groupe les documents par splitter pour optimiser l'indexation
             docs_by_splitter = {}
-            for doc in documents:
+            for doc in filtered_docs:
                 source = doc.metadata.get("source", "")
                 splitter = self.get_splitter_for_ext(source)
                 if splitter not in docs_by_splitter:
@@ -260,7 +272,21 @@ class VectorService:
                 if not keys: return []
                 all_documents = [doc for doc in self.store.mget(keys) if doc]
                 from app.core.config import settings
-                files = {os.path.relpath(doc.metadata.get("source", ""), settings.TARGET_PROJECT_PATH) for doc in all_documents if doc.metadata.get("source")}
+                
+                ignore_patterns = {".next/", "node_modules/", "dist/", "build/", ".venv/", "venv/", ".git/", "__pycache__/"}
+                
+                files = set()
+                for doc in all_documents:
+                    source = doc.metadata.get("source")
+                    if not source: continue
+                    
+                    # On ignore les fichiers de build même s'ils sont en base
+                    if any(p in source for p in ignore_patterns):
+                        continue
+                        
+                    rel_path = os.path.relpath(source, settings.TARGET_PROJECT_PATH)
+                    files.add(rel_path)
+                
                 return sorted(list(files))
             except Exception as e: 
                 print(f"Error listing files: {e}")

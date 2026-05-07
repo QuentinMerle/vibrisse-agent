@@ -38,8 +38,21 @@ ENV/
 frontend/.env
 frontend/.env.local
 
-# Frontend
+# --- Build Artifacts & Cache ---
+node_modules/
+.next/
+dist/
+build/
+.cache/
+.parcel-cache/
+.turbo/
+out/
+.swc/
+.eslintcache
+
+# Frontend Specific (Backup)
 frontend/node_modules/
+frontend/.next/
 # frontend/dist/  <-- Included for swift installation
 frontend/build/
 frontend/.cache/
