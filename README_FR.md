@@ -19,6 +19,8 @@ Bâti sur la conviction que **"Petits modèles + Grands outils = Performance pro
 - **RAG Triple-Couche** : Recherche sémantique, BM25 et **Surgical Grep** (ripgrep) pour une précision technique totale.
 - **Architecture Supervisor/Worker** : Des experts spécialisés (Coder, Architecte, Writer) pour un raisonnement profond.
 - **Interface Studio** : Une UI web "Obsidian Glass" immersive avec monitoring du contexte en temps réel.
+- **Vision Intégrée** : Analyse d'UI et raisonnement multimodal via injection visuelle.
+- **Streaming de Pensée** : Transparence en temps réel sur le processus de réflexion de l'agent.
 - **100% Local & Souverain** : Intelligence locale via Ollama. Aucune donnée ne quitte ta machine.
 
 ---

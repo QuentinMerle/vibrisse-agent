@@ -35,14 +35,21 @@ For detailed information on specific modules, consult these files:
 ## ⚠️ Critical Watchpoints (DON'T BREAK THESE)
 
 ### 🎯 Router Calibration
-The **router** (`app/agents/nodes/router.py`) is the most sensitive component.
-- Implements **Robust Parsing** (JSON -> XML -> Keywords).
-- Any prompt change must be tested across all 3 routes.
+The **router** (`app/agents/nodes/router.py`) has been hardened.
+- Implements **Triple-Layer Robust Parsing** (Regex JSON -> Regex XML -> Keywords fallback).
+- Any prompt change must be tested against all 3 routes.
 
-### 🍎 Environment & OS
-- **OS**: Primarily tested on **macOS**.
-- **Python**: Use `python3 -m pip` instead of `pip` if path issues occur.
-- **Venv**: Always target `./.venv/bin/python` for tool installations to ensure persistence.
+### 👁️ Vision Strategy
+- **Injection**: Vision descriptions are now injected directly into the last `HumanMessage` to force model attention.
+- **Persistence**: `vision_description` is reset to `None` in `finalize_answer` to prevent "context ghosting" in future turns.
+
+### 🌊 Thought Streaming
+- Thoughts are streamed live during generation via `extract_thought` on the active buffer.
+- The UI uses `ThinkingConsole` to render these thoughts separately from the answer.
+
+### 🛡️ Privacy & Security
+- `data/session.json` is excluded from Git to prevent leaking local absolute paths.
+- All technical docs in `docs/technical/` are tracked except `vibrisse-lite.md`.
 
 ### 🚧 Dependencies
 - Updating `langgraph` or `langchain` is **High Risk** due to silent breaking changes in tool returns.

@@ -20,6 +20,8 @@ Built on the conviction that **"Small models + Great tools = Professional perfor
 - **Supervisor/Worker Architecture**: Specialized workers (Coder, Architect, Writer) for deep reasoning.
 - **Smart Onboarding**: Real-time hardware discovery and persona-based setup (2-minute configuration).
 - **Studio Interface**: An immersive "Obsidian Glass" web UI with real-time context monitoring.
+- **Integrated Vision**: Visual context injection for UI analysis and multimodal reasoning.
+- **Live Thought Streaming**: Real-time transparency of the agent's internal reasoning process.
 - **100% Local**: Sovereign intelligence via Ollama. No data leaves your machine.
 
 ---
