@@ -57,8 +57,10 @@ data/.DS_Store
 utilisateurs.db
 
 # Ignorer les données d'activité et de cache (peuvent contenir des chemins locaux ou secrets)
-data/hashes.json
-data/eval_dataset.json
+# Data & Sessions
+data/session.json
+data/*.json
+!data/example.json
 
 # Préserver la structure des dossiers vitaux (nécessaire au démarrage)
 !data/chroma_db/.gitkeep
