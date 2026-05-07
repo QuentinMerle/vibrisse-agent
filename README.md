@@ -16,11 +16,11 @@ Built on the conviction that **"Small models + Great tools = Professional perfor
 
 ## ✨ Key Highlights
 - **Triple-Layer RAG**: Semantic search (Chroma), BM25, and **Surgical Grep** (ripgrep) for 100% technical precision.
-- **Supervisor/Worker Architecture**: Specialized workers (Coder, Architect, Writer) for deep reasoning.
+- **Supervisor/Worker Architecture**: Specialized experts (Coder, Architect, Writer) orchestrated for deep reasoning.
+- **MCP Native Support**: Connect your agent to Linear, GitHub, Postgres, and the entire MCP ecosystem.
 - **Smart Onboarding**: Real-time hardware discovery and persona-based setup (2-minute configuration).
-- **Studio Interface**: An immersive "Obsidian Glass" web UI with real-time context monitoring.
+- **Studio Interface**: Immersive "Obsidian Studio" web UI with real-time thought streaming and context gauges.
 - **Integrated Vision**: Visual context injection for UI analysis and multimodal reasoning.
-- **Live Thought Streaming**: Real-time transparency of the agent's internal reasoning process.
 - **Sovereign Evaluation**: Automated response quality scoring via RAGAS metrics (Faithfulness, Relevancy) running 100% locally.
 - **Sovereign First**: Optimized for local-first intelligence via Ollama. No data leaves your machine by default.
 
