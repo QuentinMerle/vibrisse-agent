@@ -88,3 +88,11 @@ logs/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# Final exclusions to override any re-inclusions
+docs/formation/
+docs/business/
+docs/technical/vibrisse-lite.md
+data/session.json
+data/*.json
+!data/example.json

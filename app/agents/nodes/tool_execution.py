@@ -36,7 +36,13 @@ async def tool_agent_node(state: AgentState):
     try:
         # 1. Tentative avec outils natifs
         llm_with_tools = llm.bind_tools(active_tools)
-        response = await llm_with_tools.ainvoke([SystemMessage(content=load_skill("tool_expert"))] + cleaned_messages)
+        
+        # Injection d'un rappel spécifique pour Groq (souvent trop bavard au lieu d'appeler l'outil)
+        final_skill = load_skill("tool_expert")
+        if state.get("llm_provider") == "groq":
+            final_skill += "\n\nCRITICAL: You are currently using your NATIVE TOOL API. You MUST return a tool_call and NOTHING ELSE. No conversational text."
+            
+        response = await llm_with_tools.ainvoke([SystemMessage(content=final_skill)] + cleaned_messages)
     except Exception as e:
         error_str = str(e).lower()
         if "does not support tools" in error_str or "400" in error_str:

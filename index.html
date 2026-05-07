@@ -1,15 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vibrisse Agent | The AI Assistant That Understands Your Code</title>
-    
+    <title>Vibrisse | Sovereign Engineering Partner</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="frontend/public/favicon.ico">
+
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet">
-    
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@300;700&display=swap"
+        rel="stylesheet">
+
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
 
@@ -17,11 +23,12 @@
         :root {
             --primary: #7b39ed;
             --primary-glow: rgba(123, 57, 237, 0.4);
-            --bg-dark: #09090b;
-            --glass-bg: rgba(18, 18, 20, 0.7);
-            --glass-border: rgba(255, 255, 255, 0.08);
-            --text-main: #e4e4e7;
+            --bg-dark: #050507;
+            --bg-card: #0c0c0e;
+            --glass-border: rgba(255, 255, 255, 0.05);
+            --text-main: #f4f4f5;
             --text-muted: #a1a1aa;
+            /* Increased contrast for a11y */
             --font-display: 'Space Grotesk', sans-serif;
             --font-body: 'Inter', sans-serif;
             --font-mono: 'JetBrains Mono', monospace;
@@ -33,368 +40,765 @@
             box-sizing: border-box;
         }
 
+        /* --- FOCUS STATES --- */
+        :focus-visible {
+            outline: 2px solid var(--primary);
+            outline-offset: 4px;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
             background-color: var(--bg-dark);
             color: var(--text-main);
             font-family: var(--font-body);
             -webkit-font-smoothing: antialiased;
             overflow-x: hidden;
-            line-height: 1.6;
+            line-height: 1.5;
         }
 
-        /* --- BACKGROUND EFFECTS --- */
-        .ambient-glow {
+        /* --- NOISE TEXTURE (BACKGROUND) --- */
+        body::before {
+            content: "";
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: -1;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            opacity: 0.02; /* Extremely subtle */
             pointer-events: none;
-            background: 
-                radial-gradient(circle at 10% 10%, rgba(123, 57, 237, 0.05) 0%, transparent 40%),
-                radial-gradient(circle at 90% 90%, rgba(123, 57, 237, 0.05) 0%, transparent 40%);
+            z-index: -2; /* Behind everything */
         }
 
-        /* --- LAYOUT --- */
+        /* --- AMBIENCE --- */
+        .ambient-light {
+            position: fixed;
+            top: -10%;
+            left: -10%;
+            width: 60%;
+            height: 60%;
+            background: radial-gradient(circle, rgba(123, 57, 237, 0.08) 0%, transparent 70%);
+            z-index: -1;
+            filter: blur(80px);
+        }
+
+        .ambient-light-bottom {
+            position: fixed;
+            bottom: -10%;
+            right: -10%;
+            width: 50%;
+            height: 50%;
+            background: radial-gradient(circle, rgba(123, 57, 237, 0.05) 0%, transparent 70%);
+            z-index: -1;
+            filter: blur(80px);
+        }
+
         .container {
-            max-width: 1100px;
+            max-width: 1200px;
             margin: 0 auto;
-            padding: 0 24px;
+            padding: 0 40px;
         }
 
+        /* --- HEADER --- */
         header {
-            height: 80px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 90px;
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            backdrop-filter: blur(12px);
+            z-index: 1000;
+            backdrop-filter: blur(20px);
             border-bottom: 1px solid var(--glass-border);
         }
 
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+
         .logo {
-            font-family: var(--font-display);
-            font-size: 1.5rem;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 14px;
             text-decoration: none;
-            color: var(--text-main);
+            color: #fff;
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 1.25rem;
             letter-spacing: -0.02em;
         }
 
-        .logo span {
-            color: var(--primary);
-            text-shadow: 0 0 10px var(--primary-glow);
+        .logo-box {
+            width: 40px;
+            height: 40px;
+            background: var(--primary);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 20px var(--primary-glow);
+        }
+
+        .logo-box svg {
+            width: 28px;
+            height: 28px;
         }
 
         nav {
             display: flex;
-            gap: 32px;
+            gap: 40px;
         }
 
         nav a {
             text-decoration: none;
             color: var(--text-muted);
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             font-weight: 500;
-            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            transition: color 0.3s ease;
         }
 
         nav a:hover {
-            color: var(--text-main);
+            color: var(--primary);
         }
 
         /* --- HERO --- */
         .hero {
-            padding: 120px 0 80px;
+            padding-top: 220px;
+            padding-bottom: 120px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             text-align: center;
         }
 
-        .badge {
-            display: inline-flex;
-            align-items: center;
-            padding: 6px 12px;
-            background: rgba(123, 57, 237, 0.1);
-            border: 1px solid rgba(123, 57, 237, 0.2);
-            border-radius: 100px;
-            font-size: 0.75rem;
-            font-weight: 500;
+        .kicker {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.4em;
             color: var(--primary);
             margin-bottom: 24px;
-            font-family: var(--font-mono);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .kicker::before,
+        .kicker::after {
+            content: "";
+            width: 40px;
+            height: 1px;
+            background: rgba(123, 57, 237, 0.3);
         }
 
         h1 {
             font-family: var(--font-display);
-            font-size: 4rem;
-            line-height: 1.1;
-            margin-bottom: 24px;
-            letter-spacing: -0.03em;
-            background: linear-gradient(180deg, #fff 0%, #a1a1aa 100%);
+            font-size: clamp(3rem, 8vw, 6rem);
+            line-height: 0.95;
+            letter-spacing: -0.05em;
+            font-weight: 700;
+            margin-bottom: 40px;
+            background: linear-gradient(to bottom, #fff 30%, rgba(255, 255, 255, 0.4) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        .hero p {
+        .hero-desc {
+            max-width: 680px;
             font-size: 1.25rem;
             color: var(--text-muted);
-            max-width: 600px;
-            margin: 0 auto 48px;
+            margin-bottom: 60px;
+            font-weight: 300;
         }
 
-        /* --- INSTALL COMMAND --- */
-        .install-box {
-            background: #121214;
+        /* --- PRODUCT SHOWCASE --- */
+        .showcase {
+            position: relative;
+            width: 100%;
+            max-width: 1100px;
+            margin: 0 auto 160px;
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, transparent 100%);
+            border-radius: 32px;
             border: 1px solid var(--glass-border);
-            border-radius: 12px;
-            padding: 16px 24px;
+            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.8);
+        }
+
+        .showcase img {
+            width: 100%;
+            border-radius: 20px;
+            display: block;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        .showcase::before {
+            content: "";
+            position: absolute;
+            top: -2px;
+            left: 10%;
+            width: 80%;
+            height: 1px;
+            background: linear-gradient(to right, transparent, var(--primary), transparent);
+        }
+
+        /* --- FEATURES (ASIMMETRIC) --- */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 32px;
+            padding-bottom: 160px;
+        }
+
+        .f-card {
+            background: var(--bg-card);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 48px;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.4s cubic-bezier(0.2, 0, 0.2, 1);
+        }
+
+        .f-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(123, 57, 237, 0.2);
+        }
+
+        .f-card.large {
+            grid-column: span 7;
+        }
+
+        .f-card.small {
+            grid-column: span 5;
+        }
+
+        .f-icon {
+            color: var(--primary);
+            margin-bottom: 32px;
+        }
+
+        .f-card h3 {
+            font-family: var(--font-display);
+            font-size: 1.75rem;
+            margin-bottom: 16px;
+            letter-spacing: -0.02em;
+        }
+
+        .f-card p {
+            color: var(--text-muted);
+            font-size: 1.05rem;
+            line-height: 1.6;
+        }
+
+        /* --- INSTALL TERMINAL --- */
+        .terminal-wrap {
+            padding: 160px 0;
+            text-align: center;
+        }
+
+        .terminal {
             display: inline-flex;
             align-items: center;
-            gap: 16px;
+            background: #000;
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 24px 40px;
             font-family: var(--font-mono);
-            font-size: 0.95rem;
+            font-size: 1.1rem;
+            color: var(--text-main); /* Force visibility */
             cursor: pointer;
-            transition: all 0.2s ease;
             position: relative;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            transition: all 0.3s ease;
+            appearance: none;
+            -webkit-appearance: none;
+            text-align: left;
         }
 
-        .install-box:hover {
+        .terminal:hover {
+            box-shadow: 0 0 40px rgba(123, 57, 237, 0.15);
             border-color: var(--primary);
-            box-shadow: 0 0 20px rgba(123, 57, 237, 0.2);
         }
 
-        .install-box .prefix {
+        .terminal .prompt {
             color: var(--primary);
-            opacity: 0.8;
+            margin-right: 16px;
+            flex-shrink: 0;
         }
 
-        .copy-icon {
-            color: var(--text-muted);
-            width: 18px;
-            height: 18px;
-        }
-
-        .tooltip {
+        .copy-hint {
             position: absolute;
             bottom: -40px;
             left: 50%;
             transform: translateX(-50%);
-            background: var(--primary);
-            color: white;
-            padding: 4px 10px;
-            border-radius: 4px;
             font-size: 0.75rem;
-            opacity: 0;
-            transition: opacity 0.2s ease;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            opacity: 0.6;
         }
 
-        /* --- FEATURES --- */
-        .features {
+        /* --- GALLERY --- */
+        .gallery-section {
+            padding: 100px 0;
+        }
+
+        .gallery-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 24px;
-            padding: 80px 0;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 32px;
         }
 
-        .card {
-            background: var(--glass-bg);
+        .gallery-item {
+            background: rgba(255, 255, 255, 0.01);
             border: 1px solid var(--glass-border);
-            border-radius: 20px;
-            padding: 32px;
-            backdrop-filter: blur(12px);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 24px;
+            padding: 24px;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        .card:hover {
-            border-color: rgba(123, 57, 237, 0.3);
-            transform: translateY(-8px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        .gallery-item:hover {
+            background: rgba(255, 255, 255, 0.03);
+            border-color: rgba(123, 57, 237, 0.4);
+            transform: scale(1.02);
         }
 
-        .card-icon {
-            width: 48px;
-            height: 48px;
-            background: rgba(123, 57, 237, 0.1);
+        .gallery-item img {
+            width: 100%;
             border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            margin-bottom: 20px;
+        }
+
+        .gallery-item h3 {
+            font-family: var(--font-display);
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+            color: #fff;
+        }
+
+        .gallery-item p {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        @media (max-width: 992px) {
+            .gallery-grid { grid-template-columns: 1fr; }
+        }
+
+        /* --- FOOTER --- */
+        /* --- FAQ (ACCORDION) --- */
+        .faq-section {
+            padding-bottom: 160px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .faq-accordion {
+            border-top: 1px solid var(--glass-border);
+        }
+
+        .faq-item {
+            border-bottom: 1px solid var(--glass-border);
+            transition: all 0.3s ease;
+        }
+
+        .faq-item:hover {
+            background: rgba(255, 255, 255, 0.01);
+        }
+
+        .faq-item summary {
+            padding: 32px 0;
+            list-style: none;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 500;
+            color: #fff;
+        }
+
+        .faq-item summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .faq-item .faq-icon-wrap {
+            width: 24px;
+            height: 24px;
+            position: relative;
             display: flex;
             align-items: center;
             justify-content: center;
+            transition: transform 0.3s ease;
             color: var(--primary);
-            margin-bottom: 24px;
         }
 
-        .card h3 {
+        .faq-item[open] .faq-icon-wrap {
+            transform: rotate(45deg);
+            color: var(--text-muted);
+        }
+
+        .faq-content {
+            padding-bottom: 32px;
+            color: var(--text-muted);
+            font-size: 1.05rem;
+            line-height: 1.6;
+            max-width: 90%;
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .faq-item[open] .faq-content {
+            animation: fadeInDown 0.4s ease forwards;
+        }
             font-family: var(--font-display);
-            font-size: 1.25rem;
+            font-size: 1.1rem;
             margin-bottom: 12px;
+            color: #fff;
         }
 
-        .card p {
+        .faq-item p {
             color: var(--text-muted);
             font-size: 0.95rem;
             line-height: 1.6;
         }
 
-        /* --- CTA --- */
-        .cta-section {
-            padding: 100px 0;
-            text-align: center;
-        }
-
-        .btn-primary {
+        .os-badge {
             display: inline-flex;
             align-items: center;
             gap: 10px;
-            background: var(--primary);
-            color: white;
-            padding: 14px 28px;
-            border-radius: 12px;
-            text-decoration: none;
-            font-family: var(--font-display);
-            font-weight: 700;
-            font-size: 1.1rem;
-            transition: all 0.2s ease;
-            box-shadow: 0 4px 20px var(--primary-glow);
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border);
+            padding: 8px 16px;
+            border-radius: 100px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 24px;
+            color: #fff;
         }
 
-        .btn-primary:hover {
-            filter: brightness(1.1);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 30px var(--primary-glow);
+        .os-badge span {
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+
+        .legal-disclaimer {
+            max-width: 600px;
+            margin: 0 auto 32px;
+            font-size: 0.75rem;
+            line-height: 1.6;
+            color: var(--text-muted);
+            opacity: 0.7;
         }
 
         footer {
-            padding: 48px 0;
+            padding: 80px 0;
             border-top: 1px solid var(--glass-border);
             text-align: center;
+        }
+
+        .footer-logo {
+            margin-bottom: 32px;
+            opacity: 0.5;
+            filter: grayscale(1);
+        }
+
+        .copyright {
             color: var(--text-muted);
-            font-size: 0.85rem;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
         }
 
-        footer span {
-            color: var(--primary);
+        /* --- ANIMATIONS --- */
+        [data-reveal] {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.2, 0, 0.2, 1);
         }
 
-        /* --- RESPONSIVE --- */
-        @media (max-width: 768px) {
-            h1 { font-size: 2.5rem; }
-            .hero { padding: 80px 0 40px; }
-            nav { display: none; }
+        [data-reveal].revealed {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        @media (max-width: 900px) {
+
+            .f-card.large,
+            .f-card.small {
+                grid-column: span 12;
+            }
+
+            h1 {
+                font-size: 4rem;
+            }
+
+            nav {
+                display: none;
+            }
         }
     </style>
 </head>
+
 <body>
 
-    <div class="ambient-glow"></div>
+    <div class="ambient-light" aria-hidden="true"></div>
+    <div class="ambient-light-bottom" aria-hidden="true"></div>
 
     <header>
-        <div class="container" style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
-            <a href="#" class="logo">
-                <i data-lucide="cat"></i>
-                Vibrisse <span>Agent</span>
+        <div class="container header-content">
+            <a href="#" class="logo" aria-label="Vibrisse - Back to home">
+                <div class="logo-box">
+                    <svg width="48px" height="33px" viewBox="0 0 48 33" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+                        <g transform="matrix(1,0,0,1,4.44089e-16,-1396.05)">
+                            <g id="Vibrisse-AI" transform="matrix(0.0111025,0,0,0.00780979,3.46222,1399.36)">
+                                <rect x="-311.842" y="-424.276" width="4247.28" height="4104.68" style="fill:none;"/>
+                                <g id="Merge" transform="matrix(22.0404,0,0,25.7451,-37290,-35766.3)">
+                                    <g transform="matrix(4.1382,0,0,4.98326,-338.902,-5584.3)">
+                                        <path d="M496.096,1418.48l-8.052,-2.63c-0.54,-0.176 -0.837,-0.763 -0.663,-1.309c0.175,-0.546 0.755,-0.846 1.295,-0.669l7.42,2.423l-0,-4.433c-0,-2.178 1.131,-4.09 2.832,-5.169c-0.002,-0.078 0.006,-0.157 0.022,-0.235l1.936,-9.131l0.163,-0.438l0.276,-0.363l0.368,-0.267l0.438,-0.152l0.462,-0.014l0.438,0.119l0.385,0.242l0.305,0.352l5.695,8.956l2.545,0l5.695,-8.956l0.305,-0.352l0.385,-0.242l0.438,-0.119l0.463,0.014l0.438,0.152l0.368,0.267l0.276,0.363l0.163,0.438l1.935,9.131c0.016,0.077 0.024,0.155 0.023,0.232c1.703,1.078 2.836,2.992 2.836,5.172l0,4.358l7.192,-2.348c0.54,-0.177 1.12,0.123 1.295,0.669c0.175,0.546 -0.122,1.133 -0.663,1.309l-7.824,2.555l0,1.079l7.824,2.555c0.541,0.177 0.838,0.763 0.663,1.309c-0.175,0.546 -0.755,0.846 -1.295,0.67l-7.192,-2.348l0,0.312c0,3.367 -2.704,6.1 -6.035,6.1l-17.12,0c-3.331,0 -6.035,-2.733 -6.035,-6.1l-0,-0.387l-7.42,2.423c-0.54,0.176 -1.12,-0.124 -1.295,-0.67c-0.174,-0.546 0.123,-1.132 0.663,-1.309l8.052,-2.629l-0,-0.93Zm27.133,-6.618c0,-2.219 -1.782,-4.021 -3.978,-4.021l-17.12,0c-2.195,0 -3.978,1.802 -3.978,4.021l0,10.12c0,2.219 1.783,4.021 3.978,4.021l17.12,-0c2.196,-0 3.978,-1.802 3.978,-4.021l0,-10.12Zm-4.496,-12.904l-4.246,6.678l5.662,0l-1.416,-6.678Zm-16.089,-0l-1.415,6.678l5.662,0l-4.247,-6.678Z" style="fill:white;"/>
+                                    </g>
+                                    <g transform="matrix(4.32295,0,0,5.2612,-430.894,-5977.1)">
+                                        <ellipse cx="505.31" cy="1416.49" rx="1.637" ry="3.124" style="fill:white;"/>
+                                    </g>
+                                    <g transform="matrix(4.32295,0,0,5.2612,-389.499,-5977.1)">
+                                        <ellipse cx="505.31" cy="1416.49" rx="1.637" ry="3.124" style="fill:white;"/>
+                                    </g>
+                                </g>
+                            </g>
+                        </g>
+                    </svg>
+                </div>
+                Vibrisse
             </a>
-            <nav>
-                <a href="https://github.com/QuentinMerle/vibrisse-agent">GitHub</a>
-                <a href="#features">Features</a>
-                <a href="https://github.com/QuentinMerle/vibrisse-agent/blob/main/AGENTS.md">Architecture</a>
+            <nav aria-label="Main Navigation">
+                <a href="#features">Capabilities</a>
+                <a href="#interface">Interface</a>
+                <a href="https://github.com/QuentinMerle/vibrisse-agent">Source</a>
+                <a href="#install">Deploy</a>
             </nav>
-            <a href="https://github.com/QuentinMerle/vibrisse-agent" class="btn-primary" style="padding: 8px 16px; font-size: 0.9rem;">
-                Star on GitHub
-            </a>
+            <div class="logo"
+                style="font-size: 0.7rem; opacity: 0.6; text-transform: uppercase; letter-spacing: 0.2em;">
+                v1.0.4 stable
+            </div>
         </div>
     </header>
 
-    <section class="hero">
-        <div class="container">
-            <div class="badge">Sovereign • Technical • Precision</div>
-            <h1>The AI Assistant That<br>Understands Your Code</h1>
-            <p>"Small models, Great tools." Vibrisse transforms your local codebase into an intelligent conversation partner with surgical precision.</p>
-            
-            <div class="install-box" onclick="copyInstall()">
-                <span class="prefix">$</span>
-                <span id="install-cmd">curl -sSL https://agent.vibrisse-studio.dev/install.sh | bash</span>
-                <i data-lucide="copy" class="copy-icon"></i>
-                <div class="tooltip" id="tooltip">Copied!</div>
-            </div>
-        </div>
-    </section>
+    <main>
 
-    <section class="container" id="features">
-        <div class="features">
-            <div class="card">
-                <div class="card-icon"><i data-lucide="layers"></i></div>
-                <h3>Triple-Layer RAG</h3>
-                <p>Combines Semantic search, BM25, and Surgical Grep (ripgrep) for 100% precision on technical terms and exact code locations.</p>
-            </div>
-            <div class="card">
-                <div class="card-icon"><i data-lucide="git-branch"></i></div>
-                <h3>Supervisor/Worker</h3>
-                <p>A multi-agent architecture where specialized experts (Coder, Architect, Writer) collaborate to solve complex reasoning tasks.</p>
-            </div>
-            <div class="card">
-                <div class="card-icon"><i data-lucide="shield-check"></i></div>
-                <h3>100% Sovereign</h3>
-                <p>Runs locally via Ollama. Your code never leaves your machine. Full support for Groq and OpenRouter for hybrid performance.</p>
-            </div>
-            <div class="card">
-                <div class="card-icon"><i data-lucide="eye"></i></div>
-                <h3>Integrated Vision</h3>
-                <p>Multimodal awareness. Inject visual context (screenshots, UI mockups) directly into the agent's reasoning flow.</p>
-            </div>
-            <div class="card">
-                <div class="card-icon"><i data-lucide="terminal"></i></div>
-                <h3>Studio Interface</h3>
-                <p>An immersive "Obsidian Glass" web studio with real-time context monitoring and live thought streaming.</p>
-            </div>
-            <div class="card">
-                <div class="card-icon"><i data-lucide="zap"></i></div>
-                <h3>Swift Onboarding</h3>
-                <p>Hardware-aware setup that recommends the best models for your machine. Be up and running in under 2 minutes.</p>
-            </div>
-        </div>
-    </section>
-
-    <section class="cta-section">
-        <div class="container">
-            <h2 style="font-family: var(--font-display); font-size: 2.5rem; margin-bottom: 32px;">Ready to elevate your workflow?</h2>
-            <p style="color: var(--text-muted); margin-bottom: 40px; max-width: 600px; margin-left: auto; margin-right: auto;">
-                Join the developers who build faster and smarter with local sovereign intelligence.
+        <section class="container hero">
+            <div class="kicker" data-reveal>Sovereign Intelligence</div>
+            <h1 data-reveal>Engineering Partner<br>for Local Context.</h1>
+            <p class="hero-desc" data-reveal>
+                Vibrisse is a multi-agent system designed to transform your codebase into an active reasoning
+                environment. 100% private, surgically precise, and built for speed.
             </p>
-            <a href="https://github.com/QuentinMerle/vibrisse-agent" class="btn-primary">
-                View Source on GitHub
-                <i data-lucide="arrow-right"></i>
-            </a>
-        </div>
-    </section>
+
+            <div class="showcase" data-reveal>
+                <img src="docs/assets/vibrisse-agent-ui.png"
+                    alt="Vibrisse Studio User Interface showing the multi-agent chat and system resource monitoring">
+            </div>
+        </section>
+
+        <section class="container features-grid" id="features">
+            <h2 class="sr-only"
+                style="position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); border: 0;">
+                Main Features</h2>
+
+            <div class="f-card large" data-reveal>
+                <div class="f-icon" aria-hidden="true"><i data-lucide="layers"></i></div>
+                <h3>Triple-Layer RAG</h3>
+                <p>We don't just rely on semantic search. Vibrisse combines Vector Retrieval, BM25, and Surgical Grep to
+                    find exact code symbols across million-line repos with zero hallucination.</p>
+            </div>
+            <div class="f-card small" data-reveal>
+                <div class="f-icon" aria-hidden="true"><i data-lucide="shield"></i></div>
+                <h3>Sovereign First</h3>
+                <p>Your intellectual property stays yours. Built to run locally via Ollama, ensuring your code never
+                    touches the cloud by default.</p>
+            </div>
+            <div class="f-card small" data-reveal>
+                <div class="f-icon" aria-hidden="true"><i data-lucide="zap"></i></div>
+                <h3>Hybrid Intelligence</h3>
+                <p>Need more power? Seamlessly connect to Groq, OpenRouter, or Gemini. Use local models for sensitive
+                    logic and cloud giants for complex architecture.</p>
+            </div>
+            <div class="f-card large" data-reveal>
+                <div class="f-icon" aria-hidden="true"><i data-lucide="plug"></i></div>
+                <h3>MCP Ready</h3>
+                <p>Built-in support for the Model Context Protocol. Connect your agent to an ever-growing ecosystem of
+                    tools, databases, and local services seamlessly.</p>
+            </div>
+            <div class="f-card full" data-reveal style="grid-column: span 12;">
+                <div class="f-icon" aria-hidden="true"><i data-lucide="monitor"></i></div>
+                <h3>Obsidian Glass Studio</h3>
+                <p>An immersive, technical interface designed for deep focus. Featuring real-time thought streaming,
+                    context gauges, and hardware-aware performance monitoring.</p>
+            </div>
+        </section>
+
+        <section id="interface" class="container gallery-section">
+            <h2 data-reveal style="font-family: var(--font-display); font-size: 2.5rem; margin-bottom: 60px; text-align: center;">
+                Engineered for Focus</h2>
+            <div class="gallery-grid">
+                <div class="gallery-item" data-reveal>
+                    <img src="docs/assets/vibrisse-agent-hardware-discovery.png" alt="Hardware Discovery screen">
+                    <h3>Hardware Awareness</h3>
+                    <p>Automatic detection and optimization based on your local GPU/CPU resources.</p>
+                </div>
+                <div class="gallery-item" data-reveal>
+                    <img src="docs/assets/vibrisse-agent-groq-example.png" alt="Groq Hybrid execution">
+                    <h3>Hybrid Intelligence</h3>
+                    <p>Leverage Groq LPU speed for complex tasks while keeping sensitive logic 100% local.</p>
+                </div>
+                <div class="gallery-item" data-reveal>
+                    <img src="docs/assets/vibrisse-agent-choose-your-persona.png" alt="Persona selection screen">
+                    <h3>Expert Personas</h3>
+                    <p>Dedicated agents for Coder, Architect, and Writer tasks with specialized prompt sets.</p>
+                </div>
+                <div class="gallery-item" data-reveal>
+                    <img src="docs/assets/vibrisse-agent-modèle-configuration.png" alt="Advanced configuration">
+                    <h3>Deep Configuration</h3>
+                    <p>Granular control over model parameters, provider settings, and RAG thresholds.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="faq" class="container faq-section">
+            <h2 data-reveal style="font-family: var(--font-display); font-size: 3rem; margin-bottom: 64px; text-align: center; background: linear-gradient(to right, #fff, var(--text-muted)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                Expert Knowledge</h2>
+            <div class="faq-accordion" data-reveal>
+                <details class="faq-item">
+                    <summary>Is my code really private? <div class="faq-icon-wrap"><i data-lucide="plus"></i></div></summary>
+                    <div class="faq-content">
+                        Yes. By default, Vibrisse uses Ollama to run models locally on your machine. No code or prompts are sent to any server unless you explicitly enable a cloud provider.
+                    </div>
+                </details>
+                <details class="faq-item">
+                    <summary>Which models work best? <div class="faq-icon-wrap"><i data-lucide="plus"></i></div></summary>
+                    <div class="faq-content">
+                        For local use, we recommend Llama 3 (8B) or Mistral. If you have enough VRAM, Llama 3.3 (70B) is a powerhouse. Our setup wizard helps you choose the best tier for your hardware.
+                    </div>
+                </details>
+                <details class="faq-item">
+                    <summary>How does Web Search work? <div class="faq-icon-wrap"><i data-lucide="plus"></i></div></summary>
+                    <div class="faq-content">
+                        Vibrisse integrates with Tavily. When enabled, the agent can fetch live documentation, API changes, or stackoverflow answers to supplement its local knowledge.
+                    </div>
+                </details>
+                <details class="faq-item">
+                    <summary>Does it support Vision? <div class="faq-icon-wrap"><i data-lucide="plus"></i></div></summary>
+                    <div class="faq-content">
+                        Absolutely. You can drop screenshots or UI mockups into the chat. The agent uses multimodal models to analyze the design and help you implement it in code.
+                    </div>
+                </details>
+                <details class="faq-item">
+                    <summary>Can I extend it with MCP? <div class="faq-icon-wrap"><i data-lucide="plus"></i></div></summary>
+                    <div class="faq-content">
+                        Yes. Vibrisse is MCP-native. You can connect standard MCP servers to give the agent access to your calendar, linear, github, or even custom local databases.
+                    </div>
+                </details>
+            </div>
+        </section>
+
+        <section class="terminal-wrap" id="install">
+            <div class="container">
+                <div class="os-badge" data-reveal>
+                    <i data-lucide="apple" style="width: 14px;" aria-hidden="true"></i>
+                    Optimized for macOS <span>(Linux & Win coming soon)</span>
+                </div>
+                <h2 style="font-family: var(--font-display); font-size: 2.5rem; margin-bottom: 48px;">Get started in
+                    seconds.</h2>
+                <button class="terminal" onclick="copyInstall()" data-reveal
+                    aria-label="Copy install command: curl -sSL https://agent.vibrisse-studio.dev/install.sh | bash"
+                    title="Click to copy command">
+                    <span class="prompt" aria-hidden="true">➜</span>
+                    <span id="cmd">curl -sSL https://agent.vibrisse-studio.dev/install.sh | bash</span>
+                    <div class="copy-hint">Click to copy command</div>
+                </button>
+            </div>
+        </section>
+    </main>
 
     <footer>
         <div class="container">
-            <p>Vibrisse Agent © 2026. Made with <span>♥</span> for the Open Source community.</p>
+            <div class="footer-logo" aria-hidden="true">
+                <div class="logo-box" style="margin: 0 auto 20px;">
+                    <svg width="48px" height="33px" viewBox="0 0 48 33" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+                        <g transform="matrix(1,0,0,1,4.44089e-16,-1396.05)">
+                            <g id="Vibrisse-AI-Footer" transform="matrix(0.0111025,0,0,0.00780979,3.46222,1399.36)">
+                                <rect x="-311.842" y="-424.276" width="4247.28" height="4104.68" style="fill:none;"/>
+                                <g id="Merge-Footer" transform="matrix(22.0404,0,0,25.7451,-37290,-35766.3)">
+                                    <g transform="matrix(4.1382,0,0,4.98326,-338.902,-5584.3)">
+                                        <path d="M496.096,1418.48l-8.052,-2.63c-0.54,-0.176 -0.837,-0.763 -0.663,-1.309c0.175,-0.546 0.755,-0.846 1.295,-0.669l7.42,2.423l-0,-4.433c-0,-2.178 1.131,-4.09 2.832,-5.169c-0.002,-0.078 0.006,-0.157 0.022,-0.235l1.936,-9.131l0.163,-0.438l0.276,-0.363l0.368,-0.267l0.438,-0.152l0.462,-0.014l0.438,0.119l0.385,0.242l0.305,0.352l5.695,8.956l2.545,0l5.695,-8.956l0.305,-0.352l0.385,-0.242l0.438,-0.119l0.463,0.014l0.438,0.152l0.368,0.267l0.276,0.363l0.163,0.438l1.935,9.131c0.016,0.077 0.024,0.155 0.023,0.232c1.703,1.078 2.836,2.992 2.836,5.172l0,4.358l7.192,-2.348c0.54,-0.177 1.12,0.123 1.295,0.669c0.175,0.546 -0.122,1.133 -0.663,1.309l-7.824,2.555l0,1.079l7.824,2.555c0.541,0.177 0.838,0.763 0.663,1.309c-0.175,0.546 -0.755,0.846 -1.295,0.67l-7.192,-2.348l0,0.312c0,3.367 -2.704,6.1 -6.035,6.1l-17.12,0c-3.331,0 -6.035,-2.733 -6.035,-6.1l-0,-0.387l-7.42,2.423c-0.54,0.176 -1.12,-0.124 -1.295,-0.67c-0.174,-0.546 0.123,-1.132 0.663,-1.309l8.052,-2.629l-0,-0.93Zm27.133,-6.618c0,-2.219 -1.782,-4.021 -3.978,-4.021l-17.12,0c-2.195,0 -3.978,1.802 -3.978,4.021l0,10.12c0,2.219 1.783,4.021 3.978,4.021l17.12,-0c2.196,-0 3.978,-1.802 3.978,-4.021l0,-10.12Zm-4.496,-12.904l-4.246,6.678l5.662,0l-1.416,-6.678Zm-16.089,-0l-1.415,6.678l5.662,0l-4.247,-6.678Z" style="fill:white;"/>
+                                    </g>
+                                    <g transform="matrix(4.32295,0,0,5.2612,-430.894,-5977.1)">
+                                        <ellipse cx="505.31" cy="1416.49" rx="1.637" ry="3.124" style="fill:white;"/>
+                                    </g>
+                                    <g transform="matrix(4.32295,0,0,5.2612,-389.499,-5977.1)">
+                                        <ellipse cx="505.31" cy="1416.49" rx="1.637" ry="3.124" style="fill:white;"/>
+                                    </g>
+                                </g>
+                            </g>
+                        </g>
+                    </svg>
+                </div>
+                Vibrisse
+            </div>
+            <div class="legal-disclaimer">
+                Vibrisse is an open-source experimental tool provided "as is" without warranty of any kind.
+                Users are responsible for ensuring compliance with their organization's security and data privacy
+                policies.
+                Local execution via Ollama is recommended for sensitive environments.
+            </div>
+            <div class="copyright">Vibrisse AI / Modern Engineering Protocol</div>
         </div>
     </footer>
 
     <script>
-        // Initialize icons
         lucide.createIcons();
 
-        // Copy functionality
+        // Reveal logic
+        const observerOptions = { threshold: 0.1 };
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('revealed');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('[data-reveal]').forEach(el => observer.observe(el));
+
+        // Copy logic
         function copyInstall() {
-            const text = document.getElementById('install-cmd').innerText;
+            const text = document.getElementById('cmd').innerText;
             navigator.clipboard.writeText(text).then(() => {
-                const tooltip = document.getElementById('tooltip');
-                tooltip.style.opacity = '1';
+                const term = document.querySelector('.terminal');
+                const originalText = document.querySelector('.copy-hint').innerText;
+                document.querySelector('.copy-hint').innerText = "Copied to clipboard!";
+                term.style.borderColor = "#10b981";
                 setTimeout(() => {
-                    tooltip.style.opacity = '0';
+                    document.querySelector('.copy-hint').innerText = originalText;
+                    term.style.borderColor = "";
                 }, 2000);
             });
         }
     </script>
 </body>
+
 </html>

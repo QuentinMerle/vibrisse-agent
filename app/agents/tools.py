@@ -5,7 +5,7 @@ from app.core.config import settings
 
 @tool
 def web_search(query: str):
-    """Recherche sur le web pour obtenir des informations actualisées (météo, news, etc.)."""
+    """Search the web for up-to-date information (weather, news, latest docs, API changes). Use when local RAG is insufficient."""
     tavily_key = settings.TAVILY_API_KEY
     if tavily_key:
         os.environ["TAVILY_API_KEY"] = tavily_key
@@ -13,10 +13,8 @@ def web_search(query: str):
             from langchain_tavily import TavilySearch
             search = TavilySearch(max_results=3)
             results = search.invoke(query)
-            # Nouvelle API (≥0.1.0) retourne une string directement
             if isinstance(results, str):
                 return results[:4000]
-            # Ancienne API retournait une liste de dicts {"content": "..."}
             elif isinstance(results, list):
                 clean_text = ""
                 for i, res in enumerate(results):
@@ -26,67 +24,61 @@ def web_search(query: str):
             else:
                 return str(results)[:4000]
         except Exception as e:
-            print(f"⚠️ Échec Tavily: {e}", flush=True)
+            print(f"⚠️ Tavily failure: {e}", flush=True)
 
-    # Fallback sur DuckDuckGo (Gratuit, pas de clé)
     try:
         from langchain_community.tools import DuckDuckGoSearchRun
         search = DuckDuckGoSearchRun()
         result = search.invoke(query)
-        return f"\n[Source Web (DuckDuckGo)]: {result[:3000]}\n"
+        return f"\n[Web Source (DuckDuckGo)]: {result[:3000]}\n"
     except Exception as e:
-        return f"Erreur critique : Impossible d'accéder au web ({str(e)})"
+        return f"Critical error: Unable to access the web ({str(e)})"
 
 @tool
 def run_terminal_command(command: str):
-    """Exécute une commande terminal pour obtenir des infos système (versions, fichiers, config, matériel) ou effectuer des actions. À utiliser en priorité pour toute question sur l'environnement local."""
+    """Execute a terminal command to get system info (versions, files, config, hardware) or perform actions. Use primarily for any local environment questions."""
     try:
-        # Restriction de sécurité : commandes destructrices bloquées
         forbidden = ["rm -rf", "format", "mkfs", "> /dev/sda", "dd if=", ":(){ :|:& };:"]
         if any(f in command for f in forbidden):
-            return "Erreur : Commande jugée dangereuse et bloquée par le système de sécurité."
+            return "Error: Command deemed dangerous and blocked by security system."
 
         result = subprocess.run(
             command, shell=True, capture_output=True,
             text=True, timeout=30
         )
         output = result.stdout if result.stdout else result.stderr
-        # Limite l'output pour ne pas saturer le contexte du LLM
         if len(output) > 3000:
-            output = output[:3000] + "\n... [Output tronqué à 3000 chars]"
-        return output if output else "Commande exécutée avec succès (pas de sortie)."
+            output = output[:3000] + "\n... [Output truncated at 3000 chars]"
+        return output if output else "Command executed successfully (no output)."
     except subprocess.TimeoutExpired:
-        return "Erreur : La commande a dépassé le délai de 30 secondes."
+        return "Error: Command timed out after 30 seconds."
     except Exception as e:
-        return f"Erreur d'exécution : {str(e)}"
+        return f"Execution error: {str(e)}"
 
 @tool
 def write_file(filename: str, content: str):
-    """Crée ou met à jour un fichier avec le contenu spécifié. Utile pour sauvegarder des articles, du code ou de la documentation."""
+    """Create or update a file with the specified content. Useful for saving articles, code, or documentation."""
     from pathlib import Path
     try:
-        # On s'assure que le chemin est relatif au projet cible
         from app.core.config import settings
         target_dir = Path(settings.TARGET_PROJECT_PATH).absolute()
         file_path = (target_dir / filename).absolute()
         
-        # Sécurité : on empêche d'écrire en dehors du dossier projet
         if not str(file_path).startswith(str(target_dir)):
-            return f"Erreur : Tentative d'écriture en dehors du dossier projet autorisé ({target_dir})."
+            return f"Error: Attempted to write outside authorized project directory ({target_dir})."
 
-        # Création des dossiers parents si besoin
         file_path.parent.mkdir(parents=True, exist_ok=True)
         
         with open(file_path, "w", encoding="utf-8") as f:
             f.write(content)
             
-        return f"Succès : Le fichier '{filename}' a été écrit avec succès ({len(content)} caractères)."
+        return f"Success: File '{filename}' written successfully ({len(content)} characters)."
     except Exception as e:
-        return f"Erreur lors de l'écriture du fichier : {str(e)}"
+        return f"Error writing file: {str(e)}"
 
 @tool
 def list_dir(directory: str = "."):
-    """Liste les fichiers et dossiers dans un répertoire spécifique. Utile pour comprendre la structure du projet."""
+    """List files and folders in a specific directory. Useful for understanding project structure."""
     from pathlib import Path
     try:
         from app.core.config import settings
@@ -94,66 +86,61 @@ def list_dir(directory: str = "."):
         path = (target_dir / directory).absolute()
         
         if not str(path).startswith(str(target_dir)):
-            return "Erreur : Accès hors du dossier projet interdit."
+            return "Error: Access outside project directory forbidden."
             
         if not path.exists():
-            return f"Erreur : Le dossier '{directory}' n'existe pas."
+            return f"Error: Directory '{directory}' does not exist."
             
         items = os.listdir(path)
-        # On ignore les dossiers cachés et les trucs lourds
         items = [i for i in items if not i.startswith('.') and i != "node_modules" and i != "__pycache__"]
         
-        return f"Contenu de {directory} :\n" + "\n".join(sorted(items))
+        return f"Content of {directory} :\n" + "\n".join(sorted(items))
     except Exception as e:
-        return f"Erreur lors du listage : {str(e)}"
+        return f"Error listing directory: {str(e)}"
 
 @tool
 def read_file(filename: str):
-    """Lit le contenu complet d'un fichier. À utiliser quand le RAG ne donne pas assez de détails sur un fichier spécifique."""
+    """Read the complete content of a file. Use when RAG doesn't provide enough detail for a specific file."""
     from pathlib import Path
     try:
-        # Nettoyage du nom de fichier (on enlève le @ de mention ou le ./ si présents)
         clean_name = filename.lstrip("@").lstrip("./")
-        
         from app.core.config import settings
         target_dir = Path(settings.TARGET_PROJECT_PATH).absolute()
         path = (target_dir / clean_name).absolute()
         
         if not str(path).startswith(str(target_dir)):
-            return "Erreur : Accès hors du dossier projet interdit."
+            return "Error: Access outside project directory forbidden."
             
         if not path.is_file():
-            return f"Erreur : '{filename}' n'est pas un fichier valide."
+            return f"Error: '{filename}' is not a valid file."
             
         with open(path, "r", encoding="utf-8") as f:
-            content = f.read(5000) # Limite de sécurité pour le contexte
+            content = f.read(5000)
             if len(content) >= 5000:
-                content += "\n... [Fichier tronqué à 5000 caractères]"
+                content += "\n... [File truncated at 5000 characters]"
             return content
     except Exception as e:
-        return f"Erreur lors de la lecture : {str(e)}"
+        return f"Error reading file: {str(e)}"
 
 @tool
 def grep_search(pattern: str, directory: str = "."):
-    """Cherche une chaîne de caractères ou un pattern dans les fichiers du projet. Idéal pour trouver des variables ou des appels de fonctions précis."""
+    """Search for a string or pattern within project files. Ideal for finding specific variables or function calls."""
     import subprocess
     from pathlib import Path
     try:
         from app.core.config import settings
         target_dir = Path(settings.TARGET_PROJECT_PATH).absolute()
-        
-        # On utilise grep -r (récursif), -l (juste les noms de fichiers) ou sans -l pour voir les lignes
         cmd = f"grep -rnI --exclude-dir={{node_modules,__pycache__,.git}} \"{pattern}\" {target_dir / directory}"
         
         result = subprocess.run(cmd, shell=True, capture_output=True, text=True, timeout=15)
         output = result.stdout
         
         if not output:
-            return f"Aucun résultat trouvé pour '{pattern}'."
+            return f"No results found for '{pattern}'."
             
         if len(output) > 3000:
-            output = output[:3000] + "\n... [Trop de résultats, tronqué]"
+            output = output[:3000] + "\n... [Too many results, truncated]"
             
         return output
     except Exception as e:
-        return f"Erreur lors du grep : {str(e)}"
+        return f"Error during grep: {str(e)}"
