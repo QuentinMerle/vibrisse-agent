@@ -1,9 +1,10 @@
+import warnings
+# SILENCE ONLY SPECIFIC TECH DEPRECATIONS
+warnings.filterwarnings("ignore", message=".*allowed_objects.*")
+warnings.filterwarnings("ignore", message=".*Experimental.*")
+
 import logging
 import asyncio
-import warnings
-
-# Silencer les warnings de dépréciation avant tout autre import
-warnings.filterwarnings("ignore", message=".*allowed_objects.*")
 
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request
@@ -30,14 +31,19 @@ class SensitiveFilter(logging.Filter):
 # Silencer les bibliothèques trop verbeuses
 logging.getLogger("httpx").setLevel(logging.WARNING)
 logging.getLogger("httpcore").setLevel(logging.WARNING)
+logging.getLogger("watchfiles").setLevel(logging.WARNING)
 
-# Filtrer les logs d'accès uvicorn pour les routes techniques (health, etc.)
+# Filtrer les logs d'accès uvicorn pour les routes techniques et les assets
 class NoNoiseFilter(logging.Filter):
     def filter(self, record: logging.LogRecord) -> bool:
         msg = record.getMessage()
-        # On cache les pollings incessants
-        noise_paths = ["/api/system/health", "/api/system/config", "/api/threads/"]
-        return not any(path in msg for path in noise_paths)
+        # On cache les pollings incessants et les fichiers statiques
+        noise_patterns = [
+            "/api/system/health", "/api/system/config", "/api/system/models",
+            "/api/threads/", "/assets/", "/fonts/", ".woff2", ".js", ".css", 
+            "/vite.svg", "/favicon.ico", "GET / HTTP/1.1"
+        ]
+        return not any(pattern in msg for pattern in noise_patterns)
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

@@ -71,6 +71,8 @@ class Settings(BaseSettings):
 
     # Cloud Providers
     GOOGLE_API_KEY: Optional[str] = None
+    GROQ_API_KEY: Optional[str] = None
+    OPENROUTER_API_KEY: Optional[str] = None
     
     model_config = SettingsConfigDict(
         # Priorité : .env.native > .env

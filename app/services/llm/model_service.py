@@ -100,10 +100,32 @@ async def fetch_model_capabilities(provider: str, model_name: str) -> Dict[str, 
     return caps
 
 async def fetch_model_context_limit(model_name: str) -> int:
-    """Interroge Ollama pour connaître la limite réelle de contexte d'un modèle."""
+    """Retourne la limite de contexte d'un modèle (en caractères)."""
     if model_name in MODEL_LIMITS_CACHE:
         return MODEL_LIMITS_CACHE[model_name]
     
+    # 0. Hardcoded limits pour les modèles Cloud connus (en tokens * 4 pour les caractères)
+    cloud_limits = {
+        "llama-3.3-70b-versatile": 128000 * 4,
+        "llama-3.1-70b-versatile": 128000 * 4,
+        "llama-3.1-8b-instant": 128000 * 4,
+        "mixtral-8x7b-32768": 32768 * 4,
+        "gemini-1.5-flash": 1000000 * 4,
+        "gemini-1.5-pro": 2000000 * 4,
+        "gpt-4o": 128000 * 4,
+        "gpt-4o-mini": 128000 * 4,
+        "claude-3-5-sonnet": 200000 * 4,
+    }
+    
+    # Mapping partiel pour OpenRouter/Groq
+    m_lower = model_name.lower()
+    if "llama-3.3-70b" in m_lower: return 128000 * 4
+    if "llama-3.1" in m_lower: return 128000 * 4
+    if "mixtral-8x7b" in m_lower: return 32768 * 4
+    if "gemini-1.5" in m_lower: return 1000000 * 4
+    if "gpt-4o" in m_lower: return 128000 * 4
+    if "claude-3" in m_lower: return 200000 * 4
+
     default_limit = 32000 # Fallback si non trouvé
     try:
         async with httpx.AsyncClient() as client:

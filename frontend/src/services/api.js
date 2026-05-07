@@ -116,7 +116,11 @@ export const api = {
     if (apiKey) headers["X-Vibrisse-Api-Key"] = apiKey;
     
     // Le modèle dans le payload (choix manuel) est prioritaire sur le modèle des settings
-    const finalModel = payload.model || llmSettings.model;
+    // SAUF si on est sur un provider cloud, où on veut le modèle configuré spécifiquement
+    const finalModel = (llmSettings.provider && llmSettings.provider !== 'ollama') 
+      ? (llmSettings.model || payload.model)
+      : (payload.model || llmSettings.model);
+
     if (finalModel) headers["X-Vibrisse-Model"] = finalModel;
 
     return fetch(`${API_ROOT}/chat/`, {

@@ -39,9 +39,9 @@ ENV/
 frontend/.env
 frontend/.env.local
 
-# --- Frontend ---
+# Frontend
 frontend/node_modules/
-frontend/dist/
+# frontend/dist/  <-- Included for swift installation
 frontend/build/
 frontend/.cache/
 
@@ -77,7 +77,8 @@ data/*.json
 docs/*
 !docs/**/
 !docs/**/*.md
-docs/technical/vibrisse-lite.md
+# Exclusion spécifique
+docs/formation/
 tests/
 archives/
 logs/

@@ -109,6 +109,18 @@ async def get_config():
 from pydantic import BaseModel
 from pathlib import Path
 
+class ModelUpdateRequest(BaseModel):
+    model: str
+    provider: Optional[str] = "ollama"
+
+@router.post("/config/model")
+async def update_global_model(req: ModelUpdateRequest):
+    """Change le modèle par défaut de l'agent."""
+    settings.LLM_MODEL = req.model
+    if req.provider:
+        settings.LLM_PROVIDER = req.provider
+    return {"status": "success", "new_model": settings.LLM_MODEL, "provider": settings.LLM_PROVIDER}
+
 class TargetPathRequest(BaseModel):
     path: str
 

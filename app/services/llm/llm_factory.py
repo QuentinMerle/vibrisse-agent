@@ -55,6 +55,12 @@ def get_llm(
             raise ValueError("Clé API Ollama Cloud manquante.")
         
         logger.info(f"--- 🧠 LLM FACTORY : Instanciation OLLAMA CLOUD ({model_name}) ---")
+        
+        # Robustesse : si le modèle ressemble à un tag local Ollama (sans suffixe :cloud ou autre connu)
+        if ":" in model_name and not model_name.endswith(":cloud"):
+             logger.warning(f"Modèle '{model_name}' semble être un tag local. Fallback sur llama3.2-vision:cloud pour Ollama Cloud.")
+             model_name = "llama3.2-vision:cloud"
+
         return ChatOpenAI(
             model=model_name,
             base_url="https://api.ollama.com/v1",
@@ -72,6 +78,13 @@ def get_llm(
             raise ValueError("Clé API Groq manquante. Veuillez la configurer dans les réglages.")
         
         logger.info(f"--- 🧠 LLM FACTORY : Instanciation GROQ ({model_name}) ---")
+        
+        # Robustesse : si le modèle ressemble à un tag Ollama (ex: gemma4:e4b), 
+        # on évite d'envoyer ça à Groq qui va 404.
+        if ":" in model_name:
+            logger.warning(f"Modèle '{model_name}' semble être un tag Ollama. Fallback sur llama-3.3-70b-versatile pour Groq.")
+            model_name = "llama-3.3-70b-versatile"
+
         return ChatGroq(
             model=model_name,
             api_key=key,
@@ -86,6 +99,12 @@ def get_llm(
             raise ValueError("Clé API OpenRouter manquante.")
         
         logger.info(f"--- 🧠 LLM FACTORY : Instanciation OPENROUTER ({model_name}) ---")
+        
+        # Robustesse : si le modèle ressemble à un tag Ollama sans provider
+        if ":" in model_name and "/" not in model_name:
+            logger.warning(f"Modèle '{model_name}' semble être un tag Ollama. Fallback sur llama-3.1-8b pour OpenRouter.")
+            model_name = "meta-llama/llama-3.1-8b-instruct"
+
         return ChatOpenAI(
             model=model_name,
             base_url="https://openrouter.ai/api/v1",

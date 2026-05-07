@@ -117,7 +117,7 @@ function App() {
     sendMessage({
       content: input,
       image,
-      model: selectedModel,
+      model: settings.provider === 'ollama' ? selectedModel : null,
       overrideContent
     });
     if (!overrideContent) setInput("");
