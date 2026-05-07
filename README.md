@@ -21,6 +21,7 @@ Built on the conviction that **"Small models + Great tools = Professional perfor
 - **Studio Interface**: An immersive "Obsidian Glass" web UI with real-time context monitoring.
 - **Integrated Vision**: Visual context injection for UI analysis and multimodal reasoning.
 - **Live Thought Streaming**: Real-time transparency of the agent's internal reasoning process.
+- **Sovereign Evaluation**: Automated response quality scoring via RAGAS metrics (Faithfulness, Relevancy) running 100% locally.
 - **Sovereign First**: Optimized for local-first intelligence via Ollama. No data leaves your machine by default.
 
 ---

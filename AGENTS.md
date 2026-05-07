@@ -14,6 +14,7 @@ Vibrisse empowers small local models (7B-8B) with high-precision tools and a rob
 - **[Architecture & Structure](docs/technical/architecture.md)**: Folders, DDD structure, tech stack.
 - **[Hybrid Retrieval & RAG](docs/technical/retrieval.md)**: Surgical Grep, ChromaDB, Pruning logic.
 - **[Reasoning & Agents](docs/technical/reasoning.md)**: Supervisor/Worker, Skills, Robust Parsing.
+- **[Observability & Evaluation](app/services/core/evaluation_service.py)**: Sovereign RAGAS scoring (Faithfulness, Relevancy).
 - **[Smart Personalization](app/services/core/system_discovery.py)**: Hardware discovery, Persona-based model strategy.
 
 ---
