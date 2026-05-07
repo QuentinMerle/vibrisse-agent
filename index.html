@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vibrisse Agent | The AI Assistant That Understands Your Code</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet">
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        :root {
+            --primary: #7b39ed;
+            --primary-glow: rgba(123, 57, 237, 0.4);
+            --bg-dark: #09090b;
+            --glass-bg: rgba(18, 18, 20, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --text-main: #e4e4e7;
+            --text-muted: #a1a1aa;
+            --font-display: 'Space Grotesk', sans-serif;
+            --font-body: 'Inter', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: var(--font-body);
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* --- BACKGROUND EFFECTS --- */
+        .ambient-glow {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+            background: 
+                radial-gradient(circle at 10% 10%, rgba(123, 57, 237, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 90% 90%, rgba(123, 57, 237, 0.05) 0%, transparent 40%);
+        }
+
+        /* --- LAYOUT --- */
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        header {
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .logo {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: var(--text-main);
+            letter-spacing: -0.02em;
+        }
+
+        .logo span {
+            color: var(--primary);
+            text-shadow: 0 0 10px var(--primary-glow);
+        }
+
+        nav {
+            display: flex;
+            gap: 32px;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        nav a:hover {
+            color: var(--text-main);
+        }
+
+        /* --- HERO --- */
+        .hero {
+            padding: 120px 0 80px;
+            text-align: center;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px;
+            background: rgba(123, 57, 237, 0.1);
+            border: 1px solid rgba(123, 57, 237, 0.2);
+            border-radius: 100px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--primary);
+            margin-bottom: 24px;
+            font-family: var(--font-mono);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        h1 {
+            font-family: var(--font-display);
+            font-size: 4rem;
+            line-height: 1.1;
+            margin-bottom: 24px;
+            letter-spacing: -0.03em;
+            background: linear-gradient(180deg, #fff 0%, #a1a1aa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto 48px;
+        }
+
+        /* --- INSTALL COMMAND --- */
+        .install-box {
+            background: #121214;
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 16px 24px;
+            display: inline-flex;
+            align-items: center;
+            gap: 16px;
+            font-family: var(--font-mono);
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+        }
+
+        .install-box:hover {
+            border-color: var(--primary);
+            box-shadow: 0 0 20px rgba(123, 57, 237, 0.2);
+        }
+
+        .install-box .prefix {
+            color: var(--primary);
+            opacity: 0.8;
+        }
+
+        .copy-icon {
+            color: var(--text-muted);
+            width: 18px;
+            height: 18px;
+        }
+
+        .tooltip {
+            position: absolute;
+            bottom: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--primary);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        /* --- FEATURES --- */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            padding: 80px 0;
+        }
+
+        .card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 32px;
+            backdrop-filter: blur(12px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card:hover {
+            border-color: rgba(123, 57, 237, 0.3);
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+
+        .card-icon {
+            width: 48px;
+            height: 48px;
+            background: rgba(123, 57, 237, 0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            margin-bottom: 24px;
+        }
+
+        .card h3 {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            margin-bottom: 12px;
+        }
+
+        .card p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        /* --- CTA --- */
+        .cta-section {
+            padding: 100px 0;
+            text-align: center;
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--primary);
+            color: white;
+            padding: 14px 28px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 1.1rem;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 20px var(--primary-glow);
+        }
+
+        .btn-primary:hover {
+            filter: brightness(1.1);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px var(--primary-glow);
+        }
+
+        footer {
+            padding: 48px 0;
+            border-top: 1px solid var(--glass-border);
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        footer span {
+            color: var(--primary);
+        }
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 768px) {
+            h1 { font-size: 2.5rem; }
+            .hero { padding: 80px 0 40px; }
+            nav { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="ambient-glow"></div>
+
+    <header>
+        <div class="container" style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
+            <a href="#" class="logo">
+                <i data-lucide="cat"></i>
+                Vibrisse <span>Agent</span>
+            </a>
+            <nav>
+                <a href="https://github.com/QuentinMerle/vibrisse-agent">GitHub</a>
+                <a href="#features">Features</a>
+                <a href="https://github.com/QuentinMerle/vibrisse-agent/blob/main/AGENTS.md">Architecture</a>
+            </nav>
+            <a href="https://github.com/QuentinMerle/vibrisse-agent" class="btn-primary" style="padding: 8px 16px; font-size: 0.9rem;">
+                Star on GitHub
+            </a>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="container">
+            <div class="badge">Sovereign • Technical • Precision</div>
+            <h1>The AI Assistant That<br>Understands Your Code</h1>
+            <p>"Small models, Great tools." Vibrisse transforms your local codebase into an intelligent conversation partner with surgical precision.</p>
+            
+            <div class="install-box" onclick="copyInstall()">
+                <span class="prefix">$</span>
+                <span id="install-cmd">curl -sSL https://agent.vibrisse-studio.dev/install.sh | bash</span>
+                <i data-lucide="copy" class="copy-icon"></i>
+                <div class="tooltip" id="tooltip">Copied!</div>
+            </div>
+        </div>
+    </section>
+
+    <section class="container" id="features">
+        <div class="features">
+            <div class="card">
+                <div class="card-icon"><i data-lucide="layers"></i></div>
+                <h3>Triple-Layer RAG</h3>
+                <p>Combines Semantic search, BM25, and Surgical Grep (ripgrep) for 100% precision on technical terms and exact code locations.</p>
+            </div>
+            <div class="card">
+                <div class="card-icon"><i data-lucide="git-branch"></i></div>
+                <h3>Supervisor/Worker</h3>
+                <p>A multi-agent architecture where specialized experts (Coder, Architect, Writer) collaborate to solve complex reasoning tasks.</p>
+            </div>
+            <div class="card">
+                <div class="card-icon"><i data-lucide="shield-check"></i></div>
+                <h3>100% Sovereign</h3>
+                <p>Runs locally via Ollama. Your code never leaves your machine. Full support for Groq and OpenRouter for hybrid performance.</p>
+            </div>
+            <div class="card">
+                <div class="card-icon"><i data-lucide="eye"></i></div>
+                <h3>Integrated Vision</h3>
+                <p>Multimodal awareness. Inject visual context (screenshots, UI mockups) directly into the agent's reasoning flow.</p>
+            </div>
+            <div class="card">
+                <div class="card-icon"><i data-lucide="terminal"></i></div>
+                <h3>Studio Interface</h3>
+                <p>An immersive "Obsidian Glass" web studio with real-time context monitoring and live thought streaming.</p>
+            </div>
+            <div class="card">
+                <div class="card-icon"><i data-lucide="zap"></i></div>
+                <h3>Swift Onboarding</h3>
+                <p>Hardware-aware setup that recommends the best models for your machine. Be up and running in under 2 minutes.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta-section">
+        <div class="container">
+            <h2 style="font-family: var(--font-display); font-size: 2.5rem; margin-bottom: 32px;">Ready to elevate your workflow?</h2>
+            <p style="color: var(--text-muted); margin-bottom: 40px; max-width: 600px; margin-left: auto; margin-right: auto;">
+                Join the developers who build faster and smarter with local sovereign intelligence.
+            </p>
+            <a href="https://github.com/QuentinMerle/vibrisse-agent" class="btn-primary">
+                View Source on GitHub
+                <i data-lucide="arrow-right"></i>
+            </a>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>Vibrisse Agent © 2026. Made with <span>♥</span> for the Open Source community.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize icons
+        lucide.createIcons();
+
+        // Copy functionality
+        function copyInstall() {
+            const text = document.getElementById('install-cmd').innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                const tooltip = document.getElementById('tooltip');
+                tooltip.style.opacity = '1';
+                setTimeout(() => {
+                    tooltip.style.opacity = '0';
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>
