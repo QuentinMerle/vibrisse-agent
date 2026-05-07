@@ -72,8 +72,9 @@ data/eval_dataset.json
 
 # --- Misc ---
 docs/*
-!docs/TEST_SCENARIOS.md
-!docs/assets/
+!docs/**/
+!docs/**/*.md
+docs/technical/vibrisse-lite.md
 tests/
 archives/
 logs/

@@ -5,13 +5,13 @@ import './VibrisseAvatar.css';
  * VibrisseAvatar - Version SVG Officielle
  * Utilise le tracé exact fourni par l'utilisateur.
  */
-export default function VibrisseAvatar({ size = 24, containerSize, isThinking = false }) {
+export default function VibrisseAvatar({ size = 24, containerSize, isThinking = false, variant = 'default' }) {
   // Le ratio 1.6 est conservé pour le carré violet
   const finalContainerSize = containerSize || (size * 1.5);
   
   return (
     <div 
-      className={`vibrisse-avatar-container ${isThinking ? 'thinking' : ''}`}
+      className={`vibrisse-avatar-container ${isThinking ? 'thinking' : ''} ${variant}`}
       style={{ 
         width: `${finalContainerSize}px`, 
         height: `${finalContainerSize}px`

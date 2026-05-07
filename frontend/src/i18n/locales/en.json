@@ -150,5 +150,36 @@
     "warning_text": "⚠️ Warning: Executing terminal commands can be dangerous. Always verify the command before authorizing it.",
     "cancel_btn": "Cancel",
     "approve_btn": "Authorize Execution"
+  },
+  "onboarding": {
+    "step_of": "Step {{current}} of {{total}}",
+    "welcome_title": "Welcome to Vibrisse AI",
+    "welcome_subtitle": "Small models, Great tools. Let's configure your surgical engineering studio.",
+    "welcome_btn": "Let's Begin",
+    "hw_title": "Hardware Discovery",
+    "hw_subtitle": "Analyzing your machine to optimize performance...",
+    "hw_ram": "RAM",
+    "hw_gpu": "GPU / VRAM",
+    "tier_detected": "Tier Detected:",
+    "persona_title": "Choose Your Persona",
+    "persona_subtitle": "Select your primary role. We'll pre-configure the best models for you.",
+    "workspace_title": "Workspace Setup",
+    "workspace_subtitle": "Where is your project located? We'll start indexing it immediately.",
+    "path_placeholder": "/Users/name/Documents/my-project",
+    "browse_btn": "Browse",
+    "final_notice": "Note: Large projects might take a few minutes to index. You can track progress in the sidebar.",
+    "finish_btn": "Finish Setup",
+    "initializing": "Initializing...",
+    "back": "Back",
+    "next": "Next"
+  },
+  "system_tab": {
+    "title": "System & Hardware",
+    "ram_label": "System Memory (RAM)",
+    "gpu_label": "GPU Acceleration (VRAM)",
+    "diagnostic": "Performance Diagnostic",
+    "tier_desc": "Vibrisse detected a {{tier}} configuration. Your models are currently optimized for maximum responsiveness.",
+    "reset_btn": "Re-run Onboarding Wizard",
+    "reset_confirm": "Are you sure you want to re-run the onboarding wizard?"
   }
 }

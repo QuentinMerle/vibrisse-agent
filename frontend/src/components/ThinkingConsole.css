@@ -80,9 +80,66 @@
   margin-bottom: 12px;
 }
 
+.console-text h1, .console-text h2, .console-text h3, .console-text h4 {
+  color: var(--primary);
+  margin-top: 16px;
+  margin-bottom: 8px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.8rem;
+}
+
+.console-text h1::before, .console-text h2::before {
+  content: "> ";
+  opacity: 0.5;
+}
+
 .console-text strong {
   color: var(--primary);
   opacity: 1;
+}
+
+.console-text ul, .console-text ol {
+  margin-bottom: 12px;
+  padding-left: 20px;
+  list-style: none;
+}
+
+.console-text li {
+  position: relative;
+  margin-bottom: 4px;
+}
+
+/* Puces personnalisées pour les listes non-ordonnées */
+.console-text ul > li::before {
+  content: "-";
+  position: absolute;
+  left: -15px;
+  color: var(--primary);
+  opacity: 0.7;
+}
+
+/* Numérotation pour les listes ordonnées */
+.console-text ol {
+  counter-reset: console-counter;
+}
+
+.console-text ol > li::before {
+  counter-increment: console-counter;
+  content: counter(console-counter) ".";
+  position: absolute;
+  left: -20px;
+  color: var(--primary);
+  opacity: 0.7;
+  font-size: 0.7rem;
+}
+
+/* Support de l'imbrication (ul > li > ul) */
+.console-text li > ul, .console-text li > ol {
+  margin-top: 4px;
+  margin-bottom: 4px;
+  padding-left: 15px;
 }
 
 .scan-line {

@@ -1,19 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { X, Cpu, ShieldCheck, Plug, Globe } from 'lucide-react';
+import { X, Cpu, ShieldCheck, Plug, Globe, Zap } from 'lucide-react';
 import { api } from '../services/api';
 import LLMTab from './settings/LLMTab';
 import MCPTab from './settings/MCPTab';
+import SystemTab from './settings/SystemTab';
 import './SettingsModal.css';
 
-const SettingsModal = ({ isOpen, onClose, settings, onSave }) => {
+const SettingsModal = ({ isOpen, onClose, settings, onSave, onResetOnboarding }) => {
   const { t, i18n } = useTranslation();
   const [localSettings, setLocalSettings] = useState(settings);
   const [isValidating, setIsValidating] = useState(false);
   const [validationStatus, setValidationStatus] = useState(null);
   
   // Onglets et MCP State
-  const [activeTab, setActiveTab] = useState('llm'); // 'llm' ou 'mcp'
+  const [activeTab, setActiveTab] = useState('llm'); // 'llm', 'mcp', 'general', 'system'
   const [mcpServers, setMcpServers] = useState([]);
   const [isConnectingMcp, setIsConnectingMcp] = useState(false);
   
@@ -117,6 +118,9 @@ const SettingsModal = ({ isOpen, onClose, settings, onSave }) => {
           <button className={`tab-btn ${activeTab === 'general' ? 'active' : ''}`} onClick={() => setActiveTab('general')}>
             <Globe size={14} /> {t('settings.tabs_general')}
           </button>
+          <button className={`tab-btn ${activeTab === 'system' ? 'active' : ''}`} onClick={() => setActiveTab('system')}>
+            <Zap size={14} /> System
+          </button>
         </div>
 
         <div className="modal-body" style={{ minHeight: '350px' }}>
@@ -136,6 +140,8 @@ const SettingsModal = ({ isOpen, onClose, settings, onSave }) => {
               newMcpCmd={newMcpCmd} setNewMcpCmd={setNewMcpCmd}
               newMcpArgs={newMcpArgs} setNewMcpArgs={setNewMcpArgs}
             />
+          ) : activeTab === 'system' ? (
+            <SystemTab onResetOnboarding={onResetOnboarding} />
           ) : (
             <div className="settings-tab-content">
               <div className="setting-group">

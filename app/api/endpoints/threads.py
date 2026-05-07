@@ -92,24 +92,13 @@ async def get_thread_history(request: Request, thread_id: str):
                 thoughts = msg["additional_kwargs"].get("thoughts_history", [])
                 tool_calls = msg["additional_kwargs"].get("tool_calls", [])
 
-            if role == "agent" and history and history[-1]["role"] == "agent":
-                # Fusion avec le message précédent si c'est aussi l'agent
-                prev = history[-1]
-                if content and content != prev["content"]:
-                    prev["content"] = (prev["content"] + "\n\n" + content).strip()
-                if thoughts:
-                    prev_thoughts = prev.get("thoughts_history", [])
-                    prev["thoughts_history"] = list(dict.fromkeys(prev_thoughts + thoughts))
-                if tool_calls:
-                    prev_tool_calls = prev.get("tool_calls", [])
-                    prev["tool_calls"] = prev_tool_calls + tool_calls
-            else:
-                history.append({
-                    "role": role, 
-                    "content": content,
-                    "thoughts_history": thoughts,
-                    "tool_calls": tool_calls
-                })
+            history.append({
+                "id": f"msg_{len(history)}",
+                "role": role, 
+                "content": content,
+                "thoughts_history": thoughts,
+                "tool_calls": tool_calls
+            })
                 
         return {"messages": history, "context_usage": usage}
     except Exception as e:

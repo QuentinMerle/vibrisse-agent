@@ -13,11 +13,12 @@ class SessionService:
     def _ensure_data_dir(self):
         os.makedirs(self.data_dir, exist_ok=True)
 
-    def save_session(self, project_path: str, manifest: str):
+    def save_session(self, project_path: str, manifest: str, onboarded: bool = True):
         """Sauvegarde les informations de session."""
         session_data = {
             "last_project_path": project_path,
-            "last_manifest": manifest
+            "last_manifest": manifest,
+            "onboarded": onboarded
         }
         try:
             with open(self.session_file, "w", encoding="utf-8") as f:

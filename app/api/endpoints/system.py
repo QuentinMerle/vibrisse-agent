@@ -9,8 +9,15 @@ from app.core.config import settings
 from app.services.llm.model_service import fetch_model_context_limit, get_available_models
 from app.services.core.watcher_service import watcher_service
 
+from app.services.core.system_discovery import system_discovery
+
 logger = logging.getLogger(__name__)
 router = APIRouter()
+
+@router.get("/discovery")
+async def get_system_discovery():
+    """Découvre les ressources système (RAM, VRAM, GPU)."""
+    return system_discovery.get_system_info()
 
 @router.get("/config-check")
 async def config_check():
@@ -83,9 +90,13 @@ async def get_capabilities(provider: str, model: Optional[str] = None):
 
 @router.get("/config")
 async def get_config():
+    from app.services.core.session_service import session_service
     limit = await fetch_model_context_limit(settings.clean_orchestrator_model)
+    session = session_service.load_session()
     return {
         "model": settings.clean_orchestrator_model,
+        "target_path": settings.TARGET_PROJECT_PATH,
+        "onboarded": session.get("onboarded", False),
         "context_limit": limit,
         "features": {
             "search": settings.ENABLE_WEB_SEARCH,
@@ -153,6 +164,28 @@ class LLMValidationRequest(BaseModel):
     provider: str
     model: Optional[str] = None
     apiKey: Optional[str] = None
+
+@router.post("/models/pull")
+async def pull_model(req: dict, background_tasks: BackgroundTasks):
+    """Lance le téléchargement d'un modèle Ollama en arrière-plan de manière asynchrone."""
+    model_name = req.get("model")
+    if not model_name:
+        return {"status": "error", "message": "Modèle requis"}
+    
+    async def do_pull_async():
+        try:
+            process = await asyncio.create_subprocess_exec(
+                "ollama", "pull", model_name,
+                stdout=asyncio.subprocess.DEVNULL,
+                stderr=asyncio.subprocess.DEVNULL
+            )
+            await process.wait()
+            logger.info(f"Modèle {model_name} téléchargé avec succès (async).")
+        except Exception as e:
+            logger.error(f"Échec pull async {model_name}: {e}")
+
+    background_tasks.add_task(do_pull_async)
+    return {"status": "success", "message": f"Téléchargement de {model_name} lancé."}
 
 @router.post("/validate-llm")
 async def validate_llm(req: LLMValidationRequest):
@@ -239,6 +272,30 @@ async def pick_directory():
     except Exception as e:
         logger.error(f"Error picking directory: {e}")
         return {"status": "error", "message": str(e)}
+
+@router.post("/onboarding/reset")
+async def reset_onboarding():
+    """Réinitialise le statut d'onboarding dans la session."""
+    from app.services.core.session_service import session_service
+    session = session_service.load_session()
+    session_service.save_session(
+        project_path=session.get("last_project_path", "."),
+        manifest=session.get("last_manifest", ""),
+        onboarded=False
+    )
+    return {"status": "success"}
+
+@router.post("/onboarding/complete")
+async def complete_onboarding():
+    """Marque l'onboarding comme terminé dans la session."""
+    from app.services.core.session_service import session_service
+    session = session_service.load_session()
+    session_service.save_session(
+        project_path=session.get("last_project_path", "."),
+        manifest=session.get("last_manifest", ""),
+        onboarded=True
+    )
+    return {"status": "success"}
 
 @router.post("/evaluate")
 async def evaluate_rag(data: dict):

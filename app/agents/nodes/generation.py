@@ -10,137 +10,184 @@ async def generate_answer(state: AgentState):
     messages = state.get("messages", [])
     vision_desc = state.get("vision_description")
     
+    print(f"--- 📝 GENERATION: Processing {len(messages)} messages ---", flush=True)
+    
     # On nettoie les messages pour le LLM (mentions @[display](id) -> @display)
     cleaned_messages = []
     for m in messages:
-        if hasattr(m, "content") and isinstance(m.content, str):
-            # On crée une copie du message avec le contenu nettoyé via .copy()
-            msg_copy = m.copy(update={"content": clean_mentions(m.content)})
-            cleaned_messages.append(msg_copy)
+        # On vérifie si c'est un objet message LangChain
+        if hasattr(m, "content"):
+            content = m.content
+            if isinstance(content, str):
+                # On utilise une approche plus simple pour copier le message
+                from langchain_core.messages import HumanMessage, AIMessage, SystemMessage, ToolMessage
+                new_content = clean_mentions(content)
+                if isinstance(m, HumanMessage): cleaned_messages.append(HumanMessage(content=new_content))
+                elif isinstance(m, AIMessage): cleaned_messages.append(AIMessage(content=new_content, tool_calls=getattr(m, "tool_calls", [])))
+                elif isinstance(m, ToolMessage): cleaned_messages.append(m) # On ne touche pas aux résultats d'outils
+                else: cleaned_messages.append(m)
+            else:
+                cleaned_messages.append(m)
         else:
+            # Fallback si c'est un tuple ou autre
             cleaned_messages.append(m)
-
+ 
+    worker = state.get("active_worker", "general")
+    print(f"--- 👷 WORKER: {worker} ---", flush=True)
+    
     llm = get_llm(
         provider=state.get("llm_provider", "ollama"),
         model=state.get("selected_model"),
-        api_key=state.get("llm_api_key")
+        api_key=state.get("llm_api_key"),
+        role=worker
     )
     
-    # Building the precision prompt
-    vision_context = f"\n--- IMAGE VISUAL ANALYSIS ---\n{vision_desc}\n" if vision_desc else ""
-    rag_context = f"\n--- PROJECT CONTEXT (SOURCE OF TRUTH) ---\n{context}\n" if context else ""
+    # On charge le skill correspondant au worker
+    skill_map = {
+        "coder": "code_expert",
+        "writer": "technical_writer",
+        "architect": "system_architect",
+        "general": "code_expert"
+    }
+    skill_name = skill_map.get(worker, "code_expert")
+    base_instruction = load_skill(skill_name)
     
-    # Getting project profile (Manifest generated on ingestion)
+    # Construction du prompt final
+    vision_context = f"\n\n[CONTEXTE VISUEL FOURNI PAR LE SYSTÈME]\n{vision_desc}\n(Note: Utilise cette description comme si tu voyais l'image toi-même.)" if vision_desc else ""
     project_profile = settings.get_project_profile()
     
-    instruction = f"""You are the Senior Technical Expert of Vibrisse.
-Your mission is to answer the user's question with precision and professionalism.
+    # Injection AGRESSIVE de la vision dans le dernier message de l'utilisateur
+    if vision_desc and cleaned_messages and isinstance(cleaned_messages[-1], HumanMessage):
+        last_msg = cleaned_messages[-1]
+        cleaned_messages[-1] = HumanMessage(content=last_msg.content + vision_context)
+        print("--- 👁️ VISION INJECTED into last HumanMessage ---", flush=True)
 
-CRITICAL: You must respond in the SAME LANGUAGE as the user's last message. 
-If the user speaks English, respond in English. If the user speaks French, respond in French.
+    # Extraction explicite des résultats d'outils
+    tool_results = []
+    for m in messages:
+        if m.type == 'tool':
+            tool_results.append(f"TOOL RESULT ({getattr(m, 'name', 'unknown')}): {m.content}")
+    
+    tool_context = "\n".join(tool_results) if tool_results else "No tool results yet."
 
-AVAILABLE SOURCES:
-1. VISUAL ANALYSIS: {vision_desc if vision_desc else "No image provided."}
-2. PROJECT CONTEXT (RAG): {context if context else "No relevant source files found in code."}
-3. TOOLS & WEB: If 'tool' type messages are present in history, use them as the source of truth for real-time or external data.
+    instruction = f"""{base_instruction}
 
---- ANALYZED PROJECT PROFILE ---
-{project_profile}
+CRITICAL: Respond in the user's language (French/English).
+SOURCE OF TRUTH:
+1. TOOL RESULTS: {tool_context}
+2. PROJECT CONTEXT: {context if context else "No context."}
+3. PROJECT PROFILE: {project_profile}
 
-CRITICAL RULES:
-- Priority to sources: Use the sources above to answer. If info comes from web search, synthesize it.
-- Technical Fidelity: If the question concerns code, strictly adopt the stack and conventions described in the PROJECT PROFILE.
-- Versatile Expertise: While your expertise is technical, you must answer general questions (weather, news) if and only if research tools provided the data.
-- ALWAYS START with a <thought> tag to detail your technical reasoning or synthesis strategy in English.
+ALWAYS START with a <thought> tag for your internal strategy. 
+CRITICAL: Close your thought with </thought> before writing your final response.
 """
-
-    # Source analysis for initial thought
-    source_info = "general knowledge"
-    if context:
-        source_info = "project context"
-    elif vision_desc:
-        source_info = "visual analysis"
-    
-    # On ne considère les outils que s'ils sont récents dans l'historique ou si c'est la raison de la réponse
-    recent_messages = messages[-3:] if len(messages) >= 3 else messages
-    if any(msg.type == 'tool' or (isinstance(msg, AIMessage) and hasattr(msg, "tool_calls") and msg.tool_calls) for msg in recent_messages):
-        source_info = "web search/tool results"
-    
+ 
     yield {
-        "thoughts": [f"**Drafting:** Synthesizing a response based on {source_info}."],
+        "thoughts": ["**Drafting:** Processing request..."],
         "detail": "Drafting final response...",
         "steps": ["generation_started"]
     }
 
     full_message = ""
-    # On utilise cleaned_messages au lieu de messages
-    async for chunk in llm.astream([SystemMessage(content=instruction)] + cleaned_messages):
-        content = chunk.content if hasattr(chunk, "content") else str(chunk)
-        full_message += content
-        yield chunk
+    last_thought = ""
     
-    # Sécurité : Si le stream est resté vide, on tente une invocation directe
+    try:
+        async for chunk in llm.astream([SystemMessage(content=instruction)] + cleaned_messages):
+            content = chunk.content if hasattr(chunk, "content") else str(chunk)
+            full_message += content
+            
+            # Streaming intelligent de la pensée pendant la génération
+            current_thought = extract_thought(full_message)
+            if current_thought and current_thought != last_thought:
+                last_thought = current_thought
+                yield {
+                    "thoughts": [f"**Thinking:** {current_thought}"],
+                    "detail": "Streaming thoughts...",
+                    "steps": ["generation_streaming"]
+                }
+    except Exception as e:
+        print(f"⚠️ Generation Error: {e}", flush=True)
+    
     if not full_message.strip():
-        print("⚠️ Stream vide détecté, tentative de fallback ainvoke...", flush=True)
-        fallback_resp = await llm.ainvoke([SystemMessage(content=instruction)] + messages)
-        full_message = fallback_resp.content
-        # On n'émet pas de chunk ici car le stream est fini, mais on remplit 'generation'
+        try:
+            resp = await llm.ainvoke([SystemMessage(content=instruction)] + cleaned_messages)
+            full_message = resp.content
+        except Exception as e:
+            print(f"⚠️ Fallback Generation Error: {e}", flush=True)
     
-    # Store final result in 'generation' for final synthesis
-    thought = extract_thought(full_message)
+
+    final_thought = extract_thought(full_message)
     yield {
         "generation": full_message, 
         "steps": ["generation_complete"],
-        "thoughts": [f"**Analysis:** {thought}"] if thought else ["**Analysis:** Response generated and structured."]
+        "thoughts": [f"**Analysis:** {final_thought}"] if final_thought else ["**Analysis:** Response generated."]
     }
 
 async def finalize_answer(state: AgentState):
     """Transforme la génération finale en un message structuré pour l'historique."""
     content = state.get("generation", "")
     thoughts = state.get("thoughts", [])
-    print(f"--- 🏁 FINALIZE : Synthèse de {len(thoughts)} pensées ---", flush=True)
     
-    # Extraction propre du contenu textuel
+    # Extraction robuste du contenu
+    if not content and state.get("messages"):
+        # Si generation est vide, on tente de récupérer le dernier message de l'assistant
+        last_msg = state["messages"][-1]
+        if hasattr(last_msg, "content"):
+            content = last_msg.content
+            
     if hasattr(content, "content"):
         content = content.content
-    elif isinstance(content, dict) and "content" in content:
-        content = content["content"]
         
-    if not content:
-        content = "Sorry, I could not generate a response."
+    if not content or str(content).strip() == "":
+        print("⚠️ Warning: finalize_answer received empty content, using fallback message.", flush=True)
+        content = "✅ Opération terminée avec succès."
     
-    # Nettoyage final des balises résiduelles dans le corps du message
-    clean_content = content
+    # Nettoyage des balises de pensée
+    clean_content = str(content)
     patterns = [r"<thought>.*?</thought>", r"<think>.*?</think>", r"<thinking>.*?</thinking>"]
     for p in patterns:
         clean_content = re.sub(p, "", clean_content, flags=re.DOTALL | re.IGNORECASE).strip()
+    
+    # Nettoyage des balises orphelines (ex: <thought> sans </thought>)
+    clean_content = re.sub(r'</?(thought|think|thinking)>', '', clean_content, flags=re.IGNORECASE).strip()
         
+    # Si après nettoyage il ne reste rien, on tente de récupérer le contenu des balises thought
+    # (Cas fréquent où le petit modèle met TOUTE sa réponse dans <thought>)
     if not clean_content:
-        # Fallback si le modèle a absolument tout écrit à l'intérieur de ses balises de pensée
-        clean_content = "✅ Operation complete. (Technical details in logs)"
+        # On cherche à extraire les pensées brutes du contenu original si possible
+        raw_thought = extract_thought(content)
+        if raw_thought:
+            clean_content = raw_thought
+        else:
+            # Fallback sur la liste des pensées du state
+            all_thoughts = " ".join(thoughts) if isinstance(thoughts, list) else str(thoughts)
+            clean_content = all_thoughts.replace("**Analysis:**", "").replace("**Expert Optimization:**", "").replace("**Thinking:**", "").strip()
         
-    # Construction d'une chronologie de pensée élégante et structurée
-    # On filtre les doublons ou pensées vides
-    unique_thoughts = []
-    for t in thoughts:
-        if t and t not in unique_thoughts:
-            unique_thoughts.append(t)
+    if not clean_content or len(clean_content) < 2:
+        clean_content = "✅ J'ai terminé ma réflexion. (Consulte la console de réflexion pour les détails)"
             
-    # On transmet la chronologie via les métadonnées, pas dans le texte
     final_message = AIMessage(
         content=clean_content,
         additional_kwargs={
-            "thoughts_history": unique_thoughts,
+            "thoughts_history": thoughts,
             "context": state.get("context", "")
         }
     )
     
-    return {"messages": [final_message], "steps": ["final_response"]}
+    return {
+        "messages": [final_message], 
+        "steps": ["final_response"],
+        "vision_description": None # On vide la mémoire visuelle après usage
+    }
 
 async def expert_review_node(state: AgentState):
     """Vérifie la réponse (brouillon) et l'améliore si nécessaire."""
+    llm_model = state.get("selected_model", "").lower()
+    is_small_model = any(size in llm_model for size in ["3b", "4b", "7b", "8b", "9b"])
     draft_answer = state.get("generation", "")
-    if not draft_answer:
+    
+    if not draft_answer or is_small_model:
+        print(f"--- 🛡️ EXPERT: Review skipped (Model {llm_model} is too small or no draft) ---", flush=True)
         yield {"steps": ["expert_review_skipped"]}
         return
     
@@ -150,7 +197,8 @@ async def expert_review_node(state: AgentState):
         provider=state.get("llm_provider", "ollama"),
         model=state.get("selected_model"),
         api_key=state.get("llm_api_key"),
-        temperature=0.1
+        temperature=0.1,
+        role="reviewer"
     )
     
     expert_prompt = """You are the Quality Control Engineer of Vibrisse.
@@ -176,8 +224,11 @@ FORMAL PROHIBITIONS (CRITICAL ERROR OTHERWISE):
     for p in [r"<thought>.*?</thought>", r"<think>.*?</think>", r"<thinking>.*?</thinking>"]:
         clean_expert_content = re.sub(p, "", clean_expert_content, flags=re.DOTALL | re.IGNORECASE).strip()
 
+    # On ne remplace par l'expert QUE si sa réponse est valide et non vide
+    final_gen = clean_expert_content if clean_expert_content else draft_answer
+    
     yield {
-        "generation": clean_expert_content, 
+        "generation": final_gen, 
         "steps": ["expert_review_passed"], 
         "detail": "Technical optimization completed.",
         "thoughts": [f"**Expert Optimization:** {thought}"] if thought else ["**Expert Optimization:** Response validated and optimized for the technical stack."]

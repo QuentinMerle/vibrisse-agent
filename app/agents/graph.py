@@ -147,10 +147,8 @@ workflow.add_edge("safe_tools", "tool_agent_node")
 workflow.add_edge("sensitive_tools", "tool_agent_node")
 
 # Routage final
-def final_routing(state: AgentState):
-    return "finalize_answer"
-
-workflow.add_edge("generate_answer", "finalize_answer")
+workflow.add_edge("generate_answer", "expert_review_node")
+workflow.add_edge("expert_review_node", "finalize_answer")
 workflow.add_edge("finalize_answer", END)
 
 def get_checkpointer():

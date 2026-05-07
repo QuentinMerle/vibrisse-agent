@@ -1,3 +1,4 @@
+import re
 from typing import List, Any
 from langchain_core.messages import SystemMessage, HumanMessage
 from app.agents.state import AgentState
@@ -40,6 +41,19 @@ async def rerank_documents(query: str, docs: List[Any], state: AgentState) -> Li
         print(f"⚠️ Reranking failed: {e}")
         return docs[:5] # Fallback sécurité
 
+def prune_content(content: str) -> str:
+    """Réduit le bruit dans le code source (espaces excessifs, headers répétitifs)."""
+    # 1. Supprime les headers de fichiers trop longs (licences, etc. - heuristique simple)
+    lines = content.split('\n')
+    if len(lines) > 20 and (lines[0].startswith('#') or lines[0].startswith('/*')):
+        # Si les 10 premières lignes sont des commentaires, on peut suspecter un header de licence
+        if all(l.strip().startswith(('#', '*', '/')) or not l.strip() for l in lines[:10]):
+            content = '\n'.join(lines[10:])
+    
+    # 2. Réduire les suites de lignes vides (max 1 ligne vide)
+    content = re.sub(r'\n\s*\n\s*\n', '\n\n', content)
+    return content.strip()
+
 async def retrieve_code(state: AgentState):
     question = state.get("question", "")
     vision_desc = state.get("vision_description")
@@ -53,18 +67,18 @@ async def retrieve_code(state: AgentState):
         yield {"detail": f"Recherche sémantique : '{search_query[:60]}...' dans le code source", "steps": ["retrieving_code"]}
         
         from app.services.rag.vs_instance import vs
-        # 1. Récupération large
+        # 1. Récupération large (Hybrid: Grep + Semantic)
         docs = await vs.search(search_query)
         
         # 2. Re-ranking moins agressif pour garder du contexte
         if len(docs) > 8:
-            print(f"--- 🎯 RE-RANKING : Filtrage de {len(docs)} documents ---", flush=True)
             docs = await rerank_documents(question, docs, state)
             
         context = ""
         for doc in docs:
             source = doc.metadata.get("source", "Inconnu")
-            context += f"\n--- FICHIER: {source} ---\n{doc.page_content}\n"
+            clean_body = prune_content(doc.page_content)
+            context += f"\n--- FICHIER: {source} ---\n{clean_body}\n"
         
         if not context.strip():
             context = f"Note: Recherche RAG infructueuse pour '{search_query}'. Voici le manifeste global :\n{settings.PROJECT_MANIFEST}"

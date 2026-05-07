@@ -1,5 +1,10 @@
 import logging
 import asyncio
+import warnings
+
+# Silencer les warnings de dépréciation avant tout autre import
+warnings.filterwarnings("ignore", message=".*allowed_objects.*")
+
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware

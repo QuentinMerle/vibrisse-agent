@@ -11,6 +11,7 @@ import { useSettings } from './hooks/useSettings';
 import { useChatScroll } from './hooks/useChatScroll';
 import SettingsModal from './components/SettingsModal';
 import ConfirmModal from './components/layout/ConfirmModal';
+import OnboardingWizard from './components/onboarding/OnboardingWizard';
 import { processImageFile } from './utils/fileUtils';
 import './App.css';
 
@@ -66,6 +67,7 @@ function App() {
   const [image, setImage] = useState(null);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(localStorage.getItem("vibrisse_sidebar_collapsed") === "true");
   const [confirmModal, setConfirmModal] = useState({ isOpen: false, threadId: null });
+  const [resetOnboardingConfirm, setResetOnboardingConfirm] = useState({ isOpen: false });
   
   const fileInputRef = useRef(null);
   const inputRef = useRef(null);
@@ -214,15 +216,44 @@ function App() {
         onClose={() => setIsSettingsOpen(false)} 
         settings={settings}
         onSave={updateSettings}
+        onResetOnboarding={() => setResetOnboardingConfirm({ isOpen: true })}
       />
 
       <ConfirmModal 
         isOpen={confirmModal.isOpen}
-        title="Supprimer la session"
-        message="Êtes-vous sûr de vouloir supprimer définitivement cette conversation ? Cette action est irréversible."
-        confirmText="Supprimer"
+        title={t('sidebar.confirm_delete_title')}
+        message={t('sidebar.confirm_delete_msg')}
+        confirmText={t('common.delete')}
         onClose={() => setConfirmModal({ ...confirmModal, isOpen: false })}
         onConfirm={() => deleteThread(confirmModal.threadId)}
+      />
+
+      <ConfirmModal 
+        isOpen={resetOnboardingConfirm.isOpen}
+        title="Réinitialiser l'Onboarding"
+        message="Voulez-vous vraiment relancer le processus de configuration initiale ? Vos paramètres actuels de modèle seront écrasés."
+        confirmText="Relancer"
+        onClose={() => setResetOnboardingConfirm({ isOpen: false })}
+        onConfirm={async () => {
+          try {
+            await fetch('/api/system/onboarding/reset', { method: 'POST' });
+            localStorage.removeItem('vibrisse_onboarded');
+            window.location.reload();
+          } catch (e) {
+            console.error("Reset failed", e);
+          }
+        }}
+      />
+
+      <OnboardingWizard 
+        isOpen={config.onboarded === false}
+        onClose={() => {}} 
+        onComplete={() => {
+          // On pourrait forcer un fetchConfig ici au lieu d'un reload
+        }}
+        updateSettings={updateSettings}
+        updateTargetPath={updateTargetPath}
+        updateSelectedModel={updateSelectedModel}
       />
     </div>
   );

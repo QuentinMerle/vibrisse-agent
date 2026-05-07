@@ -29,19 +29,21 @@ async def chat(request: Request, chat_req: ChatRequest):
     # Extraction des configurations LLM depuis les headers
     llm_provider = request.headers.get("X-Vibrisse-Provider", "ollama").lower()
     llm_api_key = request.headers.get("X-Vibrisse-Api-Key")
-    llm_model = request.headers.get("X-Vibrisse-Model")
-
+    llm_model_header = request.headers.get("X-Vibrisse-Model")
+    
+    # Résolution finale du modèle : Priorité au Payload (choix manuel) > Header > Default
+    final_model = chat_req.model or llm_model_header or settings.LLM_MODEL
+    
     async def event_generator():
         print(f"--- 🚀 STARTING STREAM FOR THREAD {thread_id} ---", flush=True)
-        logger.info(f"HEADERS RECEIVED - Provider: {llm_provider}, Model: {llm_model}, HasKey: {bool(llm_api_key)}")
-        print(f"--- 🛠️ CONFIG: Provider={llm_provider}, Model={llm_model} ---", flush=True)
+        print(f"DEBUG: Header Model: {llm_model_header}, Payload Model: {chat_req.model} -> Final: {final_model}", flush=True)
         
         config = {"configurable": {"thread_id": thread_id}}
         initial_state = {
             "messages": [("user", chat_req.message)], 
             "question": chat_req.message,
             "image": chat_req.image,
-            "selected_model": llm_model or chat_req.model,
+            "selected_model": final_model,
             "llm_provider": llm_provider,
             "llm_api_key": llm_api_key
         }

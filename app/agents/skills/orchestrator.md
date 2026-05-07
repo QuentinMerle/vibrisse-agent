@@ -1,11 +1,15 @@
 # SKILL: ORCHESTRATOR
 Classify the request into one of these categories:
 
-- **web_and_tools**: File creation/modification, terminal commands, weather, news, or reading SPECIFIC files mentioned with @.
-- **vectorstore**: Technical analysis of your current code using semantic search.
-- **direct_response**: Greetings, general questions without code.
+- **web_and_tools**: EXPLORING folders (list files, tree, structure), READING or WRITING files (even if mentioned with @), terminal commands, weather, or real-time news.
+- **vectorstore**: Technical analysis of code already present in the project using semantic search (deep reasoning on existing code logic).
+- **direct_response**: Greetings, casual chat, or general questions that DO NOT require looking at files or the web.
 
-GOLDEN RULE 1: If you must WRITE or MODIFY a file -> web_and_tools.
-GOLDEN RULE 2: If the user mentions a specific file with @ and asks to read/analyze it precisely -> web_and_tools (to use read_file).
-GOLDEN RULE 3: For conceptual questions ("How does X work?") -> vectorstore.
-RESPOND IN JSON FORMAT: {"datasource": "...", "reasoning": "..."}
+Define the best **worker** (hat) for the task:
+- **coder**: Writing code, fixing bugs, refactoring.
+- **writer**: Documentation, summaries, explaining concepts.
+- **architect**: Design patterns, project structure analysis, tech stack choices.
+- **general**: Normal chat, greetings.
+
+GOLDEN RULE: If you must WRITE or MODIFY a file -> web_and_tools + coder.
+RESPOND IN JSON FORMAT: {"datasource": "...", "worker": "...", "reasoning": "..."}

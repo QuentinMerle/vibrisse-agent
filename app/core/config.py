@@ -35,6 +35,9 @@ class Settings(BaseSettings):
     LLM_MODEL: str = "ollama/gemma4:e2b"  # Modèle par défaut
     LLM_MODEL_ORCHESTRATOR: str = "ollama/gemma4:e2b"
     LLM_MODEL_CODER: str = "ollama/gemma4:e2b"
+    LLM_MODEL_WRITER: str = "ollama/gemma4:e2b"
+    LLM_MODEL_ARCHITECT: str = "ollama/gemma4:e2b"
+    LLM_MODEL_REVIEWER: str = "ollama/gemma4:e2b"
     LLM_BASE_URL: str = "http://localhost:11434"
     LLM_TEMPERATURE: float = 0.0
     
@@ -119,7 +122,8 @@ class Settings(BaseSettings):
         # Sauvegarde en session pour le prochain redémarrage
         session_service.save_session(
             project_path=str(target_path),
-            manifest=self.PROJECT_MANIFEST
+            manifest=self.PROJECT_MANIFEST,
+            onboarded=True
         )
 
 settings = Settings()

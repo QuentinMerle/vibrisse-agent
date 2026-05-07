@@ -1,9 +1,9 @@
 import asyncio
 from langchain_ollama import OllamaEmbeddings
 from langchain_chroma import Chroma
-from langchain_classic.retrievers import ParentDocumentRetriever, EnsembleRetriever
+from langchain.retrievers import ParentDocumentRetriever, EnsembleRetriever
 from langchain_community.retrievers import BM25Retriever
-from langchain_classic.storage import LocalFileStore, create_kv_docstore
+from langchain.storage import LocalFileStore, create_kv_docstore
 from langchain_text_splitters import RecursiveCharacterTextSplitter, Language
 from pathlib import Path
 import os
@@ -133,8 +133,31 @@ class VectorService:
             raise e
 
     async def search(self, query: str):
+        from app.services.rag.grep_service import GrepService
+        from app.core.config import settings
+        
+        # 1. Surgical Grep (Fast-Track)
+        print(f"--- 🔍 SURGICAL GREP : Scannage rapide du projet... ---", flush=True)
+        grep_svc = GrepService(settings.TARGET_PROJECT_PATH)
+        grep_results = await asyncio.to_thread(grep_svc.fast_search, query)
+        
+        # 2. Hybrid Retriever (Semantic + BM25)
         retriever = self.get_hybrid_retriever()
-        return await retriever.ainvoke(query)
+        hybrid_results = await retriever.ainvoke(query)
+        
+        # 3. Fusion & Dé-doublonnage
+        # On met les résultats du Grep en premier car ils sont plus "exacts"
+        all_results = grep_results + hybrid_results
+        
+        seen_sources = set()
+        final_results = []
+        for doc in all_results:
+            source = doc.metadata.get("source")
+            if source not in seen_sources:
+                final_results.append(doc)
+                seen_sources.add(source)
+                
+        return final_results[:10] # On limite aux 10 meilleurs
 
     def get_hybrid_retriever(self):
         if self._cached_hybrid_retriever: return self._cached_hybrid_retriever
@@ -184,7 +207,8 @@ class VectorService:
         valid_extensions = {".py", ".js", ".jsx", ".ts", ".tsx", ".css", ".html", ".md", ".json", ".yaml", ".yml"}
         ignore_dirs = {
             "node_modules", ".git", ".gemini", "__pycache__", "dist", "build", 
-            "venv", ".venv", "data", "out", ".next", ".cache", "logs", "temp", "tmp"
+            "venv", ".venv", "data", "out", ".next", ".cache", "logs", "temp", "tmp",
+            "coverage", ".pytest_cache", ".idea", ".vscode", ".next"
         }
         
         BATCH_SIZE = 50 # On indexe par paquets de 50 fichiers pour préserver la RAM

@@ -5,11 +5,14 @@ from langgraph.graph.message import add_messages
 from langchain_core.messages import AnyMessage
 
 class RouteQuery(BaseModel):
-    """Sortie structurée pour le routage via Vibrisse Agent"""
+    """Sortie structurée pour le routage/supervision via Vibrisse Agent"""
     datasource: Literal["vectorstore", "direct_response", "web_and_tools"] = Field(
-        ..., description="Décide si la question nécessite le code source, une réponse générale, ou l'utilisation d'outils web/système."
+        ..., description="Décide du flux technique (RAG, Direct, Outils)."
     )
-    reasoning: str = Field(description="Explication courte du choix.")
+    worker: Literal["coder", "writer", "architect", "general"] = Field(
+        default="general", description="Définit le profil d'expertise (casquette) à utiliser."
+    )
+    reasoning: str = Field(description="Explication courte du choix stratégique.")
 
 def thoughts_reducer(old: List[str], new: List[str]) -> List[str]:
     """Reducer personnalisé pour gérer le journal de réflexion. 
@@ -22,6 +25,7 @@ class AgentState(TypedDict):
     messages: Annotated[list[AnyMessage], add_messages] # Historique pour les tools
     question: str
     decision: str
+    active_worker: str # Nom du worker actuellement en charge
     context: List[str]  # Contiendra les chunks parents (Small-to-Big)
     generation: str
     steps: Annotated[List[str], operator.add]

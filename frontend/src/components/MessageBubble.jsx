@@ -1,8 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import { useTranslation } from 'react-i18next';
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { User, RotateCcw } from "lucide-react";
+import { User, RotateCcw, Copy, Check } from "lucide-react";
 import VibrisseAvatar from "./chat/VibrisseAvatar";
 import ThinkingConsole from "./ThinkingConsole";
 import CodeBlock from "./chat/CodeBlock";
@@ -14,6 +14,14 @@ import QualityMetrics from "./chat/QualityMetrics";
 
 export default function MessageBubble({ message, isLatest, onRetry, question }) {
   const { t } = useTranslation();
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(answer || "");
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
   const isUser = message.role === "user";
   const showRetry = isLatest && isUser && !message.isLoading;
 
@@ -40,20 +48,12 @@ export default function MessageBubble({ message, isLatest, onRetry, question }) 
       </div>
       
       <div className="message-body">
-        <div className="message-content">
-          {isUser && message.image && (
-            <div className="message-image">
-              <img src={`data:image/png;base64,${message.image}`} alt={t('chat.visual_context_alt')} />
-            </div>
-          )}
-          
-          {finalThoughts && (
+        <div className="message-content">{isUser && message.image_data && (
+            <div className="message-image"><img src={message.image_data} alt="Attached" /></div>
+          )}{finalThoughts && (
             <ThinkingConsole content={finalThoughts} isComplete={isComplete || !!message.thoughts_history} />
-          )}
-
-          {shouldShowAnswer && (
-            <div className="text">
-              <ReactMarkdown
+          )}{shouldShowAnswer && (
+            <div className="text"><ReactMarkdown
                 children={answer}
                 remarkPlugins={[remarkGfm]}
                 components={{
@@ -62,25 +62,35 @@ export default function MessageBubble({ message, isLatest, onRetry, question }) 
                     return !inline && match ? (
                       <CodeBlock language={match[1]} children={children} />
                     ) : (
-                      <code className="inline-code" {...props}>
-                        {children}
-                      </code>
+                      <code className="inline-code" {...props}>{children}</code>
                     );
                   },
-                  h3: ({node, ...props}) => <h3 className="text-h3" {...props} />,
-                  ul: ({node, ...props}) => <ul className="text-ul" {...props} />,
-                  ol: ({node, ...props}) => <ol className="text-ol" {...props} />,
-                  li: ({node, ...props}) => <li className="text-li" {...props} />,
+                  h3: ({node, ...props}) => <h3 {...props} />,
+                  ul: ({node, ...props}) => <ul {...props} />,
+                  ol: ({node, ...props}) => <ol {...props} />,
+                  li: ({node, ...props}) => <li {...props} />,
                 }}
-              />
+              /></div>
+          )}{!isUser && (
+            <div className="message-footer">
+              <QualityMetrics message={message} question={question} />
+              <div className="footer-right">
+                <span className="timestamp">
+                  {(() => {
+                    const d = new Date(message.timestamp);
+                    return isNaN(d.getTime()) ? new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                  })()}
+                </span>
+                <button 
+                  className={`copy-btn ${copied ? 'copied' : ''}`}
+                  onClick={handleCopy}
+                  title="Copier la réponse"
+                >
+                  {copied ? <Check size={14} /> : <Copy size={14} />}
+                </button>
+              </div>
             </div>
-          )}
-          
-          {!isUser && (
-            <QualityMetrics message={message} question={question} />
-          )}
-
-          {message.isLoading && !answer && (
+          )}{message.isLoading && !answer && (
             <div className="thinking-loader" style={{ marginTop: finalThoughts ? '12px' : '0' }}>
               <div className="thinking-loader-top">
                 <div className="dots">

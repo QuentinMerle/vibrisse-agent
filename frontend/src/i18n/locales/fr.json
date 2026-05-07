@@ -150,5 +150,36 @@
     "warning_text": "⚠️ Attention : L'exécution de commandes terminal peut être dangereuse. Vérifiez bien la commande avant de l'autoriser.",
     "cancel_btn": "Annuler",
     "approve_btn": "Autoriser l'exécution"
+  },
+  "onboarding": {
+    "step_of": "Étape {{current}} sur {{total}}",
+    "welcome_title": "Bienvenue sur Vibrisse AI",
+    "welcome_subtitle": "Petits modèles, Grands outils. Configurons votre studio d'ingénierie chirurgicale.",
+    "welcome_btn": "Commencer",
+    "hw_title": "Découverte Hardware",
+    "hw_subtitle": "Analyse de votre machine pour optimiser les performances...",
+    "hw_ram": "Mémoire vive (RAM)",
+    "hw_gpu": "GPU / VRAM",
+    "tier_detected": "Configuration détectée :",
+    "persona_title": "Choisissez votre Persona",
+    "persona_subtitle": "Sélectionnez votre rôle principal. Nous pré-configurerons les meilleurs modèles pour vous.",
+    "workspace_title": "Configuration du Workspace",
+    "workspace_subtitle": "Où se trouve votre projet ? Nous allons commencer l'indexation immédiatement.",
+    "path_placeholder": "/Users/nom/Documents/mon-projet",
+    "browse_btn": "Parcourir",
+    "final_notice": "Note : Les gros projets peuvent prendre quelques minutes à indexer. Vous pourrez suivre la progression dans la sidebar.",
+    "finish_btn": "Terminer la configuration",
+    "initializing": "Initialisation...",
+    "back": "Retour",
+    "next": "Suivant"
+  },
+  "system_tab": {
+    "title": "Système & Hardware",
+    "ram_label": "Mémoire Système (RAM)",
+    "gpu_label": "Accélération GPU (VRAM)",
+    "diagnostic": "Diagnostic de Performance",
+    "tier_desc": "Vibrisse a détecté une configuration {{tier}}. Vos modèles sont actuellement optimisés pour une réactivité maximale.",
+    "reset_btn": "Relancer l'assistant de configuration",
+    "reset_confirm": "Êtes-vous sûr de vouloir relancer l'assistant d'onboarding ?"
   }
 }

@@ -11,6 +11,11 @@
   box-shadow: 0 4px 12px rgba(123, 57, 237, 0.25);
 }
 
+.vibrisse-avatar-container.transparent {
+  background: transparent;
+  box-shadow: none;
+}
+
 .vibrisse-svg {
   overflow: visible; /* Pour laisser les moustaches dépasser du viewBox 24x24 */
 }

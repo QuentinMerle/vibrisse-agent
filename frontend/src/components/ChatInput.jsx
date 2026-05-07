@@ -10,19 +10,21 @@ const mentionsStyle = {
     fontSize: '15px',
     fontWeight: 'normal',
     lineHeight: '1.5',
+    fontFamily: 'inherit',
   },
   '&multiLine': {
     control: {
       fontFamily: 'inherit',
     },
     highlighter: {
-      padding: '12px 0',
+      padding: '12px 14px',
       border: '1px solid transparent',
       lineHeight: '1.5',
+      color: 'transparent', // CRUCIAL : évite le dédoublement du texte
     },
     input: {
-      padding: '12px 0',
-      border: '1px solid transparent', // Match highlighter border
+      padding: '12px 14px',
+      border: '1px solid transparent',
       outline: 'none',
       lineHeight: '1.5',
       color: '#f1f5f9',
@@ -136,7 +138,15 @@ const ChatInput = ({
           <MentionsInput
             inputRef={inputRef}
             value={input}
-            onChange={(e) => setInput(e.target.value)}
+            onChange={(e) => {
+              const val = e.target.value;
+              // Si on détecte un collage (gros changement) avec des sauts de ligne à la fin, on trim
+              if (val.length > input.length + 5 && val.endsWith('\n')) {
+                setInput(val.trim());
+              } else {
+                setInput(val);
+              }
+            }}
             placeholder={t('input.placeholder')}
             style={mentionsStyle}
             a11ySuggestionsListLabel={t('input.files_label')}

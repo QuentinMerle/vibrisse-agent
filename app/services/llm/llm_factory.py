@@ -12,28 +12,44 @@ def get_llm(
     model: Optional[str] = None,
     api_key: Optional[str] = None,
     temperature: float = 0.0,
-    streaming: bool = True
+    streaming: bool = True,
+    role: Optional[str] = None
 ):
     """
     Factory pour instancier dynamiquement le bon client LLM.
     Priorise les réglages fournis par l'utilisateur (via le frontend).
     """
     
-    # 1. OLLAMA (Défaut / Local)
-    if provider == "ollama":
+    # 1. Sélection du modèle selon le rôle (si non fourni explicitement)
+    if not model and role:
+        role_map = {
+            "supervisor": settings.LLM_MODEL_ORCHESTRATOR,
+            "coder": settings.LLM_MODEL_CODER,
+            "writer": settings.LLM_MODEL_WRITER,
+            "architect": settings.LLM_MODEL_ARCHITECT,
+            "reviewer": settings.LLM_MODEL_REVIEWER
+        }
+        model = role_map.get(role, settings.LLM_MODEL)
+
+    # 2. Nettoyage du nom du modèle (retrait du préfixe provider si présent)
+    if model and "/" in model:
+        model_name = model.split("/")[-1]
+    else:
         model_name = model or settings.clean_orchestrator_model
-        logger.info(f"--- 🧠 LLM FACTORY : Instanciation OLLAMA ({model_name}) ---")
+
+    # 3. OLLAMA (Défaut / Local)
+    if provider == "ollama":
+        print(f"--- 🧠 LLM OLLAMA: Sending request to {model_name} (Base: {settings.LLM_BASE_URL}) ---", flush=True)
         return ChatOpenAI(
             model=model_name,
             base_url=f"{settings.LLM_BASE_URL}/v1",
-            api_key="ollama", # Requis par le SDK mais ignoré par Ollama
+            api_key="ollama", 
             temperature=temperature,
             streaming=streaming
         )
 
-    # 2. OLLAMA CLOUD
+    # 4. OLLAMA CLOUD
     elif provider == "ollama_cloud":
-        model_name = model or "llama3.2-vision"
         key = api_key
         if not key:
             raise ValueError("Clé API Ollama Cloud manquante.")
@@ -47,9 +63,8 @@ def get_llm(
             streaming=streaming
         )
 
-    # 3. GROQ (Connecteur Officiel)
+    # 5. GROQ (Connecteur Officiel)
     elif provider == "groq":
-        model_name = model if model and ":" not in model else "llama-3.3-70b-versatile"
         key = api_key or getattr(settings, "GROQ_API_KEY", None)
         
         # Sécurité JS : parfois les headers arrivent avec la string "undefined" ou "null"
@@ -64,9 +79,8 @@ def get_llm(
             streaming=streaming
         )
 
-    # 4. OPENROUTER
+    # 6. OPENROUTER
     elif provider == "openrouter":
-        model_name = model if model and ":" not in model else "meta-llama/llama-3-8b-instruct"
         key = api_key or getattr(settings, "OPENROUTER_API_KEY", None)
         if not key:
             raise ValueError("Clé API OpenRouter manquante.")

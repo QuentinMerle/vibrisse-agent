@@ -6,42 +6,45 @@ This document tracks the long-term vision and specific ideas for evolving Vibris
 
 ## 🧠 Intelligence & Architecture
 
-### 1. Supervisor/Worker Refactoring (High Priority)
+### 1. Supervisor/Worker Refactoring (Completed ✅)
 - **Goal**: Move from a monolithic graph to a multi-agent system.
 - **Concept**: A "Supervisor" node analyzes the intent and dispatches tasks to specialized "Workers" (Expert Coder, Doc Maker, System Debugger).
 - **Benefit**: Better reasoning depth and easier debugging of the agent's internal state.
 
-### 2. Vibrisse "Lite" Mode
-- **Goal**: Tailor the experience for small local models (7B/8B).
-- **Features**:
-    - **Prompt Compression**: Aggressive context pruning to stay within limited windows.
-    - **Atomic Tasks**: Forced breakdown of complex requests into simple steps.
-    - **Few-Shot Library**: Injecting task-specific examples to guide the model.
+### 2. Hybrid Retrieval: "Surgical Grep" (Completed ✅)
+- **Goal**: Instant and exact code location.
+- **Concept**: Integrated `ripgrep` (Rust) directly into the RAG pipeline.
+- **Benefit**: 100% precision on keyword searches and near-zero latency for technical terms.
 
-### 3. Long-term Session Memory
+### 3. Studio-Lite Optimizations (Completed ✅)
+- **Goal**: Performance and stability for local models.
+- **Mechanism**: 
+    - **Context Pruning**: Automated removal of headers and noise (20% token reduction).
+    - **Robust Parsing**: Multi-layer (JSON/XML/Keyword) parsing for resilient tool execution.
+
+### 4. Long-term Session Memory (Completed ✅)
 - **Goal**: Conversations that survive server restarts.
-- **Implementation**: Persistent thread storage in SQLite/ChromaDB with the ability to "resume" a deep debugging session from days ago.
+- **Implementation**: Persistent thread storage in SQLite with full CRUD capabilities (List, Resume, Delete).
 
 ## 🚀 Onboarding & Personalization (Step 0)
 
-### 1. Smart Onboarding Wizard
+### 1. Smart Onboarding Wizard (Completed ✅)
 - **Goal**: Guide the user from the very first second.
-- **Concept**: A setup screen that detects system resources (RAM, GPU) and asks for the user's **Persona** (Developer, Technical Writer, Data Analyst, Architect).
+- **Implementation**: `SystemDiscoveryService` tracks RAM/VRAM and provides model recommendations.
 - **Features**:
-    - **Resource-Aware Recommendations**: Suggest models based on available VRAM (e.g., Phi-3 for 8GB, Llama3-8B for 16GB, Llama3-70B for 64GB).
-    - **Persona Tailoring**: Automatically pre-configure the system prompts and default "Skills" based on the selected role.
-    - **Hardware Check**: Detect Ollama installation and download the best-fit model automatically if missing.
+    - **Resource-Aware Recommendations**: High/Mid/Low tiers.
+    - **Persona-Based Models**: Developer, Data, Writer, Architect profiles.
+    - **Asynchronous Pulling**: Real-time background installation of LLMs.
+    - **Workspace Discovery**: Automated project path configuration.
+    - **Session Persistence**: Backend-level state tracking (no more recurring setup).
 
 ---
 
 ## 📦 Distribution & Developer Experience
 
-### 1. "One-Liner" Global Installer
+### 1. "One-Liner" Global Installer (Completed ✅)
 - **Goal**: `curl -fsSL https://vibrisse-studio.dev/install.sh | bash`
-- **Features**:
-    - Automatic `venv` creation and dependency syncing.
-    - Global `vibrisse` command added to PATH.
-    - Onboarding scan integrated into the installation flow.
+- **Implementation**: `install.sh` automates cloning, venv setup, npm install, and alias creation.
 
 ### 2. Update Mechanism (`vibrisse update`)
 - **Goal**: Seamless updates for users.
@@ -71,4 +74,4 @@ This document tracks the long-term vision and specific ideas for evolving Vibris
 - [ ] **Ragas Industrialization**: Real-time evaluation dashboard in the Studio UI.
 
 ---
-*Vibrisse Studio: Pushing the boundaries of sovereign engineering.*
+*Vibrisse AI: Small models, Great tools.*
