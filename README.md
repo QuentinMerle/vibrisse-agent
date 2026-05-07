@@ -30,9 +30,10 @@ While Vibrisse is built for **privacy-first local execution**, it also supports 
 - **Groq**: Extreme inference speed for real-time coding assistance.
 - **OpenRouter**: Access to the world's most powerful models (Claude, GPT, Llama) via a single API.
 - **Ollama Cloud**: Seamlessly scale your local Ollama experience to the cloud.
+- **Tavily**: Enable **Web Search** capabilities to allow the agent to fetch real-time information from the internet.
 
 > [!NOTE]
-> Unlike Ollama, these cloud providers are **proprietary SaaS services**. When using them, your prompts are processed on their servers. Use Ollama for 100% local sovereignty.
+> Unlike Ollama, these cloud providers are **proprietary SaaS services**. When using them, your prompts (and search queries) are processed on their servers. Use Ollama for 100% local sovereignty.
 
 ---
 
