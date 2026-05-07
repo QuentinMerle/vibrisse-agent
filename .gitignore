@@ -58,6 +58,7 @@ utilisateurs.db
 
 # Documentation & Formation
 docs/formation/
+docs/business/
 docs/technical/vibrisse-lite.md
 data/session.json
 data/*.json
@@ -79,6 +80,7 @@ docs/*
 !docs/**/*.md
 # Exclusion spécifique
 docs/formation/
+docs/business/
 tests/
 archives/
 logs/
