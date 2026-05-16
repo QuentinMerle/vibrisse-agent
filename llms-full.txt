@@ -1,0 +1,49 @@
+# Vibrisse Agent: Engineering Protocol & Architecture
+> Full project documentation for LLM consumption.
+
+## 🧠 Philosophy
+Vibrisse is a "Small models, Great tools" agentic framework. It prioritizes local-first, privacy-centric engineering by leveraging the Model Context Protocol (MCP) and a multi-agent orchestration layer.
+
+## 🏗️ Architecture (Supervisor/Worker)
+- **Supervisor**: Orchestrates high-level reasoning, task decomposition, and tool arbitration.
+- **Worker**: Executes atomic tasks (coding, searching, auditing) with surgical precision.
+- **Routing**: Smart sentinel arbitrating between local (Ollama) and cloud (OpenAI/Groq) models based on task complexity.
+
+## 🚀 Core Features
+- **Triple-Layer RAG**: Vector Search (ChromaDB) + BM25 + Surgical Grep for 100% precision context.
+- **Architectural Mapping**: Automatic generation of `project_map.json` to understand codebase topology.
+- **Ghost Mode**: Control the agent via in-file comments (`@vibrisse: instruction`).
+- **MCP Hub**: Native support for stdio-based MCP servers with persistent, auto-recovering connections.
+- **TUI Control Center**: Dashboard for real-time observability (Hardware health, Tool logs, Thinking graph).
+
+## 🛠️ Technical Stack
+- **Backend**: FastAPI (Python 3.12) + LangGraph.
+- **Frontend**: React (Obsidian Glass aesthetic).
+- **Communication**: HTTPX + WebSockets for thought streaming.
+- **Persistence**: SQLite (Checkpoints) + ChromaDB (Embeddings).
+
+## 📂 Key Files & Directories
+- `app/agents/`: Graph definitions, nodes, and tool logic.
+- `app/services/core/`: Mapping, Onboarding, and Ghost Mode services.
+- `app/services/mcp/`: Manager for external tool protocols.
+- `vibrisse_tui.py`: The terminal dashboard implementation.
+- `install.sh`: Swift, zero-build deployment script.
+
+## 📜 Development Rules
+- **Python**: Enforce version 3.12+.
+- **Imports**: Avoid circular dependencies; use local imports in services if necessary.
+- **State**: The `AgentState` is the source of truth for the reasoning graph.
+- **Observability**: All tool calls and thoughts must be streamed to the `ThinkingConsole`.
+
+## 🔌 Extension Protocol
+To add a tool:
+1. Define the logic in `app/agents/tools.py`.
+2. Wrap it with the `@tool` decorator.
+3. Add it to the `tools` list in the orchestrator node.
+
+To add an MCP Server:
+1. Add the command to `mcp_config.json`.
+2. Vibrisse will auto-discover and map the provided tools on startup.
+
+---
+*Vibrisse AI: Empowering the sovereign engineer.*
