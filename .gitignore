@@ -85,6 +85,5 @@ scratch/
 docs/business/
 docs/formation/
 docs/technical/vibrisse-lite.md
-tests/
 logs/
 *.log
