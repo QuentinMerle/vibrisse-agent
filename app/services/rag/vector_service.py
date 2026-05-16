@@ -43,8 +43,8 @@ class VectorService:
     def vectorstore(self):
         if self._vectorstore is None:
             from app.core.config import settings
-            # Dossier data relatif au projet Vibrisse
-            base_dir = Path(__file__).parent.parent.parent / "data"
+            # Dossier data à la racine
+            base_dir = Path(__file__).parent.parent.parent.parent / "data"
             persist_dir = str(base_dir / "chroma_db")
             
             # Nom de collection dynamique pour isoler les projets
@@ -61,7 +61,7 @@ class VectorService:
     @property
     def store(self):
         if self._store is None:
-            base_dir = Path(__file__).parent.parent.parent / "data"
+            base_dir = Path(__file__).parent.parent.parent.parent / "data"
             store_dir = str(base_dir / "parent_documents" / self.project_id)
             os.makedirs(store_dir, exist_ok=True)
             fs = LocalFileStore(store_dir)
