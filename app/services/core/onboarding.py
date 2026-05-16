@@ -133,8 +133,14 @@ class OnboardingService:
         
         try:
             for root, dirs, files in os.walk(self.root_path):
-                # On ignore les dossiers cachés et techniques
-                dirs[:] = [d for d in dirs if not d.startswith('.') and d not in ['node_modules', '__pycache__', '.venv', '.git']]
+                # On ignore les dossiers cachés et techniques (Builds, Libs, Cache)
+                ignore_dirs = {
+                    'node_modules', '__pycache__', '.venv', 'venv', '.git', 
+                    'dist', 'build', 'out', '.next', '.svelte-kit',
+                    'target', 'vendor', 'coverage', '.nyc_output',
+                    '.cortex', '.gemini', '.antigravity', 'venv'
+                }
+                dirs[:] = [d for d in dirs if not d.startswith('.') and d not in ignore_dirs]
                 
                 rel_path = os.path.relpath(root, self.root_path)
                 level = rel_path.count(os.sep)
