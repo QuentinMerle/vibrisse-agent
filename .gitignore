@@ -58,10 +58,10 @@ frontend/build/
 frontend/.cache/
 
 # --- Databases & Data ---
-app/data/chroma_db/*
-!app/data/chroma_db/.gitkeep
-app/data/parent_documents/*
-!app/data/parent_documents/.gitkeep
+**/data/chroma_db/*
+!**/data/chroma_db/.gitkeep
+**/data/parent_documents/*
+!**/data/parent_documents/.gitkeep
 **/*.db*
 data/accounting_test/
 data/.DS_Store
