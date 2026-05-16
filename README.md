@@ -1,9 +1,12 @@
 # 🐱 Vibrisse Agent: The AI Assistant That Understands Your Code 🚀
 
 [![English](https://img.shields.io/badge/lang-English-blue)](#)
-[![Vibrisse - Studio Grade UI](https://img.shields.io/badge/UI-Studio--Grade-7b39ed)](file:///AGENTS.md)
+[![Vibrisse - Studio Grade UI](https://img.shields.io/badge/UI-Studio--Grade-7b39ed)](#)
 [![Local First](https://img.shields.io/badge/Local--First-Ollama-10b981)](https://ollama.com)
-[![Protocol](https://img.shields.io/badge/MCP-Native-orange)](https://modelcontextprotocol.io)
+[![MCP Hub](https://img.shields.io/badge/MCP-Hub--First-orange)](https://modelcontextprotocol.io)
+[![Multi-Agent](https://img.shields.io/badge/Architecture-Multi--Agent-ff69b4)](#)
+[![Privacy](https://img.shields.io/badge/Privacy-100%25--Local-green)](#)
+[![Zero-Build](https://img.shields.io/badge/Install-Zero--Build-00c1d4)](#)
 
 > **"vi·brisse" (noun):** The long, stiff hairs growing around the face of many mammals, used as organs of touch. Whiskers.
 
@@ -76,14 +79,14 @@ Installs Vibrisse as a global command on your system.
 
 **macOS / Linux:**
 ```bash
-# Run the one-liner installer
-curl -sSL https://raw.githubusercontent.com/QuentinMerle/vibrisse-agent/main/install.sh | bash
+# Run the branded one-liner installer
+curl -sSL https://agent.vibrisse-studio.dev/install.sh | bash
 ```
 
 **Windows (PowerShell):**
 ```powershell
-# Run the one-liner installer (Bypass execution policy for the session)
-irm https://raw.githubusercontent.com/QuentinMerle/vibrisse-agent/main/install.ps1 | iex
+# Run the branded one-liner installer
+irm https://agent.vibrisse-studio.dev/install.ps1 | iex
 ```
 
 **Commands:**
