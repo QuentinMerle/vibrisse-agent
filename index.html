@@ -346,8 +346,136 @@
             grid-column: span 2;
         }
 
-        .f-card.span-3 {
-            grid-column: span 3;
+        /* Workflow Section */
+        .workflow-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 40px;
+            margin-top: 60px;
+            position: relative;
+        }
+
+        .step-card {
+            position: relative;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.01);
+            border-radius: 20px;
+        }
+
+        .step-num {
+            font-family: var(--font-display);
+            font-size: 3rem;
+            font-weight: 700;
+            color: rgba(123, 57, 237, 0.1);
+            position: absolute;
+            top: -20px;
+            left: 20px;
+            z-index: 0;
+        }
+
+        .step-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .step-content h3 {
+            margin-bottom: 12px;
+            color: #fff;
+        }
+
+        /* Tech Stack */
+        .tech-stack-bar {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 40px;
+            margin-top: 100px;
+            opacity: 0.4;
+            filter: grayscale(1);
+            transition: all 0.5s ease;
+            flex-wrap: wrap;
+        }
+
+        .tech-stack-bar:hover {
+            opacity: 0.8;
+            filter: grayscale(0);
+        }
+
+        .tech-item {
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            letter-spacing: 0.1em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Final CTA */
+        .final-cta {
+            text-align: center;
+            padding: 120px 0;
+            background: radial-gradient(circle at center, rgba(123, 57, 237, 0.05) 0%, transparent 70%);
+        }
+
+        /* Personas Section */
+        .persona-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-top: 48px;
+        }
+
+        .persona-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 40px;
+            border-radius: 24px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            text-align: center;
+        }
+
+        .persona-card:hover {
+            background: rgba(123, 57, 237, 0.05);
+            border-color: rgba(123, 57, 237, 0.3);
+            transform: translateY(-8px);
+        }
+
+        .persona-icon {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, rgba(123, 57, 237, 0.2), rgba(167, 139, 250, 0.2));
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            color: var(--accent);
+        }
+
+        .persona-card h3 {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            margin-bottom: 16px;
+            color: #fff;
+        }
+
+        .persona-card p {
+            color: var(--text-muted);
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        .persona-tag {
+            display: inline-block;
+            padding: 4px 12px;
+            background: rgba(123, 57, 237, 0.1);
+            color: var(--accent);
+            border-radius: 100px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 20px;
         }
 
         .f-icon {
@@ -522,7 +650,8 @@
 
             .features-grid,
             .gallery-grid,
-            .persona-grid {
+            .persona-grid,
+            .workflow-grid {
                 grid-template-columns: 1fr;
             }
 
@@ -742,6 +871,7 @@
             <nav>
                 <a href="#features">Capabilities</a>
                 <a href="#personas">Personas</a>
+                <a href="#workflow">Workflow</a>
                 <a href="#interface">Interface</a>
                 <a href="https://github.com/QuentinMerle/vibrisse-agent">Source</a>
                 <a href="#install">Deploy</a>
@@ -845,6 +975,35 @@
                     <h3>Technical PMs</h3>
                     <p>Audit codebases, generate precise documentation, and accelerate team onboarding with
                         AI-driven architectural clarity.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="workflow" class="container" style="padding: 100px 0; border-top: 1px solid rgba(255, 255, 255, 0.05);">
+            <div style="text-align: center; margin-bottom: 60px;">
+                <h2 data-reveal style="font-family: var(--font-display); font-size: 2.5rem;">From Setup to Action.</h2>
+            </div>
+            <div class="workflow-grid">
+                <div class="step-card" data-reveal>
+                    <div class="step-num">01</div>
+                    <div class="step-content">
+                        <h3>Swift Link</h3>
+                        <p style="color: var(--text-muted);">One-liner installation. No complex environment setup or compilation required.</p>
+                    </div>
+                </div>
+                <div class="step-card" data-reveal>
+                    <div class="step-num">02</div>
+                    <div class="step-content">
+                        <h3>Deep Map</h3>
+                        <p style="color: var(--text-muted);">Vibrisse scans your architecture, creating a semantic map of your entire codebase.</p>
+                    </div>
+                </div>
+                <div class="step-card" data-reveal>
+                    <div class="step-num">03</div>
+                    <div class="step-content">
+                        <h3>Active Act</h3>
+                        <p style="color: var(--text-muted);">Start reasoning with your code. Execute tools, fix bugs, and architect systems 100% locally.</p>
+                    </div>
                 </div>
             </div>
         </section>
@@ -968,6 +1127,18 @@
                     <span id="cmd-win">irm https://agent.vibrisse-studio.dev/install.ps1 | iex</span>
                     <div class="copy-hint" id="hint-win">Click to copy</div>
                 </button>
+            </div>
+        </section>
+        <section class="final-cta container">
+            <h2 data-reveal style="font-family: var(--font-display); font-size: 3rem; margin-bottom: 32px;">Ready to reclaim your sovereignty?</h2>
+            <div data-reveal><a href="#install" class="btn-primary">Get Started Now</a></div>
+            
+            <div class="tech-stack-bar" data-reveal>
+                <div class="tech-item">LANGGRAPH</div>
+                <div class="tech-item">FASTAPI</div>
+                <div class="tech-item">REACT</div>
+                <div class="tech-item">OLLAMA</div>
+                <div class="tech-item">CHROMADB</div>
             </div>
         </section>
     </main>
