@@ -1,0 +1,18 @@
+# Ignore backend and unnecessary files for Vercel Static Hosting
+app/
+frontend/src/
+frontend/public/
+.venv/
+venv/
+__pycache__/
+*.py
+requirements.txt
+vibrisse_tui.py
+.env
+.env.example
+docs/technical/
+docs/assets/*.png
+!docs/assets/vibrisse-agent-ui.png
+!docs/assets/vibrisse-agent-thinking.png
+!docs/assets/vibrisse-agent-hardware-discovery.png
+!docs/assets/vibrisse-agent-model-configuration.png
