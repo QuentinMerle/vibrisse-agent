@@ -108,19 +108,26 @@ if [ ! -f ".env" ]; then
     fi
 fi
 
-# 5. Global Alias
+# 5. Global Aliases
 echo -e "${CYAN}--- 🚀 Finalizing ---${NC}"
 SHELL_RC="$HOME/.zshrc"
 [ ! -f "$SHELL_RC" ] && SHELL_RC="$HOME/.bashrc"
 
-if ! grep -q "alias vibrisse=" "$SHELL_RC"; then
-    echo "Adding aliases to $SHELL_RC..."
-    echo "alias vibrisse='cd $INSTALL_DIR && ./vibrisse-cli.sh'" >> "$SHELL_RC"
-    echo "alias vibrisse-tui='cd $INSTALL_DIR && ./vibrisse-cli.sh --tui'" >> "$SHELL_RC"
-    echo -e "${GREEN}Success! Aliases 'vibrisse' and 'vibrisse-tui' added.${NC}"
-else
-    echo -e "${GREEN}Vibrisse aliases already present.${NC}"
-fi
+# Function to add alias safely
+add_alias() {
+    local name=$1
+    local cmd=$2
+    if ! grep -q "alias $name=" "$SHELL_RC"; then
+        echo "alias $name='$cmd'" >> "$SHELL_RC"
+        echo -e "${GREEN}✓ Alias '$name' added.${NC}"
+    fi
+}
+
+add_alias "vibrisse" "cd $INSTALL_DIR && ./vibrisse-cli.sh"
+add_alias "vibrisse-tui" "cd $INSTALL_DIR && ./vibrisse-cli.sh --tui"
+add_alias "vibrisse-update" "cd $INSTALL_DIR && ./vibrisse-cli.sh update"
+
+echo -e "${GREEN}All aliases are configured in $SHELL_RC.${NC}"
 
 echo ""
 echo -e "${PURPLE}Installation complete! Restart your terminal and type:${NC}"

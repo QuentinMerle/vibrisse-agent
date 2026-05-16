@@ -156,6 +156,7 @@ pydantic_core==2.41.5
 pyfiglet==1.0.4
 Pygments==2.20.0
 PyJWT==2.12.1
+prompt_toolkit==3.0.50
 pypdf==6.10.2
 pypdfium2==5.8.0
 PyPika==0.51.1

@@ -110,10 +110,26 @@ trap cleanup SIGINT SIGTERM
 
 # UI Openings
 if [[ "$ARGS" == *"--tui"* ]]; then
-    (sleep 3 && python3 vibrisse_tui.py && cleanup) &
-elif [[ "$ARGS" != *"--no-ui"* ]]; then
-    (sleep 2 && echo -e "${CYAN}🌍 Opening Studio UI : http://localhost:8001${NC}" && open "http://localhost:8001") &
+    # In TUI mode, we run the backend in the BACKGROUND and DETACHED
+    echo -e "${CYAN}🌍 Starting Backend in background...${NC}"
+    nohup python3 -m uvicorn app.main:app --host 0.0.0.0 --port 8001 > /dev/null 2>&1 &
+    BACKEND_PID=$!
+    
+    # Wait for backend to be ready
+    sleep 3
+    
+    # Run TUI in FOREGROUND so it has access to terminal stdin
+    python3 vibrisse_tui.py
+    
+    # Kill backend when TUI exits
+    kill $BACKEND_PID 2>/dev/null || true
+    cleanup
+else
+    # In Standard mode, we run the UI opening in background
+    if [[ "$ARGS" != *"--no-ui"* ]]; then
+        (sleep 2 && echo -e "${CYAN}🌍 Opening Studio UI : http://localhost:8001${NC}" && open "http://localhost:8001") &
+    fi
+    
+    # Run Backend in FOREGROUND
+    python3 -m uvicorn app.main:app --host 0.0.0.0 --port 8001 --reload
 fi
-
-# Lancement du Backend en PREMIER plan pour capter le signal directement
-python3 -m uvicorn app.main:app --host 0.0.0.0 --port 8001 --reload
