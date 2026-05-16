@@ -7,6 +7,7 @@ export const useConfig = () => {
     features: { vision: false, search: false, expert_review: false }
   });
   const [availableFiles, setAvailableFiles] = useState([]);
+  const [availableDirs, setAvailableDirs] = useState([]);
   const [availableModels, setAvailableModels] = useState([]);
   const [selectedModel, setSelectedModel] = useState(localStorage.getItem("vibrisse_selected_model") || "");
   const [contextLimit, setContextLimit] = useState(32000);
@@ -25,11 +26,19 @@ export const useConfig = () => {
   const fetchFiles = useCallback(async () => {
     try {
       const data = await api.getFiles();
-      if (data && data.files) {
-        setAvailableFiles(data.files.map(f => ({ 
-          id: f.replace(/\(/g, '%28').replace(/\)/g, '%29'), 
-          display: f 
-        })));
+      if (data) {
+        if (data.files) {
+          setAvailableFiles(data.files.map(f => ({ 
+            id: f.replace(/\(/g, '%28').replace(/\)/g, '%29'), 
+            display: f 
+          })));
+        }
+        if (data.dirs) {
+          setAvailableDirs(data.dirs.map(d => ({ 
+            id: d.replace(/\(/g, '%28').replace(/\)/g, '%29'), 
+            display: d 
+          })));
+        }
       }
     } catch (err) {
       console.error("Erreur files:", err);
@@ -100,6 +109,7 @@ export const useConfig = () => {
   return {
     config,
     availableFiles,
+    availableDirs,
     availableModels,
     selectedModel,
     contextLimit,

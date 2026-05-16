@@ -59,10 +59,6 @@ class EvaluationService:
         except Exception as e:
             logger.error(f"Failed to init Ragas judge LLM: {e}")
             return None
-            
-        except Exception as e:
-            logger.error(f"Failed to init Ragas judge LLM: {e}")
-            return None
 
     async def evaluate_interaction(self, question: str, contexts: List[str], generation: str) -> Dict[str, Any]:
         """Évalue une interaction RAG unique via les métriques Ragas."""

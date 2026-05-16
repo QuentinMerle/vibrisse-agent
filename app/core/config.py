@@ -27,6 +27,27 @@ class Settings(BaseSettings):
             if session.get("last_manifest"):
                 self.PROJECT_MANIFEST = session["last_manifest"]
                 print(f"--- 🧠 SESSION: Restored manifest from cache ---", flush=True)
+            
+            # Restauration des clés API
+            saved_settings = session.get("settings", {})
+            if saved_settings.get("tavily_api_key"):
+                self.TAVILY_API_KEY = saved_settings["tavily_api_key"]
+            if saved_settings.get("groq_api_key"):
+                self.GROQ_API_KEY = saved_settings["groq_api_key"]
+            if saved_settings.get("openrouter_api_key"):
+                self.OPENROUTER_API_KEY = saved_settings["openrouter_api_key"]
+            if saved_settings.get("google_api_key"):
+                self.GOOGLE_API_KEY = saved_settings["google_api_key"]
+            if saved_settings.get("github_token"):
+                self.GITHUB_TOKEN = saved_settings["github_token"]
+            
+            # Feature Flags
+            if "enable_web_search" in saved_settings:
+                self.ENABLE_WEB_SEARCH = saved_settings["enable_web_search"]
+            if "enable_vision" in saved_settings:
+                self.ENABLE_VISION = saved_settings["enable_vision"]
+            if "enable_expert_review" in saved_settings:
+                self.ENABLE_EXPERT_REVIEW = saved_settings["enable_expert_review"]
         except Exception:
             pass # Silencieux au démarrage
     
@@ -39,6 +60,7 @@ class Settings(BaseSettings):
     LLM_MODEL_ARCHITECT: str = "ollama/gemma4:e2b"
     LLM_MODEL_REVIEWER: str = "ollama/gemma4:e2b"
     LLM_BASE_URL: str = "http://localhost:11434"
+    LLM_CUSTOM_BASE_URL: Optional[str] = None # Pour vLLM ou serveurs tiers
     LLM_TEMPERATURE: float = 0.0
     
     # RAG Config
@@ -94,23 +116,32 @@ class Settings(BaseSettings):
 
     def get_project_profile(self) -> str:
         """Détecte les technos du projet pour injecter du contexte aux agents."""
+        root = Path(self.TARGET_PROJECT_PATH)
+        vibrisse_dir = root / ".vibrisse"
+        map_path = vibrisse_dir / "project_map.json"
+        
+        arch_context = ""
+        if map_path.exists():
+            try:
+                with open(map_path, "r") as f:
+                    amap = json.load(f)
+                    arch_context = f"\nARCH_MAP: {len(amap.get('key_files', []))} key files detected. Total files: {amap.get('stats', {}).get('total_files', 0)}."
+            except:
+                pass
+
         # Si un manifeste a été généré (digéré par LLM), on l'utilise en priorité
         if self.PROJECT_MANIFEST:
-            return self.PROJECT_MANIFEST
+            return self.PROJECT_MANIFEST + arch_context
             
-        from pathlib import Path
-        root = Path(self.TARGET_PROJECT_PATH)
         profile = []
-        
         # Fallback si pas de manifeste
         if self.ENABLE_WEB_SEARCH: profile.append("SEARCH")
         if self.ENABLE_VISION: profile.append("VISION")
-        # Suppression de l'injection du modèle pour éviter la confusion d'identité
         
         if (root / "docker-compose.yml").exists():
             profile.append("DOCKER")
             
-        return ", ".join(profile) if profile else "STACK STANDARD"
+        return ", ".join(profile) + arch_context if profile else "STACK STANDARD" + arch_context
 
     async def load_manifest(self):
         """Initialise le manifeste au démarrage ou lors d'un changement de dossier."""

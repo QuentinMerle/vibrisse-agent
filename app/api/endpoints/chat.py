@@ -30,6 +30,8 @@ async def chat(request: Request, chat_req: ChatRequest):
     llm_provider = request.headers.get("X-Vibrisse-Provider", "ollama").lower()
     llm_api_key = request.headers.get("X-Vibrisse-Api-Key")
     llm_model_header = request.headers.get("X-Vibrisse-Model")
+    llm_custom_url = request.headers.get("X-Vibrisse-Custom-Url")
+    sovereign_routing = request.headers.get("X-Vibrisse-Sovereign-Routing", "true").lower() == "true"
     
     # Résolution finale du modèle : Priorité au Payload (choix manuel) > Header > Default
     final_model = chat_req.model or llm_model_header or settings.LLM_MODEL
@@ -38,14 +40,16 @@ async def chat(request: Request, chat_req: ChatRequest):
         print(f"--- 🚀 STARTING STREAM FOR THREAD {thread_id} ---", flush=True)
         print(f"DEBUG: Header Model: {llm_model_header}, Payload Model: {chat_req.model} -> Final: {final_model}", flush=True)
         
-        config = {"configurable": {"thread_id": thread_id}}
+        config = {"configurable": {"thread_id": thread_id}, "recursion_limit": 50}
         initial_state = {
             "messages": [("user", chat_req.message)], 
             "question": chat_req.message,
             "image": chat_req.image,
             "selected_model": final_model,
             "llm_provider": llm_provider,
-            "llm_api_key": llm_api_key
+            "llm_api_key": llm_api_key,
+            "llm_custom_url": llm_custom_url,
+            "sovereign_routing": sovereign_routing
         }
         try:
             async for event in agent_app.astream_events(initial_state, config, version="v2"):

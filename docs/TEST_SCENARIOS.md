@@ -39,14 +39,44 @@ This document outlines the standard test scenarios for validating Vibrisse Agent
 
 ---
 
+## 👻 Advanced Agentic Features
+
+### 6. Ghost Mode (In-File Directives)
+*   **Goal**: Verify that the agent can read and execute instructions hidden in comments.
+*   **Prompt**: "Process the Ghost Mode instructions in `app/agents/nodes/router.py`."
+*   **Expected**: The agent reads the file, finds comments starting with `VIBRISSE:`, and performs the requested task.
+
+### 7. Sovereign Routing (Offloading)
+*   **Goal**: Verify the "Cloud-to-Local Savings" logic.
+*   **Prompt**: "I want to perform a heavy analysis. Should we offload to Claude or stay on oMLX?"
+*   **Expected**: 
+    1.  The agent analyzes the task complexity.
+    2.  It proposes a "Sovereign Proposal" (UI modal).
+    3.  Choose your path and verify the switch.
+
+### 8. Thought Graph Observability
+*   **Goal**: Ensure the visual workflow is accurate.
+*   **Prompt**: "Research the latest news about SpaceX and then write a summary in a new file `spacex.md`."
+*   **Expected**: 
+    1.  **Graph**: See `Supervisor` -> `Coder` -> `Web_search`.
+    2.  **Graph**: See `Coder` -> `Write_file`.
+    3.  Verify the nodes are spread correctly (no overlap).
+
+### 9. Persistent MCP Hub
+*   **Goal**: Verify connection to external MCP servers.
+*   **Prompt**: "Use the connected MCP server to [action specific to your server]."
+*   **Expected**: The agent lists the MCP tools in its planning and executes them via the `mcp_client`.
+
+---
+
 ## 🌐 Research & Vision
 
-### 6. `web_search` (Real-time)
+### 10. `web_search` (Real-time)
 *   **Goal**: Verify external data access.
 *   **Prompt**: "What is the latest stable version of LangGraph? Search the web."
 *   **Expected**: The agent calls `web_search`, cites its sources, and provides the version.
 
-### 7. Vision Analysis
+### 11. Vision Analysis
 *   **Goal**: Verify image understanding.
 *   **Prompt**: (Attach a screenshot of a UI component) "Describe this UI and suggest improvements."
 *   **Expected**: The agent uses its vision capability to describe colors, layout, and components.
@@ -55,34 +85,23 @@ This document outlines the standard test scenarios for validating Vibrisse Agent
 
 ## 🧠 Core Intelligence
 
-### 8. Router Calibration
+### 12. Router Calibration
 *   **Goal**: Ensure intent is directed to the right node.
 *   **Tests**:
     -   "Hello!" -> Should go to `direct_response`.
     -   "How does the backend work?" -> Should go to `vectorstore` (RAG).
     -   "What's the weather in Paris?" -> Should go to `web_and_tools`.
 
-### 9. Expert Review
-*   **Goal**: Verify technical optimization.
-*   **Prompt**: "Write a complex React hook for managing a websocket connection with auto-reconnect."
-*   **Expected**: After the initial draft, the `expert_review` node should trigger (visible in `ThinkingConsole`) to refine the code.
+### 13. Expert Review
+*   **Goal**: Verify that large models (Claude/GPT) perform a quality check on small model outputs.
+*   **Prompt**: (Ask a complex coding question using a large model)
+*   **Expected**: See the `expert_review_node` in the ThinkingConsole and the improved final code.
 
 ---
 
-## 🌍 Internationalization (i18n)
-
-### 10. Language Switch
-*   **Goal**: Verify UI bilinguality.
-*   **Steps**:
-    1.  Go to **Settings > General**.
-    2.  Switch to **English**. Verify UI labels change.
-    3.  Switch to **French**. Verify UI labels change.
-    4.  Start a new chat. Verify the initial message matches the chosen language.
-
----
-
-## 📊 System Monitoring
-
-### 11. System Pulse
-*   **Goal**: Verify metrics accuracy.
-*   **Steps**: Observe the Sidebar Cockpit. (V)RAM and Context usage should reflect current activity. Tooltips should show detailed bytes/limits.
+## 🎨 UI/UX Validation
+- [ ] **Auto-scroll**: The ThinkingConsole should follow the stream automatically.
+- [ ] **Settings Persistence**: Change the model and refresh; it should stay.
+- [ ] **Responsive Modals**: Verify that Settings and Approvals are scrollable on small screens.
+- [ ] **Theme Consistency**: Verify the "Obsidian Glass" consistency across all components.
+- [ ] **Graph Spacing**: Confirm no node overlap (Supervisor, Workers, Tools).

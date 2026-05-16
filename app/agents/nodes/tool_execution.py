@@ -23,6 +23,7 @@ async def tool_agent_node(state: AgentState):
         provider=state.get("llm_provider", "ollama"),
         model=state.get("selected_model"),
         api_key=state.get("llm_api_key"),
+        custom_url=state.get("llm_custom_url"),
         temperature=0,
         role=worker
     )

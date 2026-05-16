@@ -2,6 +2,7 @@
 import os
 from pathlib import Path
 from typing import Dict, List, Optional
+from app.services.core.mapping_service import mapping_service
 import json
 
 class OnboardingService:
@@ -21,6 +22,10 @@ class OnboardingService:
         
         # 2. Détection technique (Stack)
         tech_stack = self._detect_tech_stack()
+        
+        # 2.5 Mapping Architectural (project_map.json)
+        print(f"--- 🗺️ ONBOARDING: Mapping architecture ---", flush=True)
+        mapping_service.generate_map(str(self.root_path))
         
         # 3. Digestion par LLM (Nouvelle étape !)
         print(f"--- 🧠 ONBOARDING: Digesting documentation with LLM ---", flush=True)

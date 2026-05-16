@@ -1,9 +1,9 @@
 # SKILL: ORCHESTRATOR
 Classify the request into one of these categories:
 
-- **web_and_tools**: EXPLORING folders (list files, tree, structure), READING or WRITING files (even if mentioned with @), terminal commands, weather, or real-time news.
+- **web_and_tools**: EXPLORING folders (list files, tree, structure), READING or WRITING files, terminal commands, weather, real-time news, or using EXTERNAL TOOLS (MCP) like memory, fetch, etc.
 - **vectorstore**: Technical analysis of code already present in the project using semantic search (deep reasoning on existing code logic).
-- **direct_response**: Greetings, casual chat, or general questions that DO NOT require looking at files or the web.
+- **direct_response**: Greetings, casual chat, or general questions that DO NOT require looking at files, the web, or using tools.
 
 Define the best **worker** (hat) for the task:
 - **coder**: Writing code, fixing bugs, refactoring.

@@ -50,61 +50,39 @@ out/
 .swc/
 .eslintcache
 
-# Frontend Specific (Backup)
+# Frontend Specific
 frontend/node_modules/
 frontend/.next/
-# frontend/dist/  <-- Included for swift installation
+!frontend/dist/
 frontend/build/
 frontend/.cache/
 
 # --- Databases & Data ---
-# Ignorer les fichiers lourds et regénérables
 **/data/chroma_db/
 **/data/parent_documents/
 **/*.db*
 data/accounting_test/
 data/.DS_Store
+data/.secret_key
 *.db
 *.sqlite3
 utilisateurs.db
-
-# Documentation & Formation
-docs/formation/
-docs/business/
-docs/technical/vibrisse-lite.md
 data/session.json
 data/*.json
 !data/example.json
+!data/.gitkeep
 
-# Préserver la structure des dossiers vitaux (nécessaire au démarrage)
-!data/chroma_db/.gitkeep
-!data/parent_documents/.gitkeep
-
-# --- IDEs ---
+# --- IDEs & Tools ---
 .vscode/
 .idea/
 *.swp
 *.swo
+scratch/
 
-# --- Misc ---
-docs/*
-!docs/**/
-!docs/**/*.md
-# Exclusion spécifique
-docs/formation/
+# --- Sensitive Docs & Internal ---
 docs/business/
+docs/formation/
+docs/technical/vibrisse-lite.md
 tests/
-archives/
 logs/
 *.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# Final exclusions to override any re-inclusions
-docs/formation/
-docs/business/
-docs/technical/vibrisse-lite.md
-data/session.json
-data/*.json
-!data/example.json

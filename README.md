@@ -3,6 +3,7 @@
 [![English](https://img.shields.io/badge/lang-English-blue)](#)
 [![Vibrisse - Studio Grade UI](https://img.shields.io/badge/UI-Studio--Grade-7b39ed)](file:///AGENTS.md)
 [![Local First](https://img.shields.io/badge/Local--First-Ollama-10b981)](https://ollama.com)
+[![Protocol](https://img.shields.io/badge/MCP-Native-orange)](https://modelcontextprotocol.io)
 
 > **"vi·brisse" (noun):** The long, stiff hairs growing around the face of many mammals, used as organs of touch. Whiskers.
 
@@ -14,115 +15,141 @@ Built on the conviction that **"Small models + Great tools = Professional perfor
 
 ---
 
-## ✨ Key Highlights
-- **Triple-Layer RAG**: Semantic search (Chroma), BM25, and **Surgical Grep** (ripgrep) for 100% technical precision.
-- **Supervisor/Worker Architecture**: Specialized experts (Coder, Architect, Writer) orchestrated for deep reasoning.
-- **MCP Native Support**: Connect your agent to Linear, GitHub, Postgres, and the entire MCP ecosystem.
-- **Smart Onboarding**: Real-time hardware discovery and persona-based setup (2-minute configuration).
-- **Studio Interface**: Immersive "Obsidian Studio" web UI with real-time thought streaming and context gauges.
-- **Integrated Vision**: Visual context injection for UI analysis and multimodal reasoning.
-- **Sovereign Evaluation**: Automated response quality scoring via RAGAS metrics (Faithfulness, Relevancy) running 100% locally.
-- **Sovereign First**: Optimized for local-first intelligence via Ollama. No data leaves your machine by default.
+## 💎 Why Vibrisse? (The Local AI Reference)
+
+Vibrisse is not just another LLM wrapper. It's a **Sovereign Agent Framework** designed for the post-cloud era:
+1. **Privacy as a Feature**: Your code never leaves your machine unless you explicitly allow it via Sovereign Routing.
+2. **Efficiency First**: We prove that 7B-8B models can outperform GPT-4 on technical tasks when given the right "muscles" (MCP Tools + Surgical RAG).
+3. **Studio-Grade UX**: A developer tool should look as good as it works. "Obsidian Glass" isn't just a style; it's a focus-oriented environment.
 
 ---
 
-## 📸 Visual Tour
+## ✨ Studio Highlights
 
-<p align="center">
-  <b>Deep Reasoning & Tool Usage</b><br>
-  <i>Watch the agent think, plan, and execute tools in real-time.</i><br>
-  <img src="./docs/assets/vibrisse-agent-thinking.png" alt="Thinking Process" width="80%">
-</p>
+### ⚖️ Sovereign Routing (Smart Offloading)
+Vibrisse is a **Hybrid Intelligence** orchestrator. It intelligently arbitrates between local-first execution (Ollama) and high-capacity cloud models (Groq, OpenRouter) based on task complexity. 
+- **Cost Efficiency**: Automatically offloads routine technical tasks (file listing, grep) to local models.
+- **Privacy Control**: You decide exactly when data leaves your machine via a dedicated Sovereign Toggle.
 
-<p align="center">
-  <br>
-  <b>Hybrid Intelligence Control</b><br>
-  <i>Seamlessly switch between Local (Ollama), Groq, and OpenRouter.</i><br>
-  <img src="./docs/assets/vibrisse-agent-model-configuration.png" alt="Model Configuration" width="80%">
-</p>
+### 🔌 MCP-Native Hub
+Stop rebuilding what already exists. Vibrisse acts as a **centralized MCP Client**, allowing you to plug in any tool from the global Model Context Protocol ecosystem:
+- **Persistent Hub**: Connect GitHub, Linear, Slack, or Postgres once; use them across every session.
+- **Dynamic Tooling**: Your agent gains "muscles" in real-time as you add new servers.
 
-<p align="center">
-  <br>
-  <b>MCP Ecosystem Ready</b><br>
-  <i>Extend your agent's capabilities with standardized Model Context Protocol servers.</i><br>
-  <img src="./docs/assets/vibrisse-agent-mcp-ready.png" alt="MCP Integration" width="80%">
-</p>
+### 🌊 Obsidian Glass Interface
+A premium, immersive Studio experience designed for deep work:
+- **Thought Graph**: Real-time visualization of the agent's reasoning path.
+- **Thinking Console**: Live thought streaming to understand the *why* behind every action.
+- **Surgical RAG**: Triple-layer retrieval combining Semantic Search, BM25, and high-precision Ripgrep.
 
 ---
 
-## 🌐 Hybrid Model Support
-While Vibrisse is built for **privacy-first local execution**, it also supports high-performance cloud providers for scenarios where you need extra speed or larger models:
-- **Groq**: Extreme inference speed for real-time coding assistance.
-- **OpenRouter**: Access to the world's most powerful models (Claude, GPT, Llama) via a single API.
-- **Ollama Cloud**: Seamlessly scale your local Ollama experience to the cloud.
-- **Tavily**: Enable **Web Search** capabilities to allow the agent to fetch real-time information from the internet.
+## 🎮 What Vibrisse Can Do (Capabilities)
 
-> [!NOTE]
-> Unlike Ollama, these cloud providers are **proprietary SaaS services**. When using them, your prompts (and search queries) are processed on their servers. Use Ollama for 100% local sovereignty.
+Vibrisse is designed to be part of your workflow, not another window you have to manage.
+
+### 👻 Ghost Mode (IDE Directives)
+You don't even need to open the UI. Add tags directly in your code comments:
+- **`// @vibrisse: refactor this function`**: The agent will detect the tag in the background and perform the task.
+- **`# @vibrisse: explain this logic`**: Get technical explanations injected right where you need them.
+
+### 🏷️ Precision Mentions
+In the chat, use **triggers** to give the agent surgical context:
+- **`@` Mention Files/Folders**: Type `@` followed by a filename to inject its full content or path into the conversation.
+- **`/` Mention Folders**: Type `/` to suggest specific directories for the agent to explore or list.
+
+### 🛠️ Professional Tooling
+- **Search Everything**: Ask "Where is the API key defined?" and Vibrisse will use **Ripgrep** for 100% accurate results.
+- **Web Research**: Integrated web search via Tavily. **No need to touch .env files**—simply paste your API key in the Studio Settings.
+- **MCP Ecosystem**: Connect servers to manage **Linear tickets**, **GitHub PRs**, or **Postgres databases** directly from the chat.
+- **Smart Offloading**: If you ask a simple question like "List files in src", Vibrisse will automatically use a **Local Model** to save you Cloud tokens.
 
 ---
 
 ## 🚀 Getting Started
 
 > [!IMPORTANT]
-> **Compatibility Note**: Vibrisse Agent is optimized for **macOS**. It requires **Python 3.12** and **Ollama**.
+> **Compatibility**: Cross-platform (**macOS**, **Windows/WSL2**, **Linux**). Requires **Python 3.12** and **Ollama**.
 
 ### 🐱 User Mode (Swift Install)
-Ideal for daily use. This installs Vibrisse as a global tool on your system.
+Installs Vibrisse as a global command on your system.
 
+**macOS / Linux:**
 ```bash
 # Run the one-liner installer
 curl -sSL https://raw.githubusercontent.com/QuentinMerle/vibrisse-agent/main/install.sh | bash
 ```
 
-Once installed, you can use these commands from anywhere:
-- `vibrisse` : Launch the **Obsidian Glass** Web Studio.
-- `vibrisse-tui` : Launch the **Control Center** in your terminal.
-- `vibrisse update` : Update the agent to the latest version.
-
----
-
-### 🛠️ Developer Mode (Source)
-Ideal if you want to explore the code or contribute to the project.
-
-```bash
-# 1. Clone the repository
-git clone https://github.com/QuentinMerle/vibrisse-agent.git
-cd vibrisse-agent
-
-# 2. Setup environment (Python 3.12)
-python3.12 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-
-# 3. Frontend (Optional - only if you modify it)
-cd frontend && npm install && npm run build
+**Windows (PowerShell):**
+```powershell
+# Run the one-liner installer (Bypass execution policy for the session)
+irm https://raw.githubusercontent.com/QuentinMerle/vibrisse-agent/main/install.ps1 | iex
 ```
 
-Launch in dev mode: `uvicorn app.main:app --reload --port 8001`
+**Commands:**
+- `vibrisse` : Launch the Web Studio (http://localhost:8001).
+- `vibrisse-tui` : Launch the terminal Control Center.
+- `vibrisse update` : Sync latest features and dependencies.
+
+### 🛠️ Developer Mode (Source)
+```bash
+git clone https://github.com/QuentinMerle/vibrisse-agent.git
+cd vibrisse-agent
+python3.12 -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+# Dev server (Backend):
+uvicorn app.main:app --reload --port 8001
+
+# Dev server (Frontend - Optional):
+cd frontend && npm install && npm run dev
+```
 
 ---
 
-## ⌨️ Control Center (TUI)
-Vibrisse comes with a powerful terminal interface for quick management. Launch it with `vibrisse --tui`.
+## 🤝 Contributor Hub
 
+Vibrisse is built for and by the local AI community. Whether you are an LLM enthusiast, a React wizard, or a Python architect, your help is welcome!
+
+- **Add a Worker**: Create specialized agents for specific languages or tasks.
+- **Connect MCP Servers**: Help us build the largest hub of local-first tools.
+- **Polish the UI**: Improve the Obsidian Glass experience.
+
+Check out our **[Contribution Guide](CONTRIBUTING.md)** to get started!
+
+---
+
+## 📚 Documentation Hub
+
+Explore the full potential of the Vibrisse ecosystem:
+
+### 🌟 Features & Usage
+- **[Capabilities](docs/features/capabilities.md)**: Explore what the agent can actually do (File I/O, Search, MCP).
+- **[Sovereign Routing](docs/technical/architecture.md#sovereign-routing)**: How the hybrid local/cloud arbitration works.
+- **[Ghost Mode](AGENTS.md#ghost-mode)**: Control the agent via in-file `@vibrisse:` directives.
+- **[Security & Privacy](docs/features/security.md)**: Our commitment to local-first data sovereignty.
+
+### 🏗️ Technical Deep Dives
+- **[Architecture Overview](docs/technical/architecture.md)**: DDD structure, LangGraph flow, and services.
+- **[Inference Engines](docs/technical/inference_engines.md)**: Guide to Ollama, Custom (vLLM/LM Studio), and Cloud providers.
+- **[Hybrid Retrieval (RAG)](docs/technical/retrieval.md)**: How we achieve 100% precision with surgical grep.
+- **[Reasoning & Agents](docs/technical/reasoning.md)**: Supervisor/Worker patterns and robust parsing.
+- **[Setup & Hardware](docs/technical/setup.md)**: Requirements for optimal performance.
+
+### 🗺️ Project State
+- **[Evolution Roadmap](ROADMAP.md)**: Future vision and upcoming features.
+- **[Agent Strategy](AGENTS.md)**: The "Small models, Great tools" philosophy in detail.
+- **[Testing Protocols](docs/technical/testing.md)**: How we ensure stability and reliability.
+
+---
+
+## 🎮 TUI Quick Commands
 | Command | Action |
 | :--- | :--- |
-| `/model [name]` | List or change the active LLM model |
-| `/path [path]` | Change the target project directory |
-| `/scan` | Re-trigger project analysis (onboarding) |
-| `/stats` | View live system RAM and Ollama status |
-| `/tools` | List all active tools and MCP servers |
-| `/ui` | Open the Studio Web Interface |
-| `/new` | Start a clean new discussion |
-
----
-
-## 📚 Documentation
-- **[Capabilities & Tools](docs/features/capabilities.md)**: What the agent can actually do.
-- **[Security & Privacy](docs/features/security.md)**: How we protect your code.
-- **[Technical Architecture](AGENTS.md)**: Deep dive into the graph and "Swift" strategy.
-- **[Evolution Roadmap](ROADMAP.md)**: Where we are going next.
+| `/model` | List or change active LLM models |
+| `/path` | Switch target workspace/project |
+| `/scan` | Force architectural re-analysis |
+| `/tools` | List connected MCP servers and tools |
+| `/stats` | Real-time RAM and Ollama health |
 
 ---
 *Vibrisse AI: Small models, Great tools.*

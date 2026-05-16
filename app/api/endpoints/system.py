@@ -3,7 +3,9 @@ import subprocess
 import psutil
 import httpx
 import logging
-from typing import Optional
+import asyncio
+from typing import Optional, List, Dict
+from pydantic import BaseModel
 from fastapi import APIRouter, Request, BackgroundTasks
 from app.core.config import settings
 from app.services.llm.model_service import fetch_model_context_limit, get_available_models
@@ -70,9 +72,9 @@ async def health_check():
     return health
 
 @router.get("/models")
-async def list_models(provider: str = "ollama", api_key: Optional[str] = None):
+async def list_models(provider: str = "ollama", api_key: Optional[str] = None, custom_url: Optional[str] = None):
     """Liste les modèles disponibles pour un provider spécifique."""
-    models = await get_available_models(provider, api_key)
+    models = await get_available_models(provider, api_key, custom_url)
     return {"models": models}
 
 @router.get("/models/limit/{model_name}")
@@ -103,10 +105,56 @@ async def get_config():
             "vision": settings.ENABLE_VISION,
             "expert_review": settings.ENABLE_EXPERT_REVIEW,
             "github": settings.ENABLE_GITHUB
+        },
+        "api_keys": {
+            "tavily": settings.TAVILY_API_KEY,
+            "groq": settings.GROQ_API_KEY,
+            "openrouter": settings.OPENROUTER_API_KEY,
+            "google": settings.GOOGLE_API_KEY,
+            "github": settings.GITHUB_TOKEN
         }
     }
 
-from pydantic import BaseModel
+class GeneralSettingsRequest(BaseModel):
+    tavily_api_key: Optional[str] = None
+    groq_api_key: Optional[str] = None
+    openrouter_api_key: Optional[str] = None
+    google_api_key: Optional[str] = None
+    github_token: Optional[str] = None
+    enable_web_search: Optional[bool] = None
+    enable_vision: Optional[bool] = None
+    enable_expert_review: Optional[bool] = None
+    sovereign_routing: Optional[bool] = None
+
+@router.post("/config/settings")
+async def update_general_settings(req: GeneralSettingsRequest):
+    """Met à jour les paramètres globaux et les clés API."""
+    from app.services.core.session_service import session_service
+    
+    if req.tavily_api_key is not None: settings.TAVILY_API_KEY = req.tavily_api_key
+    if req.groq_api_key is not None: settings.GROQ_API_KEY = req.groq_api_key
+    if req.openrouter_api_key is not None: settings.OPENROUTER_API_KEY = req.openrouter_api_key
+    if req.google_api_key is not None: settings.GOOGLE_API_KEY = req.google_api_key
+    if req.github_token is not None: settings.GITHUB_TOKEN = req.github_token
+    
+    if req.enable_web_search is not None: settings.ENABLE_WEB_SEARCH = req.enable_web_search
+    if req.enable_vision is not None: settings.ENABLE_VISION = req.enable_vision
+    if req.enable_expert_review is not None: settings.ENABLE_EXPERT_REVIEW = req.enable_expert_review
+    
+    # Sauvegarde persistante
+    session_service.save_session(settings={
+        "tavily_api_key": settings.TAVILY_API_KEY,
+        "groq_api_key": settings.GROQ_API_KEY,
+        "openrouter_api_key": settings.OPENROUTER_API_KEY,
+        "google_api_key": settings.GOOGLE_API_KEY,
+        "github_token": settings.GITHUB_TOKEN,
+        "enable_web_search": settings.ENABLE_WEB_SEARCH,
+        "enable_vision": settings.ENABLE_VISION,
+        "enable_expert_review": settings.ENABLE_EXPERT_REVIEW
+    })
+    
+    return {"status": "success"}
+
 from pathlib import Path
 
 class ModelUpdateRequest(BaseModel):
@@ -169,13 +217,14 @@ async def clear_cache(request: Request):
 
 @router.get("/files")
 async def list_files(request: Request):
-    files = await request.app.state.vs.list_indexed_files()
-    return {"files": files}
+    data = await request.app.state.vs.list_indexed_files()
+    return data # Renvoie {"files": [...], "dirs": [...]}
 
 class LLMValidationRequest(BaseModel):
     provider: str
     model: Optional[str] = None
     apiKey: Optional[str] = None
+    customUrl: Optional[str] = None
 
 @router.post("/models/pull")
 async def pull_model(req: dict, background_tasks: BackgroundTasks):
@@ -208,6 +257,7 @@ async def validate_llm(req: LLMValidationRequest):
             provider=req.provider,
             model=req.model,
             api_key=req.apiKey,
+            custom_url=req.customUrl,
             temperature=0,
             streaming=False
         )
@@ -219,8 +269,6 @@ async def validate_llm(req: LLMValidationRequest):
         return {"status": "error", "message": str(e)}
 
 # --- MCP (Model Context Protocol) ROUTES ---
-
-from typing import List, Dict
 
 class MCPConnectRequest(BaseModel):
     server_id: str
@@ -307,6 +355,30 @@ async def complete_onboarding():
         manifest=session.get("last_manifest", ""),
         onboarded=True
     )
+    return {"status": "success"}
+
+@router.get("/notifications")
+async def get_notifications():
+    """Récupère les notifications récentes (Ghost Mode, etc.)."""
+    base_dir = Path(__file__).resolve().parent.parent.parent.parent
+    notif_path = base_dir / "data" / "notifications.json"
+    if not notif_path.exists():
+        return {"notifications": []}
+    try:
+        with open(notif_path, 'r', encoding='utf-8') as f:
+            import json
+            notifs = json.load(f)
+        return {"notifications": notifs}
+    except:
+        return {"notifications": []}
+
+@router.post("/notifications/clear")
+async def clear_notifications():
+    """Marque toutes les notifications comme lues ou supprime le fichier."""
+    base_dir = Path(__file__).resolve().parent.parent.parent.parent
+    notif_path = base_dir / "data" / "notifications.json"
+    if notif_path.exists():
+        os.remove(notif_path)
     return {"status": "success"}
 
 @router.post("/evaluate")

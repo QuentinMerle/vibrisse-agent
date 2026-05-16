@@ -11,6 +11,7 @@ def get_llm(
     provider: str = "ollama",
     model: Optional[str] = None,
     api_key: Optional[str] = None,
+    custom_url: Optional[str] = None,
     temperature: float = 0.0,
     streaming: bool = True,
     role: Optional[str] = None
@@ -35,7 +36,8 @@ def get_llm(
     if model and "/" in model:
         model_name = model.split("/")[-1]
     else:
-        model_name = model or settings.clean_orchestrator_model
+        # Si on est sur un provider spécifique, on ne fallback pas sur le modèle par défaut d'Ollama
+        model_name = model if model else (settings.clean_orchestrator_model if provider == "ollama" else None)
 
     # 3. OLLAMA (Défaut / Local)
     if provider == "ollama":
@@ -109,6 +111,18 @@ def get_llm(
             model=model_name,
             base_url="https://openrouter.ai/api/v1",
             api_key=key,
+            temperature=temperature,
+            streaming=streaming
+        )
+
+    # 7. CUSTOM OPENAI-COMPATIBLE SERVER (vLLM, LM Studio, etc.)
+    elif provider == "vllm":
+        url = custom_url or settings.LLM_CUSTOM_BASE_URL or "http://localhost:8000/v1"
+        logger.info(f"--- 🧠 LLM FACTORY : Instanciation Custom ({model_name} at {url}) ---")
+        return ChatOpenAI(
+            model=model_name,
+            base_url=url,
+            api_key=api_key or "vllm", # Souvent non requis mais requis par le client
             temperature=temperature,
             streaming=streaming
         )

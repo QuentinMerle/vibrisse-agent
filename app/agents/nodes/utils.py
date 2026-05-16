@@ -77,7 +77,33 @@ def get_project_context():
     return f"{skill_code}\n\n--- INFORMATIONS SUR LE PROJET ANALYSÉ ---\n{profile}\n"
 
 def clean_mentions(text: str) -> str:
-    """Remplace le format technique @[display](id) par @display pour le LLM."""
+    """
+    Remplace le format technique @[display](id) par l'ID réel (chemin du fichier) pour le LLM.
+    Ex: @[App.jsx](/src/App.jsx) -> /src/App.jsx
+    """
     if not isinstance(text, str):
         return text
-    return re.sub(r"@\[(.*?)\]\(.*?\)", r"@\1", text)
+    
+    # On extrait l'ID (le deuxième groupe) et on déséchappe les parenthèses
+    # Le trigger peut être @ ou /
+    def replace_with_id(match):
+        path = match.group(2)
+        return path.replace('%28', '(').replace('%29', ')')
+        
+    return re.sub(r"[@/]\[(.*?)\]\((.*?)\)", replace_with_id, text)
+
+def create_node(node_id: str, label: str, node_type: str, icon: str) -> dict:
+    return {
+        "id": node_id,
+        "type": "custom",
+        "data": {"label": label, "type": node_type, "icon": icon}
+    }
+
+def create_edge(source: str, target: str, animated: bool = True) -> dict:
+    return {
+        "id": f"e-{source}-{target}",
+        "source": source,
+        "target": target,
+        "animated": animated
+    }
+

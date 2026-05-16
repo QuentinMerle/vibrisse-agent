@@ -60,7 +60,7 @@ const mentionsStyle = {
 
 const ChatInput = ({ 
   input, setInput, image, setImage, isLoading, sendMessage, onStop,
-  availableFiles, handleFileClick, fileInputRef, inputRef, handleFileUpload 
+  availableFiles, availableDirs, handleFileClick, fileInputRef, inputRef, handleFileUpload 
 }) => {
   const { t } = useTranslation();
   const [isListening, setIsListening] = useState(false);
@@ -160,9 +160,15 @@ const ChatInput = ({
           >
             <Mention
               trigger="@"
-              data={availableFiles}
+              data={[...availableFiles, ...availableDirs]}
               displayTransform={(id, display) => `@${display}`}
-              className="mention-highlight"
+              className="mention-highlight file"
+            />
+            <Mention
+              trigger="/"
+              data={availableDirs}
+              displayTransform={(id, display) => `/${display}`}
+              className="mention-highlight dir"
             />
           </MentionsInput>
         </div>

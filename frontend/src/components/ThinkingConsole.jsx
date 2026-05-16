@@ -1,22 +1,38 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { Brain, ChevronDown, ChevronUp, Sparkles } from "lucide-react";
 import ReactMarkdown from 'react-markdown';
+import ThoughtGraph from "./chat/ThoughtGraph";
 import './ThinkingConsole.css';
 
-export default function ThinkingConsole({ content, isComplete }) {
+export default function ThinkingConsole({ 
+  content, 
+  isComplete, 
+  steps = [], 
+  activeWorker = 'General',
+  graphNodes = [],
+  graphEdges = []
+}) {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(true);
-
-  if (!content) return null;
+  const scrollRef = useRef(null);
 
   // Nettoyage des balises internes qui pourraient fuiter (ex: <content>, <call>, etc.)
-  const cleanContent = content
+  const cleanContent = (content || "")
     .replace(/<\/?content>/gi, '')
     .replace(/<\/?call>/gi, '')
     .replace(/<\/?thought>/gi, '')
     .replace(/<\/?thinking>/gi, '')
     .trim();
+
+  // Auto-scroll vers le bas lors de la génération
+  useEffect(() => {
+    if (scrollRef.current && !isComplete) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, [cleanContent, isComplete, graphNodes]);
+
+  if (!content) return null;
 
   return (
     <div className={`thinking-accordion ${isOpen ? "open" : "closed"} ${isComplete ? "complete" : "active"}`}>
@@ -49,8 +65,20 @@ export default function ThinkingConsole({ content, isComplete }) {
       </button>
 
       {isOpen && (
-        <div className="thinking-console-content" role="status" aria-live="polite">
+        <div 
+          className="thinking-console-content" 
+          role="status" 
+          aria-live="polite"
+          ref={scrollRef}
+        >
           {!isComplete && <div className="scan-line" />}
+          
+          <ThoughtGraph 
+            nodes={graphNodes} 
+            edges={graphEdges} 
+            activeWorker={activeWorker} 
+          />
+
           <div className="console-text">
             <ReactMarkdown>{cleanContent}</ReactMarkdown>
             {!isComplete && <span className="cursor-blink" aria-hidden="true" />}

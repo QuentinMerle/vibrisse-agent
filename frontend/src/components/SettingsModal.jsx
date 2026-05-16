@@ -123,7 +123,7 @@ const SettingsModal = ({ isOpen, onClose, settings, onSave, onResetOnboarding })
           </button>
         </div>
 
-        <div className="modal-body" style={{ minHeight: '350px' }}>
+        <div className="modal-body">
           {activeTab === 'llm' ? (
             <LLMTab 
               localSettings={localSettings} 
@@ -144,11 +144,91 @@ const SettingsModal = ({ isOpen, onClose, settings, onSave, onResetOnboarding })
             <SystemTab onResetOnboarding={onResetOnboarding} />
           ) : (
             <div className="settings-tab-content">
-              <div className="setting-group">
-                <label className="setting-label">
-                  <Globe size={14} style={{ marginRight: '8px' }} />
-                  {t('settings.language')}
-                </label>
+              <div className="settings-section">
+                <h3 className="section-title"><Zap size={14} /> {t('settings.section_features')}</h3>
+                <div className="settings-grid">
+                  <div className="setting-control-card">
+                    <div className="card-info">
+                      <span className="card-label">Sovereign Routing</span>
+                      <span className="card-hint">Arbitrage intelligent Local/Cloud</span>
+                    </div>
+                    <label className="switch">
+                      <input 
+                        type="checkbox" 
+                        checked={localSettings.sovereignRouting}
+                        onChange={(e) => setLocalSettings({ ...localSettings, sovereignRouting: e.target.checked })}
+                      />
+                      <span className="slider round"></span>
+                    </label>
+                  </div>
+
+                  <div className="setting-control-card">
+                    <div className="card-info">
+                      <span className="card-label">Vision Mode</span>
+                      <span className="card-hint">Analyse d'images multimodale</span>
+                    </div>
+                    <label className="switch">
+                      <input 
+                        type="checkbox" 
+                        checked={localSettings.enableVision}
+                        onChange={(e) => setLocalSettings({ ...localSettings, enableVision: e.target.checked })}
+                      />
+                      <span className="slider round"></span>
+                    </label>
+                  </div>
+
+                  <div className="setting-control-card">
+                    <div className="card-info">
+                      <span className="card-label">Expert Review</span>
+                      <span className="card-hint">Vérification post-génération</span>
+                    </div>
+                    <label className="switch">
+                      <input 
+                        type="checkbox" 
+                        checked={localSettings.enableExpertReview}
+                        onChange={(e) => setLocalSettings({ ...localSettings, enableExpertReview: e.target.checked })}
+                      />
+                      <span className="slider round"></span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <div className="settings-section">
+                <h3 className="section-title"><Plug size={14} /> {t('settings.section_api_keys')}</h3>
+                <div className="api-keys-list">
+                  <div className="api-key-item">
+                    <div className="key-header">
+                      <Globe size={12} />
+                      <label>Tavily Search</label>
+                    </div>
+                    <input 
+                      type="password" 
+                      className="settings-input"
+                      placeholder="tvly-..."
+                      value={localSettings.tavilyApiKey || ''}
+                      onChange={(e) => setLocalSettings({ ...localSettings, tavilyApiKey: e.target.value })}
+                    />
+                  </div>
+
+                  <div className="api-key-item">
+                    <div className="key-header">
+                      <Cpu size={12} />
+                      <label>GitHub Integration</label>
+                    </div>
+                    <input 
+                      type="password" 
+                      className="settings-input"
+                      placeholder="ghp_..."
+                      value={localSettings.githubToken || ''}
+                      onChange={(e) => setLocalSettings({ ...localSettings, githubToken: e.target.value })}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="settings-section">
+                <h3 className="section-title"><Globe size={14} /> {t('settings.language')}</h3>
                 <div className="language-selector-grid">
                   <button 
                     className={`lang-btn ${i18n.language === 'fr' ? 'active' : ''}`}
@@ -184,7 +264,7 @@ const SettingsModal = ({ isOpen, onClose, settings, onSave, onResetOnboarding })
             <button 
               className="test-btn" 
               onClick={handleTestConnection} 
-              disabled={isValidating || (localSettings.provider !== 'ollama' && !localSettings.apiKey)}
+              disabled={isValidating || (localSettings.provider !== 'ollama' && localSettings.provider !== 'vllm' && !localSettings.apiKey)}
             >
               {t('settings.btn_test')}
             </button>

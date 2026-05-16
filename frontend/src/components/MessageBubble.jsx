@@ -51,7 +51,14 @@ export default function MessageBubble({ message, isLatest, onRetry, question }) 
         <div className="message-content">{isUser && message.image_data && (
             <div className="message-image"><img src={message.image_data} alt="Attached" /></div>
           )}{finalThoughts && (
-            <ThinkingConsole content={finalThoughts} isComplete={isComplete || !!message.thoughts_history} />
+            <ThinkingConsole 
+              content={finalThoughts} 
+              isComplete={isComplete || !!message.thoughts_history}
+              steps={message.steps}
+              activeWorker={message.active_worker || 'General'}
+              graphNodes={message.graph_nodes}
+              graphEdges={message.graph_edges}
+            />
           )}{shouldShowAnswer && (
             <div className="text"><ReactMarkdown
                 children={answer}

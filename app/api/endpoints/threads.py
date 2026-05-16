@@ -85,19 +85,39 @@ async def get_thread_history(request: Request, thread_id: str):
             # Extraction des métadonnées
             thoughts = []
             tool_calls = []
+            graph_nodes = []
+            graph_edges = []
+            active_worker = "General"
+
+            # On regarde d'abord dans l'état global pour les valeurs les plus récentes
+            # (Note: Pour une persistance parfaite par message, il faudrait les stocker dans additional_kwargs)
+            if role == "agent":
+                graph_nodes = values.get("graph_nodes", [])
+                graph_edges = values.get("graph_edges", [])
+                active_worker = values.get("active_worker", "General")
+
             if hasattr(msg, "additional_kwargs"):
-                thoughts = msg.additional_kwargs.get("thoughts_history", [])
-                tool_calls = msg.additional_kwargs.get("tool_calls", [])
+                thoughts = msg.additional_kwargs.get("thoughts_history", thoughts)
+                tool_calls = msg.additional_kwargs.get("tool_calls", tool_calls)
+                # Fallback sur les kwargs si présent
+                graph_nodes = msg.additional_kwargs.get("graph_nodes", graph_nodes)
+                graph_edges = msg.additional_kwargs.get("graph_edges", graph_edges)
             elif isinstance(msg, dict) and "additional_kwargs" in msg:
-                thoughts = msg["additional_kwargs"].get("thoughts_history", [])
-                tool_calls = msg["additional_kwargs"].get("tool_calls", [])
+                thoughts = msg["additional_kwargs"].get("thoughts_history", thoughts)
+                tool_calls = msg["additional_kwargs"].get("tool_calls", tool_calls)
+                graph_nodes = msg["additional_kwargs"].get("graph_nodes", graph_nodes)
+                graph_edges = msg["additional_kwargs"].get("graph_edges", graph_edges)
 
             history.append({
                 "id": f"msg_{len(history)}",
                 "role": role, 
                 "content": content,
                 "thoughts_history": thoughts,
-                "tool_calls": tool_calls
+                "tool_calls": tool_calls,
+                "graph_nodes": graph_nodes,
+                "graph_edges": graph_edges,
+                "active_worker": active_worker,
+                "timestamp": state.metadata.get("ts", "") if state.metadata else ""
             })
                 
         return {"messages": history, "context_usage": usage}

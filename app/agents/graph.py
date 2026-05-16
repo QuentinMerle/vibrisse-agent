@@ -6,7 +6,7 @@ from app.agents.state import AgentState
 from app.agents.nodes import (
     router_node, retrieve_code, generate_answer, 
     tool_agent_node, get_active_tools, expert_review_node, vision_node,
-    finalize_answer
+    finalize_answer, create_node, create_edge
 )
 from app.agents.tools import run_terminal_command
 from app.core.config import settings
@@ -51,7 +51,9 @@ async def call_safe_tools(state: AgentState):
     return {
         "messages": responses, 
         "thoughts": [f"**Action Outil :** {s}" for s in tool_results_summary],
-        "detail": "Résultats des outils récupérés."
+        "detail": "Résultats des outils récupérés.",
+        "graph_nodes": [create_node(f"tool-{tc['name']}", tc['name'].capitalize(), "TOOL", "🔧") for tc in last_message.tool_calls],
+        "graph_edges": [create_edge("worker", f"tool-{tc['name']}") for tc in last_message.tool_calls]
     }
 
 async def call_sensitive_tools(state: AgentState):
@@ -127,7 +129,8 @@ workflow.add_conditional_edges(
     {
         "vectorstore": "retrieve_code",
         "direct_response": "generate_answer",
-        "web_and_tools": "tool_agent_node"
+        "web_and_tools": "tool_agent_node",
+        "wait_for_offload_choice": END
     }
 )
 

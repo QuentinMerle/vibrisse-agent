@@ -3,7 +3,7 @@ from langchain_core.messages import SystemMessage, HumanMessage, AIMessage
 from app.agents.state import AgentState
 from app.core.config import settings
 from app.services.llm.llm_factory import get_llm
-from app.agents.nodes.utils import extract_thought, clean_mentions, load_skill
+from app.agents.nodes.utils import extract_thought, clean_mentions, load_skill, create_node, create_edge
 
 async def generate_answer(state: AgentState):
     context = state.get("context", "")
@@ -39,6 +39,7 @@ async def generate_answer(state: AgentState):
         provider=state.get("llm_provider", "ollama"),
         model=state.get("selected_model"),
         api_key=state.get("llm_api_key"),
+        custom_url=state.get("llm_custom_url"),
         role=worker
     )
     
@@ -85,7 +86,9 @@ CRITICAL: Close your thought with </thought> before writing your final response.
     yield {
         "thoughts": ["**Drafting:** Processing request..."],
         "detail": "Drafting final response...",
-        "steps": ["generation_started"]
+        "steps": ["generation_started"],
+        "graph_nodes": [create_node("worker", worker.capitalize(), "WORKER", "👷")],
+        "graph_edges": [create_edge("supervisor", "worker")]
     }
 
     full_message = ""
@@ -153,16 +156,16 @@ async def finalize_answer(state: AgentState):
         
     # Si après nettoyage il ne reste rien, on tente de récupérer le contenu des balises thought
     # (Cas fréquent où le petit modèle met TOUTE sa réponse dans <thought>)
-    if not clean_content:
+    if not clean_content or len(clean_content) < 150:
         # On cherche à extraire les pensées brutes du contenu original si possible
         raw_thought = extract_thought(content)
-        if raw_thought:
+        if raw_thought and len(raw_thought) > len(clean_content):
             clean_content = raw_thought
-        else:
-            # Fallback sur la liste des pensées du state
-            all_thoughts = " ".join(thoughts) if isinstance(thoughts, list) else str(thoughts)
+        elif thoughts and len(" ".join(thoughts)) > 150:
+            # Fallback sur la liste des pensées du state si elles sont riches
+            all_thoughts = "\n\n".join(thoughts) if isinstance(thoughts, list) else str(thoughts)
             clean_content = all_thoughts.replace("**Analysis:**", "").replace("**Expert Optimization:**", "").replace("**Thinking:**", "").strip()
-        
+            
     if not clean_content or len(clean_content) < 2:
         clean_content = "✅ J'ai terminé ma réflexion. (Consulte la console de réflexion pour les détails)"
             
@@ -170,13 +173,17 @@ async def finalize_answer(state: AgentState):
         content=clean_content,
         additional_kwargs={
             "thoughts_history": thoughts,
-            "context": state.get("context", "")
+            "context": state.get("context", ""),
+            "graph_nodes": state.get("graph_nodes", []),
+            "graph_edges": state.get("graph_edges", [])
         }
     )
     
     return {
         "messages": [final_message], 
         "steps": ["final_response"],
+        "graph_nodes": state.get("graph_nodes", []),
+        "graph_edges": state.get("graph_edges", []),
         "vision_description": None # On vide la mémoire visuelle après usage
     }
 
@@ -197,6 +204,7 @@ async def expert_review_node(state: AgentState):
         provider=state.get("llm_provider", "ollama"),
         model=state.get("selected_model"),
         api_key=state.get("llm_api_key"),
+        custom_url=state.get("llm_custom_url"),
         temperature=0.1,
         role="reviewer"
     )

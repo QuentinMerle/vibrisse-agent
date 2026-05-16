@@ -42,7 +42,7 @@ const SystemPulse = ({ healthStatus, contextUsage, contextLimit, llmSettings, is
             backgroundColor: statusColor, 
             boxShadow: `0 0 10px ${statusColor}` 
           }}></div>
-          <span>{llmSettings?.provider ? llmSettings.provider.charAt(0).toUpperCase() + llmSettings.provider.slice(1) : 'Ollama'}</span>
+          <span>{llmSettings?.provider ? (llmSettings.provider === 'vllm' ? 'Custom' : llmSettings.provider.charAt(0).toUpperCase() + llmSettings.provider.slice(1)) : 'Ollama'}</span>
         </div>
       </div>
 

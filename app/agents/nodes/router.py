@@ -1,7 +1,8 @@
 from langchain_core.messages import SystemMessage, HumanMessage
 from app.agents.state import AgentState, RouteQuery
 from app.services.llm.llm_factory import get_llm
-from app.agents.nodes.utils import load_skill
+from app.agents.nodes.utils import load_skill, create_node, create_edge
+from app.services.core.sovereign_service import SovereignService
 import re
 import json
 
@@ -9,17 +10,47 @@ async def router_node(state: AgentState):
     question = state.get("question", "").lower()
     vision_desc = state.get("vision_description")
     
+    # 1. Sovereign Routing (Smart Offloading) Sentinel
+    provider = state.get("llm_provider", "ollama")
+    offload_analysis = {"can_offload": False}
+    if state.get("sovereign_routing", True):
+        offload_analysis = SovereignService.analyze_offload_opportunity(
+            query=question,
+            provider=provider,
+            model=state.get("selected_model")
+        )
+        print(f"⚖️ Sovereign Analysis: {offload_analysis}", flush=True)
+    
+    if offload_analysis["can_offload"] and not state.get("offload_proposal"):
+        # On injecte la proposition dans l'état pour que l'UI puisse l'afficher
+        yield {
+            "offload_proposal": offload_analysis,
+            "thoughts": [
+                "__RESET__", 
+                f"**Sovereign Hint:** {offload_analysis['reason']}. This could be handled locally to save tokens."
+            ],
+            "detail": "Sovereign Routing proposal active. Waiting for user choice...",
+            "decision": "wait_for_offload_choice" # Indicateur pour le graphe
+        }
+        return
+
     # 2. Heuristics (Only for OBVIOUS technical triggers to assist small models)
     tech_triggers = [
         "list", "ls", "lister", "read", "cat", "lire", "explore", "explorer", "search", "chercher", "trouver", "find",
-        "weather", "météo", "actualités", "news", "save", "sauvegarde", "enregistre", "écris", "write"
+        "weather", "météo", "actualités", "news", "save", "sauvegarde", "enregistre", "écris", "write",
+        "ajoute", "add", "souvenir", "memory", "mcp", "outil"
     ]
     if question.startswith("/") or any(k in question for k in tech_triggers):
         yield {
             "decision": "web_and_tools", 
             "active_worker": "coder",
             "steps": ["router: technical fast-track"],
-            "thoughts": ["__RESET__", "**Intent:** Technical command detected. Routing to Coder Expert with tool access."]
+            "thoughts": ["__RESET__", "**Intent:** Technical command detected. Routing to Coder Expert with tool access."],
+            "graph_nodes": [
+                create_node("supervisor", "Supervisor", "SUPERVISOR", "🧠"),
+                create_node("worker", "Coder", "WORKER", "👷")
+            ],
+            "graph_edges": [create_edge("supervisor", "worker")]
         }
         return
 
@@ -28,6 +59,7 @@ async def router_node(state: AgentState):
         provider=state.get("llm_provider", "ollama"),
         model=state.get("selected_model"),
         api_key=state.get("llm_api_key"),
+        custom_url=state.get("llm_custom_url"),
         temperature=0,
         role="supervisor"
     )
@@ -38,9 +70,20 @@ async def router_node(state: AgentState):
         # Inform user about intent analysis
         yield {"detail": "Analyzing intent and choosing technical strategy...", "steps": ["router_started"]}
         
-        content = f"QUESTION: {question}"
+        # On récupère l'historique pour donner du contexte au Supervisor
+        messages = state.get("messages", [])
+        history_context = ""
+        if len(messages) > 1:
+            # On prend les 4 derniers messages pour avoir du contexte sans exploser les tokens
+            history_context = "\n--- CONTEXTE PRÉCÉDENT ---\n"
+            for m in messages[-4:]:
+                role = "USER" if isinstance(m, HumanMessage) else "AGENT"
+                content = m.content if isinstance(m.content, str) else "Image/Multi-modal content"
+                history_context += f"{role}: {content[:200]}...\n"
+
+        content = f"{history_context}\nCURRENT QUESTION: {question}"
         if vision_desc:
-            content = f"VISUAL ANALYSIS: {vision_desc}\n\nUSER QUESTION: {question}"
+            content = f"VISUAL ANALYSIS OF CURRENT IMAGE: {vision_desc}\n\n{history_context}\nCURRENT QUESTION: {question}"
 
         # We request raw text with a strict format to avoid JSON hallucination on small models
         response = await llm.ainvoke([
@@ -101,7 +144,12 @@ async def router_node(state: AgentState):
             "decision": datasource, 
             "active_worker": worker,
             "steps": [f"router: {datasource} (worker: {worker})"],
-            "thoughts": ["__RESET__", f"**Intent:** {reasoning} (Expert: {worker})"]
+            "thoughts": ["__RESET__", f"**Intent:** {reasoning} (Expert: {worker})"],
+            "graph_nodes": [
+                create_node("supervisor", "Supervisor", "SUPERVISOR", "🧠"),
+                create_node("worker", worker.capitalize(), "WORKER", "👷")
+            ],
+            "graph_edges": [create_edge("supervisor", "worker")]
         }
         return
         

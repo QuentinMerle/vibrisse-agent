@@ -33,10 +33,20 @@
             --font-mono: 'JetBrains Mono', monospace;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-        :focus-visible { outline: 2px solid var(--primary); outline-offset: 4px; }
-        html { scroll-behavior: smooth; }
+        :focus-visible {
+            outline: 2px solid var(--primary);
+            outline-offset: 4px;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
 
         body {
             background-color: var(--bg-dark);
@@ -50,8 +60,10 @@
         body::before {
             content: "";
             position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
             opacity: 0.02;
             pointer-events: none;
@@ -60,8 +72,10 @@
 
         .ambient-light {
             position: fixed;
-            top: -10%; left: -10%;
-            width: 60%; height: 60%;
+            top: -10%;
+            left: -10%;
+            width: 60%;
+            height: 60%;
             background: radial-gradient(circle, rgba(123, 57, 237, 0.08) 0%, transparent 70%);
             z-index: -1;
             filter: blur(80px);
@@ -69,14 +83,20 @@
 
         .ambient-light-bottom {
             position: fixed;
-            bottom: -10%; right: -10%;
-            width: 50%; height: 50%;
+            bottom: -10%;
+            right: -10%;
+            width: 50%;
+            height: 50%;
             background: radial-gradient(circle, rgba(123, 57, 237, 0.05) 0%, transparent 70%);
             z-index: -1;
             filter: blur(80px);
         }
 
-        .container { max-width: 1200px; margin: 0 auto; padding: 0 40px; }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 40px;
+        }
 
         .btn-primary {
             display: inline-block;
@@ -95,14 +115,25 @@
         .btn-primary::after {
             content: "";
             position: absolute;
-            top: -50%; left: -60%;
-            width: 20%; height: 200%;
+            top: -50%;
+            left: -60%;
+            width: 20%;
+            height: 200%;
             background: rgba(255, 255, 255, 0.2);
             transform: rotate(30deg);
             animation: shimmer 4s infinite;
         }
 
-        @keyframes shimmer { 0% { left: -60%; } 20%, 100% { left: 150%; } }
+        @keyframes shimmer {
+            0% {
+                left: -60%;
+            }
+
+            20%,
+            100% {
+                left: 150%;
+            }
+        }
 
         .btn-primary:hover {
             transform: translateY(-2px);
@@ -112,69 +143,112 @@
 
         header {
             position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 90px;
-            display: flex; align-items: center;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 90px;
+            display: flex;
+            align-items: center;
             z-index: 1000;
             backdrop-filter: blur(20px);
             border-bottom: 1px solid var(--glass-border);
         }
 
-        .header-content { display: flex; justify-content: space-between; align-items: center; width: 100%; }
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
 
         .logo {
-            display: flex; align-items: center; gap: 14px;
-            text-decoration: none; color: #fff;
-            font-family: var(--font-display); font-weight: 700;
-            font-size: 1.25rem; letter-spacing: -0.02em;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            text-decoration: none;
+            color: #fff;
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 1.25rem;
+            letter-spacing: -0.02em;
         }
 
         .logo-box {
-            width: 40px; height: 40px;
-            background: var(--primary); border-radius: 10px;
-            display: flex; align-items: center; justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: var(--primary);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             box-shadow: 0 0 20px var(--primary-glow);
         }
 
-        nav { display: flex; gap: 40px; }
+        nav {
+            display: flex;
+            gap: 40px;
+        }
+
         nav a {
-            text-decoration: none; color: var(--text-muted);
-            font-size: 0.85rem; font-weight: 500;
-            text-transform: uppercase; letter-spacing: 0.1em;
+            text-decoration: none;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
             transition: color 0.3s ease;
         }
-        nav a:hover { color: var(--primary); }
+
+        nav a:hover {
+            color: var(--primary);
+        }
 
         .hero {
             padding-top: 220px;
             padding-bottom: 160px;
-            display: flex; flex-direction: column;
-            align-items: center; text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
         }
 
         .kicker {
-            font-family: var(--font-mono); font-size: 0.7rem;
-            text-transform: uppercase; letter-spacing: 0.4em;
-            color: var(--primary); margin-bottom: 24px;
-            display: flex; align-items: center; gap: 12px;
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.4em;
+            color: var(--primary);
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
 
-        .kicker::before, .kicker::after {
-            content: ""; width: 40px; height: 1px;
+        .kicker::before,
+        .kicker::after {
+            content: "";
+            width: 40px;
+            height: 1px;
             background: rgba(123, 57, 237, 0.3);
         }
 
         h1 {
-            font-family: var(--font-display); font-size: clamp(3rem, 8vw, 6rem);
-            line-height: 0.95; letter-spacing: -0.05em;
-            font-weight: 700; margin-bottom: 40px;
+            font-family: var(--font-display);
+            font-size: clamp(3rem, 8vw, 6rem);
+            line-height: 0.95;
+            letter-spacing: -0.05em;
+            font-weight: 700;
+            margin-bottom: 40px;
             background: linear-gradient(to bottom, #fff 30%, rgba(255, 255, 255, 0.4) 100%);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .hero-desc {
-            max-width: 680px; font-size: 1.25rem;
-            color: var(--text-muted); margin-bottom: 60px;
+            max-width: 680px;
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            margin-bottom: 60px;
             font-weight: 300;
         }
 
@@ -183,52 +257,115 @@
         }
 
         .showcase-container {
-            position: relative; z-index: 1; width: 100%;
-            max-width: 1100px; margin: 0 auto;
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 1100px;
+            margin: 0 auto;
         }
 
         .showcase-aura {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 80%; height: 80%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            height: 80%;
             background: radial-gradient(circle, rgba(123, 57, 237, 0.1) 0%, transparent 70%);
-            filter: blur(100px); z-index: -1; animation: aura-pulse 10s infinite ease-in-out;
+            filter: blur(100px);
+            z-index: -1;
+            animation: aura-pulse 10s infinite ease-in-out;
         }
 
-        @keyframes aura-pulse { 0%, 100% { opacity: 0.3; transform: translate(-50%, -50%) scale(1); } 50% { opacity: 0.7; transform: translate(-50%, -50%) scale(1.15); } }
+        @keyframes aura-pulse {
+
+            0%,
+            100% {
+                opacity: 0.3;
+                transform: translate(-50%, -50%) scale(1);
+            }
+
+            50% {
+                opacity: 0.7;
+                transform: translate(-50%, -50%) scale(1.15);
+            }
+        }
 
         .showcase {
-            position: relative; padding: 20px;
+            position: relative;
+            padding: 20px;
             background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, transparent 100%);
-            border-radius: 32px; border: 1px solid var(--glass-border);
+            border-radius: 32px;
+            border: 1px solid var(--glass-border);
             box-shadow: 0 40px 100px rgba(0, 0, 0, 0.8);
         }
 
-        .showcase img { width: 100%; border-radius: 20px; display: block; }
+        .showcase img {
+            width: 100%;
+            border-radius: 20px;
+            display: block;
+        }
 
         .features-grid {
-            display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
             padding-bottom: 120px;
         }
 
         .f-card {
-            background: rgba(255, 255, 255, 0.01); border: 1px solid var(--glass-border);
-            border-radius: 24px; padding: 32px; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            display: flex; flex-direction: column; min-height: 260px;
+            background: rgba(255, 255, 255, 0.01);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 32px;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            flex-direction: column;
+            min-height: 260px;
         }
 
-        .f-card:hover { transform: translateY(-8px); background: rgba(255, 255, 255, 0.03); border-color: var(--primary); }
-        .f-card.span-1 { grid-column: span 1; }
-        .f-card.span-2 { grid-column: span 2; }
-        .f-card.span-3 { grid-column: span 3; }
+        .f-card:hover {
+            transform: translateY(-8px);
+            background: rgba(255, 255, 255, 0.03);
+            border-color: var(--primary);
+        }
+
+        .f-card.span-1 {
+            grid-column: span 1;
+        }
+
+        .f-card.span-2 {
+            grid-column: span 2;
+        }
+
+        .f-card.span-3 {
+            grid-column: span 3;
+        }
 
         .f-icon {
-            width: 40px; height: 40px; background: rgba(123, 57, 237, 0.1);
-            border-radius: 10px; display: flex; align-items: center; justify-content: center;
-            color: var(--primary); margin-bottom: 24px;
+            width: 40px;
+            height: 40px;
+            background: rgba(123, 57, 237, 0.1);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            margin-bottom: 24px;
         }
 
-        .f-card h3 { font-family: var(--font-display); font-size: 1.4rem; margin-bottom: 12px; color: #fff; }
-        .f-card p { font-size: 0.95rem; line-height: 1.5; color: var(--text-muted); }
+        .f-card h3 {
+            font-family: var(--font-display);
+            font-size: 1.4rem;
+            margin-bottom: 12px;
+            color: #fff;
+        }
+
+        .f-card p {
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: var(--text-muted);
+        }
 
         .pulse-banner {
             padding: 140px 0;
@@ -243,99 +380,286 @@
         .pulse-banner::before {
             content: "CORE PHILOSOPHY";
             position: absolute;
-            top: 40px; left: 50%; transform: translateX(-50%);
-            font-family: var(--font-mono); font-size: 0.6rem;
-            letter-spacing: 0.5em; color: var(--primary); opacity: 0.6;
+            top: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: var(--font-mono);
+            font-size: 0.6rem;
+            letter-spacing: 0.5em;
+            color: var(--primary);
+            opacity: 0.6;
         }
 
         .pulse-content {
-            display: flex; justify-content: center; align-items: center; gap: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 60px;
             margin-bottom: 50px;
         }
 
-        .pulse-stat { display: flex; flex-direction: column; align-items: center; }
+        .pulse-stat {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
         .stat-value {
-            font-family: var(--font-display); font-size: 4rem; font-weight: 700;
-            color: #fff; line-height: 1; margin-bottom: 8px;
+            font-family: var(--font-display);
+            font-size: 4rem;
+            font-weight: 700;
+            color: #fff;
+            line-height: 1;
+            margin-bottom: 8px;
         }
+
         .stat-label {
-            font-family: var(--font-mono); font-size: 0.7rem; text-transform: uppercase;
-            letter-spacing: 0.2em; color: var(--primary);
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: var(--primary);
         }
-        .pulse-divider { width: 1px; height: 60px; background: var(--glass-border); }
+
+        .pulse-divider {
+            width: 1px;
+            height: 60px;
+            background: var(--glass-border);
+        }
 
         .pulse-quote {
-            max-width: 700px; margin: 0 auto;
-            font-size: 1.75rem; font-weight: 300; color: var(--text-main);
-            font-style: italic; line-height: 1.4; opacity: 0.9;
+            max-width: 700px;
+            margin: 0 auto;
+            font-size: 1.75rem;
+            font-weight: 300;
+            color: var(--text-main);
+            font-style: italic;
+            line-height: 1.4;
+            opacity: 0.9;
         }
 
-        .gallery-section { padding: 100px 0; }
-        .gallery-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
-        .gallery-item {
-            background: rgba(255, 255, 255, 0.01); border: 1px solid var(--glass-border);
-            border-radius: 28px; padding: 24px; display: flex; flex-direction: column;
-            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1); position: relative; overflow: hidden;
+        .gallery-section {
+            padding: 100px 0;
         }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        .gallery-item {
+            background: rgba(255, 255, 255, 0.01);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
         .gallery-item:hover {
-            background: rgba(255, 255, 255, 0.03); border-color: var(--primary);
+            background: rgba(255, 255, 255, 0.03);
+            border-color: var(--primary);
             box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5), 0 0 20px var(--primary-glow);
             transform: translateY(-8px);
         }
-        .gallery-item.large { grid-column: span 2; grid-row: span 2; }
-        .gallery-item.wide { grid-column: span 2; }
-        .gallery-item img { width: 100%; height: auto; border-radius: 16px; margin-bottom: 24px; }
-        .gallery-item h3 { font-family: var(--font-display); font-size: 1.3rem; margin-bottom: 12px; color: #fff; }
-        .gallery-item p { font-size: 0.95rem; color: var(--text-muted); line-height: 1.6; }
+
+        .gallery-item.large {
+            grid-column: span 2;
+            grid-row: span 2;
+        }
+
+        .gallery-item.wide {
+            grid-column: span 2;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: auto;
+            border-radius: 16px;
+            margin-bottom: 24px;
+        }
+
+        .gallery-item h3 {
+            font-family: var(--font-display);
+            font-size: 1.3rem;
+            margin-bottom: 12px;
+            color: #fff;
+        }
+
+        .gallery-item p {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
 
         @media (max-width: 1100px) {
-            .gallery-grid { grid-template-columns: repeat(2, 1fr); }
-            .pulse-content { gap: 30px; flex-wrap: wrap; }
+            .gallery-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .pulse-content {
+                gap: 30px;
+                flex-wrap: wrap;
+            }
         }
 
         @media (max-width: 768px) {
-            .gallery-grid { grid-template-columns: 1fr; }
-            .pulse-content { flex-direction: column; gap: 40px; }
-            .pulse-divider { display: none; }
-            h1 { font-size: 4rem; }
-            nav { display: none; }
+            .gallery-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .pulse-content {
+                flex-direction: column;
+                gap: 40px;
+            }
+
+            .pulse-divider {
+                display: none;
+            }
+
+            h1 {
+                font-size: 4rem;
+            }
+
+            nav {
+                display: none;
+            }
         }
 
-        .faq-section { padding: 100px 0 160px; max-width: 850px; margin: 0 auto; }
-        .faq-accordion { border-top: 1px solid var(--glass-border); }
-        .faq-item { border-bottom: 1px solid var(--glass-border); }
+        .faq-section {
+            padding: 100px 0 160px;
+            max-width: 850px;
+            margin: 0 auto;
+        }
+
+        .faq-accordion {
+            border-top: 1px solid var(--glass-border);
+        }
+
+        .faq-item {
+            border-bottom: 1px solid var(--glass-border);
+        }
+
         .faq-item summary {
-            padding: 32px 0; list-style: none; cursor: pointer;
-            display: flex; justify-content: space-between; align-items: center;
-            font-family: var(--font-display); font-size: 1.25rem; font-weight: 500; color: #fff;
+            padding: 32px 0;
+            list-style: none;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 500;
+            color: #fff;
         }
-        .faq-icon-wrap { width: 24px; height: 24px; color: var(--primary); transition: transform 0.3s ease; }
-        .faq-item[open] .faq-icon-wrap { transform: rotate(45deg); }
-        .faq-content { padding-bottom: 32px; color: var(--text-muted); font-size: 1.05rem; line-height: 1.6; }
 
-        .terminal-wrap { padding: 160px 0; text-align: center; }
-        .terminal {
-            display: inline-flex; align-items: center; background: #000;
-            border: 1px solid var(--glass-border); border-radius: 16px;
-            padding: 24px 40px; font-family: var(--font-mono); font-size: 1.1rem; color: var(--text-main);
-            cursor: pointer; position: relative; transition: all 0.3s ease;
+        .faq-icon-wrap {
+            width: 24px;
+            height: 24px;
+            color: var(--primary);
+            transition: transform 0.3s ease;
         }
-        .terminal:hover { box-shadow: 0 0 40px rgba(123, 57, 237, 0.15); border-color: var(--primary); }
-        .terminal .prompt { color: var(--primary); margin-right: 16px; }
-        .copy-hint { position: absolute; bottom: -40px; left: 50%; transform: translateX(-50%); font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; }
+
+        .faq-item[open] .faq-icon-wrap {
+            transform: rotate(45deg);
+        }
+
+        .faq-content {
+            padding-bottom: 32px;
+            color: var(--text-muted);
+            font-size: 1.05rem;
+            line-height: 1.6;
+        }
+
+        .terminal-wrap {
+            padding: 160px 0;
+            text-align: center;
+        }
+
+        .terminal {
+            display: inline-flex;
+            align-items: center;
+            background: #000;
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 24px 40px;
+            font-family: var(--font-mono);
+            font-size: 1.1rem;
+            color: var(--text-main);
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .terminal:hover {
+            box-shadow: 0 0 40px rgba(123, 57, 237, 0.15);
+            border-color: var(--primary);
+        }
+
+        .terminal .prompt {
+            color: var(--primary);
+            margin-right: 16px;
+        }
+
+        .copy-hint {
+            position: absolute;
+            bottom: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
 
         .os-badge {
-            display: inline-flex; align-items: center; gap: 10px; background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--glass-border); padding: 8px 16px; border-radius: 100px;
-            font-size: 0.75rem; text-transform: uppercase; margin-bottom: 24px; color: #fff;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border);
+            padding: 8px 16px;
+            border-radius: 100px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            margin-bottom: 24px;
+            color: #fff;
         }
 
-        footer { padding: 80px 0; border-top: 1px solid var(--glass-border); text-align: center; }
-        .legal-disclaimer { max-width: 600px; margin: 0 auto 32px; font-size: 0.75rem; color: var(--text-muted); opacity: 0.7; }
-        .copyright { color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.15em; }
+        footer {
+            padding: 80px 0;
+            border-top: 1px solid var(--glass-border);
+            text-align: center;
+        }
 
-        [data-reveal] { opacity: 0; transform: translateY(30px); transition: all 0.8s cubic-bezier(0.2, 0, 0.2, 1); }
-        [data-reveal].revealed { opacity: 1; transform: translateY(0); }
+        .legal-disclaimer {
+            max-width: 600px;
+            margin: 0 auto 32px;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            opacity: 0.7;
+        }
+
+        .copyright {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+        }
+
+        [data-reveal] {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.2, 0, 0.2, 1);
+        }
+
+        [data-reveal].revealed {
+            opacity: 1;
+            transform: translateY(0);
+        }
     </style>
 </head>
 
@@ -347,19 +671,23 @@
         <div class="container header-content">
             <a href="#" class="logo">
                 <div class="logo-box">
-                    <svg width="26px" height="18px" viewBox="0 0 48 33" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+                    <svg width="26px" height="18px" viewBox="0 0 48 33" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                        xmlns:xlink="http://www.w3.org/1999/xlink"
+                        style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
                         <g transform="matrix(1,0,0,1,4.44089e-16,-1396.05)">
                             <g id="Vibrisse-AI" transform="matrix(0.0111025,0,0,0.00780979,3.46222,1399.36)">
-                                <rect x="-311.842" y="-424.276" width="4247.28" height="4104.68" style="fill:none;"/>
+                                <rect x="-311.842" y="-424.276" width="4247.28" height="4104.68" style="fill:none;" />
                                 <g id="Merge" transform="matrix(22.0404,0,0,25.7451,-37290,-35766.3)">
                                     <g transform="matrix(4.1382,0,0,4.98326,-338.902,-5584.3)">
-                                        <path d="M496.096,1418.48l-8.052,-2.63c-0.54,-0.176 -0.837,-0.763 -0.663,-1.309c0.175,-0.546 0.755,-0.846 1.295,-0.669l7.42,2.423l-0,-4.433c-0,-2.178 1.131,-4.09 2.832,-5.169c-0.002,-0.078 0.006,-0.157 0.022,-0.235l1.936,-9.131l0.163,-0.438l0.276,-0.363l0.368,-0.267l0.438,-0.152l0.462,-0.014l0.438,0.119l0.385,0.242l0.305,0.352l5.695,8.956l2.545,0l5.695,-8.956l0.305,-0.352l0.385,-0.242l0.438,-0.119l0.463,0.014l0.438,0.152l0.368,0.267l0.276,0.363l0.163,0.438l1.935,9.131c0.016,0.077 0.024,0.155 0.023,0.232c1.703,1.078 2.836,2.992 2.836,5.172l0,4.358l7.192,-2.348c0.54,-0.177 1.12,0.123 1.295,0.669c0.175,0.546 -0.122,1.133 -0.663,1.309l-7.824,2.555l0,1.079l7.824,2.555c0.541,0.177 0.838,0.763 0.663,1.309c-0.175,0.546 -0.755,0.846 -1.295,0.67l-7.192,-2.348l0,0.312c0,3.367 -2.704,6.1 -6.035,6.1l-17.12,0c-3.331,0 -6.035,-2.733 -6.035,-6.1l-0,-0.387l-7.42,2.423c-0.54,0.176 -1.12,-0.124 -1.295,-0.67c-0.174,-0.546 0.123,-1.132 0.663,-1.309l8.052,-2.629l-0,-0.93Zm27.133,-6.618c0,-2.219 -1.782,-4.021 -3.978,-4.021l-17.12,0c-2.195,0 -3.978,1.802 -3.978,4.021l0,10.12c0,2.219 1.783,4.021 3.978,4.021l17.12,-0c2.196,-0 3.978,-1.802 3.978,-4.021l0,-10.12Zm-4.496,-12.904l-4.246,6.678l5.662,0l-1.416,-6.678Zm-16.089,-0l-1.415,6.678l5.662,0l-4.247,-6.678Z" style="fill:white;"/>
+                                        <path
+                                            d="M496.096,1418.48l-8.052,-2.63c-0.54,-0.176 -0.837,-0.763 -0.663,-1.309c0.175,-0.546 0.755,-0.846 1.295,-0.669l7.42,2.423l-0,-4.433c-0,-2.178 1.131,-4.09 2.832,-5.169c-0.002,-0.078 0.006,-0.157 0.022,-0.235l1.936,-9.131l0.163,-0.438l0.276,-0.363l0.368,-0.267l0.438,-0.152l0.462,-0.014l0.438,0.119l0.385,0.242l0.305,0.352l5.695,8.956l2.545,0l5.695,-8.956l0.305,-0.352l0.385,-0.242l0.438,-0.119l0.463,0.014l0.438,0.152l0.368,0.267l0.276,0.363l0.163,0.438l1.935,9.131c0.016,0.077 0.024,0.155 0.023,0.232c1.703,1.078 2.836,2.992 2.836,5.172l0,4.358l7.192,-2.348c0.54,-0.177 1.12,0.123 1.295,0.669c0.175,0.546 -0.122,1.133 -0.663,1.309l-7.824,2.555l0,1.079l7.824,2.555c0.541,0.177 0.838,0.763 0.663,1.309c-0.175,0.546 -0.755,0.846 -1.295,0.67l-7.192,-2.348l0,0.312c0,3.367 -2.704,6.1 -6.035,6.1l-17.12,0c-3.331,0 -6.035,-2.733 -6.035,-6.1l-0,-0.387l-7.42,2.423c-0.54,0.176 -1.12,-0.124 -1.295,-0.67c-0.174,-0.546 0.123,-1.132 0.663,-1.309l8.052,-2.629l-0,-0.93Zm27.133,-6.618c0,-2.219 -1.782,-4.021 -3.978,-4.021l-17.12,0c-2.195,0 -3.978,1.802 -3.978,4.021l0,10.12c0,2.219 1.783,4.021 3.978,4.021l17.12,-0c2.196,-0 3.978,-1.802 3.978,-4.021l0,-10.12Zm-4.496,-12.904l-4.246,6.678l5.662,0l-1.416,-6.678Zm-16.089,-0l-1.415,6.678l5.662,0l-4.247,-6.678Z"
+                                            style="fill:white;" />
                                     </g>
                                     <g transform="matrix(4.32295,0,0,5.2612,-430.894,-5977.1)">
-                                        <ellipse cx="505.31" cy="1416.49" rx="1.637" ry="3.124" style="fill:white;"/>
+                                        <ellipse cx="505.31" cy="1416.49" rx="1.637" ry="3.124" style="fill:white;" />
                                     </g>
                                     <g transform="matrix(4.32295,0,0,5.2612,-389.499,-5977.1)">
-                                        <ellipse cx="505.31" cy="1416.49" rx="1.637" ry="3.124" style="fill:white;"/>
+                                        <ellipse cx="505.31" cy="1416.49" rx="1.637" ry="3.124" style="fill:white;" />
                                     </g>
                                 </g>
                             </g>
@@ -374,16 +702,19 @@
                 <a href="https://github.com/QuentinMerle/vibrisse-agent">Source</a>
                 <a href="#install">Deploy</a>
             </nav>
-            <div class="logo" style="font-size: 0.7rem; opacity: 0.6; text-transform: uppercase; letter-spacing: 0.2em;">v1.0.4 stable</div>
+            <div class="logo"
+                style="font-size: 0.7rem; opacity: 0.6; text-transform: uppercase; letter-spacing: 0.2em;">v1.1.0 stable
+            </div>
         </div>
     </header>
 
     <main>
         <section class="container hero">
-            <div class="kicker" data-reveal>Sovereign Intelligence</div>
-            <h1 data-reveal>Engineering Partner<br>for Local Context.</h1>
-            <p class="hero-desc" data-reveal>Vibrisse is a multi-agent system designed to transform your codebase into an active reasoning environment. 100% private, surgically precise, and built for speed.</p>
-            <div class="hero-btns" data-reveal><a href="#install" class="btn-primary">Deploy Agent</a></div>
+            <div class="kicker" data-reveal>Small Models, Great Tools</div>
+            <h1 data-reveal>The Sovereign<br>Engineering Partner.</h1>
+            <p class="hero-desc" data-reveal>Vibrisse is a high-performance multi-agent framework that transforms your
+                local codebase into an active reasoning partner. 100% Private. Cross-Platform. Studio-Grade.</p>
+            <div class="hero-btns" data-reveal><a href="#install" class="btn-primary">Get Started Now</a></div>
             <div class="showcase-container" data-reveal>
                 <div class="showcase-aura"></div>
                 <div class="showcase"><img src="docs/assets/vibrisse-agent-ui.png" alt="Vibrisse Studio UI"></div>
@@ -391,47 +722,49 @@
         </section>
 
         <section class="container features-section" id="features">
-            <h2 data-reveal style="font-family: var(--font-display); font-size: 3rem; margin-bottom: 80px; text-align: center; background: linear-gradient(to right, #fff, var(--text-muted)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Engineered for Focus</h2>
+            <h2 data-reveal
+                style="font-family: var(--font-display); font-size: 3rem; margin-bottom: 80px; text-align: center; background: linear-gradient(to right, #fff, var(--text-muted)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                Surgical Engineering</h2>
             <div class="features-grid">
                 <div class="f-card span-2" data-reveal>
+                    <div class="f-icon"><i data-lucide="ghost"></i></div>
+                    <h3>Ghost Mode</h3>
+                    <p>Trigger agent actions directly from your code comments with `@vibrisse:`. The background watcher
+                        handles refactors and docs without you leaving the IDE.</p>
+                </div>
+                <div class="f-card span-1" data-reveal>
+                    <div class="f-icon"><i data-lucide="shield-check"></i></div>
+                    <h3>Sovereign First</h3>
+                    <p>AES-256 encrypted sessions and local-first execution. Your code and API keys stay on your
+                        hardware, protected by industrial standards.</p>
+                </div>
+                <div class="f-card span-1" data-reveal>
+                    <div class="f-icon"><i data-lucide="route"></i></div>
+                    <h3>Sovereign Routing</h3>
+                    <p>A smart sentinel that arbitrates between local Ollama speed and Cloud LLM reasoning based on task
+                        complexity.</p>
+                </div>
+                <div class="f-card span-1" data-reveal>
                     <div class="f-icon"><i data-lucide="layers"></i></div>
                     <h3>Triple-Layer RAG</h3>
-                    <p>Vector Retrieval, BM25, and Surgical Grep combined to find exact code symbols across million-line repos with zero hallucination.</p>
-                </div>
-                <div class="f-card span-1" data-reveal>
-                    <div class="f-icon"><i data-lucide="shield"></i></div>
-                    <h3>Sovereign First</h3>
-                    <p>Built to run locally via Ollama, ensuring your code never touches the cloud.</p>
-                </div>
-                <div class="f-card span-1" data-reveal>
-                    <div class="f-icon"><i data-lucide="zap"></i></div>
-                    <h3>Hybrid Intelligence</h3>
-                    <p>Seamlessly connect to Groq or OpenRouter for speed while keeping sensitive logic local.</p>
-                </div>
-                <div class="f-card span-1" data-reveal>
-                    <div class="f-icon"><i data-lucide="brain-circuit"></i></div>
-                    <h3>Multi-Agent</h3>
-                    <p>Specialized experts (Coder, Architect, Writer) orchestrated for complex reasoning.</p>
+                    <p>Vector Search + BM25 + Surgical Grep. 100% precision for repo-scale context retrieval.</p>
                 </div>
                 <div class="f-card span-1" data-reveal>
                     <div class="f-icon"><i data-lucide="monitor"></i></div>
                     <h3>Obsidian Studio</h3>
-                    <p>Immersive interface with real-time thought streaming and hardware monitoring.</p>
+                    <p>Immersive "Glass" interface with real-time thought graph, streaming console, and hardware health
+                        tracking.</p>
                 </div>
                 <div class="f-card span-1" data-reveal>
                     <div class="f-icon"><i data-lucide="cpu"></i></div>
-                    <h3>Smart Discovery</h3>
-                    <p>Hardware-aware setup that automatically calibrates model parameters.</p>
+                    <h3>Hardware Aware</h3>
+                    <p>Automatic discovery and calibration for Mac, Windows, and Linux resources (VRAM, RAM, CPU).</p>
                 </div>
                 <div class="f-card span-2" data-reveal>
                     <div class="f-icon"><i data-lucide="plug"></i></div>
-                    <h3>MCP Native Support</h3>
-                    <p>Full support for the Model Context Protocol. Connect to an ever-growing ecosystem of tools like Linear, GitHub, or Postgres.</p>
-                </div>
-                <div class="f-card span-3" data-reveal>
-                    <div class="f-icon"><i data-lucide="line-chart"></i></div>
-                    <h3>Sovereign Evaluation Pipeline</h3>
-                    <p>Professional-grade observability with automated quality scoring via RAGAS metrics running 100% locally.</p>
+                    <h3>MCP Hub</h3>
+                    <p>Native Model Context Protocol support. Connect to GitHub, Linear, Slack, or Postgres with
+                        persistent, auto-recovering links.</p>
                 </div>
             </div>
         </section>
@@ -440,12 +773,12 @@
             <div class="container pulse-content" data-reveal>
                 <div class="pulse-stat">
                     <span class="stat-value">0%</span>
-                    <span class="stat-label">Data Leakage</span>
+                    <span class="stat-label">Cloud Exposure</span>
                 </div>
                 <div class="pulse-divider"></div>
                 <div class="pulse-stat">
                     <span class="stat-value">100%</span>
-                    <span class="stat-label">Sovereign Intel</span>
+                    <span class="stat-label">Local Sovereign</span>
                 </div>
                 <div class="pulse-divider"></div>
                 <div class="pulse-stat">
@@ -454,75 +787,102 @@
                 </div>
             </div>
             <div class="pulse-quote" data-reveal>
-                "The intelligence you need, on the hardware you own."
+                "Bringing the power of agentic engineering to the hardware you own."
             </div>
         </section>
 
         <section id="interface" class="container gallery-section">
-            <h2 data-reveal style="font-family: var(--font-display); font-size: 2.5rem; margin-bottom: 60px; text-align: center;">The Studio Experience</h2>
+            <h2 data-reveal
+                style="font-family: var(--font-display); font-size: 2.5rem; margin-bottom: 60px; text-align: center;">
+                Studio Grade Observability</h2>
             <div class="gallery-grid">
                 <div class="gallery-item large" data-reveal>
                     <img src="docs/assets/vibrisse-agent-thinking.png" alt="Technical Reasoning">
-                    <h3>Technical Reasoning</h3>
-                    <p>Observe the agent as it plans, routes intents, and executes specialized tools in real-time. A deep dive into internal thought process.</p>
+                    <h3>Visual Thought Graph</h3>
+                    <p>Observe the agent's reasoning path in real-time. Understand every tool call, every RAG retrieval,
+                        and every decision made by the orchestrator.</p>
                 </div>
                 <div class="gallery-item" data-reveal>
                     <img src="docs/assets/vibrisse-agent-hardware-discovery.png" alt="Hardware Awareness">
-                    <h3>Hardware Awareness</h3>
-                    <p>Automatic detection and optimization based on your local GPU/CPU resources.</p>
+                    <h3>System Sentinel</h3>
+                    <p>Automatic resource detection that picks the best model tiers for your specific machine.</p>
                 </div>
                 <div class="gallery-item" data-reveal>
                     <img src="docs/assets/vibrisse-agent-groq-example.png" alt="Hybrid Speed">
-                    <h3>Hybrid Speed</h3>
-                    <p>Leverage Groq LPU performance for ultra-fast coding assistance.</p>
+                    <h3>Sovereign Toggle</h3>
+                    <p>Switch between 100% Local and Hybrid-Cloud intelligence with a single toggle in the Studio.</p>
                 </div>
                 <div class="gallery-item wide" data-reveal>
-                    <img src="docs/assets/vibrisse-agent-choose-your-persona.png" alt="Expert Personas">
-                    <h3>Expert Personas</h3>
-                    <p>Dedicated agents for Coder, Architect, and Writer tasks with specialized prompt sets.</p>
+                    <img src="docs/assets/vibrisse-agent-choose-your-persona.png" alt="Expert Workers">
+                    <h3>Specialized Workers</h3>
+                    <p>Dedicated personas for Coder, Architect, and Writer tasks, each with surgical instructions.</p>
                 </div>
                 <div class="gallery-item" data-reveal>
-                    <img src="docs/assets/vibrisse-agent-model-configuration.png" alt="Deep Config">
-                    <h3>Deep Config</h3>
-                    <p>Granular control over models, providers, and RAG thresholds.</p>
+                    <img src="docs/assets/vibrisse-agent-model-configuration.png" alt="MCP Persistence">
+                    <h3>MCP Persistence</h3>
+                    <p>Configure your tools once; Vibrisse recovers them automatically across every project workspace.
+                    </p>
                 </div>
             </div>
         </section>
 
         <section id="faq" class="container faq-section">
-            <h2 data-reveal style="font-family: var(--font-display); font-size: 3rem; margin-bottom: 64px; text-align: center; background: linear-gradient(to right, #fff, var(--text-muted)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Expert Knowledge</h2>
+            <h2 data-reveal
+                style="font-family: var(--font-display); font-size: 3rem; margin-bottom: 64px; text-align: center; background: linear-gradient(to right, #fff, var(--text-muted)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                Questions & Answers</h2>
             <div class="faq-accordion" data-reveal>
                 <details class="faq-item">
-                    <summary>Is my code really private? <div class="faq-icon-wrap"><i data-lucide="plus"></i></div></summary>
-                    <div class="faq-content">Yes. By default, Vibrisse uses Ollama to run models locally on your machine. No code or prompts are sent to any server unless you explicitly enable a cloud provider.</div>
+                    <summary>Is it compatible with Windows? <div class="faq-icon-wrap"><i data-lucide="plus"></i></div>
+                    </summary>
+                    <div class="faq-content">Yes. Vibrisse is cross-platform. We provide a native PowerShell installer
+                        for Windows and a dedicated launcher for WSL2 environments.</div>
                 </details>
                 <details class="faq-item">
-                    <summary>Which models work best? <div class="faq-icon-wrap"><i data-lucide="plus"></i></div></summary>
-                    <div class="faq-content">For local use, we recommend Llama 3 (8B) or Mistral. If you have enough VRAM, Llama 3.3 (70B) is a powerhouse. Our setup wizard helps you choose the best tier for your hardware.</div>
+                    <summary>How does the data stay private? <div class="faq-icon-wrap"><i data-lucide="plus"></i></div>
+                    </summary>
+                    <div class="faq-content">By default, all inference runs on your local Ollama server. Your API keys
+                        are encrypted with AES-256 and never leave your machine.</div>
                 </details>
                 <details class="faq-item">
-                    <summary>How does Web Search work? <div class="faq-icon-wrap"><i data-lucide="plus"></i></div></summary>
-                    <div class="faq-content">Vibrisse integrates with Tavily. When enabled, the agent can fetch live documentation, API changes, or stackoverflow answers.</div>
+                    <summary>What is Ghost Mode? <div class="faq-icon-wrap"><i data-lucide="plus"></i></div>
+                    </summary>
+                    <div class="faq-content">Ghost Mode allows you to trigger the agent via comments like `// @vibrisse:
+                        add docstrings`. The agent detects the tag, performs the edit, and notifies you when it's done.
+                    </div>
                 </details>
                 <details class="faq-item">
-                    <summary>Does it support Vision? <div class="faq-icon-wrap"><i data-lucide="plus"></i></div></summary>
-                    <div class="faq-content">Absolutely. Drop screenshots into the chat. Multimodal models analyze the design to help you implement it in code.</div>
-                </details>
-                <details class="faq-item">
-                    <summary>Can I extend it with MCP? <div class="faq-icon-wrap"><i data-lucide="plus"></i></div></summary>
-                    <div class="faq-content">Yes. Vibrisse is MCP-native. Connect standard MCP servers to give access to calendar, linear, github, etc.</div>
+                    <summary>Can I use my own models? <div class="faq-icon-wrap"><i data-lucide="plus"></i></div>
+                    </summary>
+                    <div class="faq-content">Absolutely. Vibrisse supports Ollama, vLLM, LM Studio, and any
+                        OpenAI-compatible local server.</div>
                 </details>
             </div>
         </section>
 
         <section class="terminal-wrap" id="install">
             <div class="container">
-                <div class="os-badge" data-reveal><i data-lucide="apple" style="width: 14px;"></i> Optimized for macOS</div>
-                <h2 style="font-family: var(--font-display); font-size: 2.5rem; margin-bottom: 48px;">Get started in seconds.</h2>
-                <button class="terminal" onclick="copyInstall()" data-reveal title="Click to copy command">
+                <div class="os-badge" data-reveal><i data-lucide="terminal" style="width: 14px;"></i> Cross-Platform
+                    Native</div>
+                <h2 style="font-family: var(--font-display); font-size: 2.5rem; margin-bottom: 48px;">Deploy Vibrisse in
+                    seconds.</h2>
+
+                <p
+                    style="margin-bottom: 20px; font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-muted);">
+                    FOR MACOS / LINUX</p>
+                <button class="terminal" onclick="copyInstall('mac')" data-reveal title="Click to copy command"
+                    style="margin-bottom: 40px;">
                     <span class="prompt">➜</span>
-                    <span id="cmd">curl -sSL https://agent.vibrisse-studio.dev/install.sh | bash</span>
-                    <div class="copy-hint">Click to copy command</div>
+                    <span id="cmd-mac">curl -sSL https://agent.vibrisse-studio.dev/install.sh | bash</span>
+                    <div class="copy-hint" id="hint-mac">Click to copy</div>
+                </button>
+
+                <p
+                    style="margin-top: 40px; margin-bottom: 20px; font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-muted);">
+                    FOR WINDOWS (POWERSHELL)</p>
+                <button class="terminal" onclick="copyInstall('win')" data-reveal title="Click to copy command">
+                    <span class="prompt">➜</span>
+                    <span id="cmd-win">irm https://agent.vibrisse-studio.dev/install.ps1 | iex</span>
+                    <div class="copy-hint" id="hint-win">Click to copy</div>
                 </button>
             </div>
         </section>
@@ -531,26 +891,31 @@
     <footer>
         <div class="container">
             <div class="footer-logo" style="margin-bottom: 32px; opacity: 0.5;">
-                <svg width="32px" height="22px" viewBox="0 0 48 33" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2; margin: 0 auto;">
+                <svg width="32px" height="22px" viewBox="0 0 48 33" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                    xmlns:xlink="http://www.w3.org/1999/xlink"
+                    style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2; margin: 0 auto;">
                     <g transform="matrix(1,0,0,1,4.44089e-16,-1396.05)">
                         <g id="Vibrisse-AI-Footer" transform="matrix(0.0111025,0,0,0.00780979,3.46222,1399.36)">
-                            <rect x="-311.842" y="-424.276" width="4247.28" height="4104.68" style="fill:none;"/>
+                            <rect x="-311.842" y="-424.276" width="4247.28" height="4104.68" style="fill:none;" />
                             <g id="Merge-Footer" transform="matrix(22.0404,0,0,25.7451,-37290,-35766.3)">
                                 <g transform="matrix(4.1382,0,0,4.98326,-338.902,-5584.3)">
-                                    <path d="M496.096,1418.48l-8.052,-2.63c-0.54,-0.176 -0.837,-0.763 -0.663,-1.309c0.175,-0.546 0.755,-0.846 1.295,-0.669l7.42,2.423l-0,-4.433c-0,-2.178 1.131,-4.09 2.832,-5.169c-0.002,-0.078 0.006,-0.157 0.022,-0.235l1.936,-9.131l0.163,-0.438l0.276,-0.363l0.368,-0.267l0.438,-0.152l0.462,-0.014l0.438,0.119l0.385,0.242l0.305,0.352l5.695,8.956l2.545,0l5.695,-8.956l0.305,-0.352l0.385,-0.242l0.438,-0.119l0.463,0.014l0.438,0.152l0.368,0.267l0.276,0.363l0.163,0.438l1.935,9.131c0.016,0.077 0.024,0.155 0.023,0.232c1.703,1.078 2.836,2.992 2.836,5.172l0,4.358l7.192,-2.348c0.54,-0.177 1.12,0.123 1.295,0.669c0.175,0.546 -0.122,1.133 -0.663,1.309l-7.824,2.555l0,1.079l7.824,2.555c0.541,0.177 0.838,0.763 0.663,1.309c-0.175,0.546 -0.755,0.846 -1.295,0.67l-7.192,-2.348l0,0.312c0,3.367 -2.704,6.1 -6.035,6.1l-17.12,0c-3.331,0 -6.035,-2.733 -6.035,-6.1l-0,-0.387l-7.42,2.423c-0.54,0.176 -1.12,-0.124 -1.295,-0.67c-0.174,-0.546 0.123,-1.132 0.663,-1.309l8.052,-2.629l-0,-0.93Zm27.133,-6.618c0,-2.219 -1.782,-4.021 -3.978,-4.021l-17.12,0c-2.195,0 -3.978,1.802 -3.978,4.021l0,10.12c0,2.219 1.783,4.021 3.978,4.021l17.12,-0c2.196,-0 3.978,-1.802 3.978,-4.021l0,-10.12Zm-4.496,-12.904l-4.246,6.678l5.662,0l-1.416,-6.678Zm-16.089,-0l-1.415,6.678l5.662,0l-4.247,-6.678Z" style="fill:white;"/>
+                                    <path
+                                        d="M496.096,1418.48l-8.052,-2.63c-0.54,-0.176 -0.837,-0.763 -0.663,-1.309c0.175,-0.546 0.755,-0.846 1.295,-0.669l7.42,2.423l-0,-4.433c-0,-2.178 1.131,-4.09 2.832,-5.169c-0.002,-0.078 0.006,-0.157 0.022,-0.235l1.936,-9.131l0.163,-0.438l0.276,-0.363l0.368,-0.267l0.438,-0.152l0.462,-0.014l0.438,0.119l0.385,0.242l0.305,0.352l5.695,8.956l2.545,0l5.695,-8.956l0.305,-0.352l0.385,-0.242l0.438,-0.119l0.463,0.014l0.438,0.152l0.368,0.267l0.276,0.363l0.163,0.438l1.935,9.131c0.016,0.077 0.024,0.155 0.023,0.232c1.703,1.078 2.836,2.992 2.836,5.172l0,4.358l7.192,-2.348c0.54,-0.177 1.12,0.123 1.295,0.669c0.175,0.546 -0.122,1.133 -0.663,1.309l-7.824,2.555l0,1.079l7.824,2.555c0.541,0.177 0.838,0.763 0.663,1.309c-0.175,0.546 -0.755,0.846 -1.295,0.67l-7.192,-2.348l0,0.312c0,3.367 -2.704,6.1 -6.035,6.1l-17.12,0c-3.331,0 -6.035,-2.733 -6.035,-6.1l-0,-0.387l-7.42,2.423c-0.54,0.176 -1.12,-0.124 -1.295,-0.67c-0.174,-0.546 0.123,-1.132 0.663,-1.309l8.052,-2.629l-0,-0.93Zm27.133,-6.618c0,-2.219 -1.782,-4.021 -3.978,-4.021l-17.12,0c-2.195,0 -3.978,1.802 -3.978,4.021l0,10.12c0,2.219 1.783,4.021 3.978,4.021l17.12,-0c2.196,-0 3.978,-1.802 3.978,-4.021l0,-10.12Zm-4.496,-12.904l-4.246,6.678l5.662,0l-1.416,-6.678Zm-16.089,-0l-1.415,6.678l5.662,0l-4.247,-6.678Z"
+                                        style="fill:white;" />
                                 </g>
                                 <g transform="matrix(4.32295,0,0,5.2612,-430.894,-5977.1)">
-                                    <ellipse cx="505.31" cy="1416.49" rx="1.637" ry="3.124" style="fill:white;"/>
+                                    <ellipse cx="505.31" cy="1416.49" rx="1.637" ry="3.124" style="fill:white;" />
                                 </g>
                                 <g transform="matrix(4.32295,0,0,5.2612,-389.499,-5977.1)">
-                                    <ellipse cx="505.31" cy="1416.49" rx="1.637" ry="3.124" style="fill:white;"/>
+                                    <ellipse cx="505.31" cy="1416.49" rx="1.637" ry="3.124" style="fill:white;" />
                                 </g>
                             </g>
                         </g>
                     </g>
                 </svg>
             </div>
-            <div class="legal-disclaimer">Vibrisse is an open-source experimental tool provided "as is" without warranty. Users are responsible for organizational security compliance.</div>
+            <div class="legal-disclaimer">Vibrisse is an open-source experimental tool provided "as is" without
+                warranty. Users are responsible for organizational security compliance.</div>
             <div class="copyright">Vibrisse AI / Modern Engineering Protocol</div>
         </div>
     </footer>
@@ -571,19 +936,24 @@
         }, { threshold: 0.1 });
         document.querySelectorAll('[data-reveal]').forEach(el => observer.observe(el));
 
-        function copyInstall() {
-            const text = document.getElementById('cmd').innerText;
+        function copyInstall(os) {
+            const id = os === 'mac' ? 'cmd-mac' : 'cmd-win';
+            const hintId = os === 'mac' ? 'hint-mac' : 'hint-win';
+            const text = document.getElementById(id).innerText;
+
             navigator.clipboard.writeText(text).then(() => {
-                const term = document.querySelector('.terminal');
-                const originalText = document.querySelector('.copy-hint').innerText;
-                document.querySelector('.copy-hint').innerText = "Copied to clipboard!";
-                term.style.borderColor = "#10b981";
+                const hint = document.getElementById(hintId);
+                const originalText = "Click to copy";
+                hint.innerText = "Copied!";
+                hint.style.color = "#10b981";
+
                 setTimeout(() => {
-                    document.querySelector('.copy-hint').innerText = originalText;
-                    term.style.borderColor = "";
+                    hint.innerText = originalText;
+                    hint.style.color = "";
                 }, 2000);
             });
         }
     </script>
 </body>
+
 </html>

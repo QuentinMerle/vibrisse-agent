@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Server, Cpu, Key, ChevronDown, Loader2, Check } from 'lucide-react';
+import { Server, Cpu, Key, ChevronDown, Loader2, Check, RotateCw } from 'lucide-react';
 import { api } from '../../services/api';
 
 const LLMTab = ({ localSettings, setLocalSettings }) => {
@@ -11,38 +11,38 @@ const LLMTab = ({ localSettings, setLocalSettings }) => {
 
   const providers = [
     { id: 'ollama', name: 'Ollama (Local)', icon: <Server size={16} /> },
+    { id: 'vllm', name: 'Custom', icon: <Server size={16} /> },
     { id: 'ollama_cloud', name: 'Ollama Cloud', icon: <Cpu size={16} /> },
     { id: 'openrouter', name: 'OpenRouter', icon: <Cpu size={16} /> },
     { id: 'groq', name: 'Groq', icon: <Cpu size={16} /> },
   ];
 
-  // Fetch models whenever provider or apiKey changes
+  const fetchModels = React.useCallback(async () => {
+    const needsKey = ['ollama_cloud', 'openrouter', 'groq'].includes(localSettings.provider);
+    if (needsKey && !localSettings.apiKey && !localSettings.apiKeys?.[localSettings.provider]) {
+      setAvailableModels([]);
+      return;
+    }
+
+    setIsLoadingModels(true);
+    try {
+      const key = localSettings.apiKeys?.[localSettings.provider] || localSettings.apiKey;
+      const customUrl = localSettings.customUrls?.[localSettings.provider] || localSettings.customUrl;
+      const res = await api.getModels(localSettings.provider, key, customUrl);
+      if (res.models) {
+        setAvailableModels(res.models);
+      }
+    } catch (e) {
+      console.error("Erreur chargement modèles", e);
+    } finally {
+      setIsLoadingModels(false);
+    }
+  }, [localSettings.provider, localSettings.apiKeys, localSettings.apiKey, localSettings.customUrls, localSettings.customUrl]);
+
+  // Fetch models whenever provider or settings change
   useEffect(() => {
-    let isMounted = true;
-    const fetchModels = async () => {
-      const needsKey = ['ollama_cloud', 'openrouter', 'groq'].includes(localSettings.provider);
-      if (needsKey && !localSettings.apiKey && !localSettings.apiKeys?.[localSettings.provider]) {
-        setAvailableModels([]);
-        return;
-      }
-
-      setIsLoadingModels(true);
-      try {
-        const key = localSettings.apiKeys?.[localSettings.provider] || localSettings.apiKey;
-        const res = await api.getModels(localSettings.provider, key);
-        if (isMounted && res.models) {
-          setAvailableModels(res.models);
-        }
-      } catch (e) {
-        console.error("Erreur chargement modèles", e);
-      } finally {
-        if (isMounted) setIsLoadingModels(false);
-      }
-    };
-
     fetchModels();
-    return () => { isMounted = false; };
-  }, [localSettings.provider, localSettings.apiKeys, localSettings.apiKey]);
+  }, [fetchModels]);
 
   // Fermer le dropdown au clic extérieur
   useEffect(() => {
@@ -84,7 +84,17 @@ const LLMTab = ({ localSettings, setLocalSettings }) => {
       </div>
 
       <div className="settings-group">
-        <label htmlFor="model-name">Modèle spécifique</label>
+        <div className="setting-header">
+          <label className="setting-label">Modèle spécifique</label>
+          <button 
+            className="refresh-btn" 
+            onClick={fetchModels} 
+            title="Rafraîchir la liste"
+            disabled={isLoadingModels}
+          >
+            <RotateCw size={14} className={isLoadingModels ? 'spin' : ''} />
+          </button>
+        </div>
         <div className="custom-model-select" ref={dropdownRef}>
           <div 
             className={`select-trigger ${isOpen ? 'active' : ''}`}
@@ -139,6 +149,30 @@ const LLMTab = ({ localSettings, setLocalSettings }) => {
             : "Saisissez le nom du modèle manuellement ou attendez la détection."}
         </small>
       </div>
+
+      {localSettings.provider === 'vllm' && (
+        <div className="settings-group">
+          <label htmlFor="custom-url">URL du Serveur Custom</label>
+          <div className="input-wrapper">
+            <Server className="input-icon" size={16} />
+            <input
+              id="custom-url"
+              type="text"
+              placeholder="http://votre-serveur:8000/v1"
+              value={localSettings.customUrls?.[localSettings.provider] || 'http://localhost:8000/v1'}
+              onChange={e => {
+                const val = e.target.value;
+                setLocalSettings(prev => ({
+                  ...prev,
+                  customUrls: { ...prev.customUrls, [prev.provider]: val },
+                  // On garde customUrl synchronisé
+                  customUrl: val
+                }));
+              }}
+            />
+          </div>
+        </div>
+      )}
 
       {localSettings.provider !== 'ollama' && (
         <div className="settings-group">

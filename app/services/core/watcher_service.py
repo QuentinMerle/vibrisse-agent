@@ -1,10 +1,12 @@
 import logging
+import asyncio
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 from langchain_community.document_loaders import TextLoader
 from app.core.config import settings
 from app.services.rag.vs_instance import vs
 from app.services.rag.vector_service import VectorService
+from app.services.core.ghost_service import GhostService
 from pathlib import Path
 
 logger = logging.getLogger(__name__)
@@ -61,6 +63,22 @@ class ProjectWatcherHandler(FileSystemEventHandler):
             if docs:
                 self.vs.add_documents(docs)
                 print(f"--- 🚀 WATCHDOG SUCCESS : {file_path} ingéré ---", flush=True)
+                
+                # --- GHOST MODE ---
+                directives = GhostService.scan_file(file_path)
+                if directives:
+                    # On lance le traitement en tâche de fond (async)
+                    # Note: Dans un environnement synchrone type Watchdog, 
+                    # il faut être prudent avec asyncio.run ou create_task.
+                    # On utilise l'event loop s'il existe.
+                    try:
+                        # Création d'une nouvelle boucle pour ce thread si nécessaire
+                        loop = asyncio.new_event_loop()
+                        asyncio.set_event_loop(loop)
+                        loop.run_until_complete(GhostService.process_directives(file_path, directives))
+                        loop.close()
+                    except Exception as ge:
+                        logger.error(f"Erreur Ghost Mode processing: {ge}")
             else:
                 print(f"--- ⚠️ WATCHDOG SKIP : {file_path} est vide ---", flush=True)
         except Exception as e:

@@ -21,6 +21,13 @@ def thoughts_reducer(old: List[str], new: List[str]) -> List[str]:
         return new[1:]
     return (old or []) + (new or [])
 
+def unique_nodes_reducer(old: List[dict], new: List[dict]) -> List[dict]:
+    """Combine les nœuds en évitant les doublons par ID."""
+    node_map = {n['id']: n for n in (old or [])}
+    for n in (new or []):
+        node_map[n['id']] = n
+    return list(node_map.values())
+
 class AgentState(TypedDict):
     messages: Annotated[list[AnyMessage], add_messages] # Historique pour les tools
     question: str
@@ -37,4 +44,8 @@ class AgentState(TypedDict):
     selected_model: Optional[str]
     llm_provider: Optional[str]
     llm_api_key: Optional[str]
+    llm_custom_url: Optional[str] # URL pour OpenAI Custom (vLLM, LM Studio, etc.)
+    offload_proposal: Optional[dict] # Détails de la proposition de délestage
     thoughts: Annotated[List[str], thoughts_reducer] # Journal de réflexion chronologique
+    graph_nodes: Annotated[List[dict], unique_nodes_reducer] # Nœuds pour la visualisation (Thought Graph)
+    graph_edges: Annotated[List[dict], operator.add] # Arêtes pour la visualisation

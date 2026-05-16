@@ -9,9 +9,11 @@ import { useChat } from './hooks/useChat';
 import { useConfig } from './hooks/useConfig';
 import { useSettings } from './hooks/useSettings';
 import { useChatScroll } from './hooks/useChatScroll';
+import { useNotifications } from './hooks/useNotifications';
 import SettingsModal from './components/SettingsModal';
 import ConfirmModal from './components/layout/ConfirmModal';
 import OnboardingWizard from './components/onboarding/OnboardingWizard';
+import SovereignProposal from './components/SovereignProposal';
 import { processImageFile } from './utils/fileUtils';
 import './App.css';
 
@@ -41,12 +43,53 @@ function App() {
     sendMessage,
     stopGeneration,
     handleApproval,
-    deleteThread
+    deleteThread,
+    offloadProposal,
+    setOffloadProposal
   } = useChat(settings);
+
+  const handleAcceptOffload = () => {
+    // La recommandation est au format "provider/model"
+    const [recProvider, ...modelParts] = offloadProposal.recommendation.split('/');
+    const recModel = modelParts.join('/');
+
+    // 1. On change les réglages
+    updateSettings({ ...settings, provider: recProvider });
+    
+    // 2. On relance la requête
+    const lastUserMsg = messages.filter(m => m.role === 'user').pop();
+    if (lastUserMsg) {
+      sendMessage({
+        content: lastUserMsg.content,
+        image: lastUserMsg.image,
+        model: recModel,
+        overrideContent: lastUserMsg.content
+      });
+    }
+    setOffloadProposal(null);
+  };
+
+  const handleDeclineOffload = () => {
+    // On relance la requête mais en ignorant la proposition cette fois
+    const lastUserMsg = messages.filter(m => m.role === 'user').pop();
+    if (lastUserMsg) {
+      // On pourrait passer un flag pour forcer l'ignorer, 
+      // ou simplement l'état contiendra déjà 'offload_proposal' ce qui évitera de boucler
+      sendMessage({
+        content: lastUserMsg.content,
+        image: lastUserMsg.image,
+        overrideContent: lastUserMsg.content,
+        // On force le provider actuel pour être sûr
+        provider: settings.provider 
+      });
+    }
+    setOffloadProposal(null);
+  };
 
   const {
     config,
     availableFiles,
+    availableDirs,
     availableModels,
     selectedModel,
     contextLimit,
@@ -62,6 +105,9 @@ function App() {
     handleScroll,
     resetAutoScroll
   } = useChatScroll(messages, isLoading);
+
+  const { notifications, clearNotifications } = useNotifications();
+  const [activeToast, setActiveToast] = useState(null);
 
   const [input, setInput] = useState("");
   const [image, setImage] = useState(null);
@@ -107,6 +153,16 @@ function App() {
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isSidebarCollapsed, handleNewSession]);
+
+  // Handle visual toast for new notifications
+  useEffect(() => {
+    if (notifications.length > 0) {
+      const latest = notifications[notifications.length - 1];
+      setActiveToast(latest);
+      const timer = setTimeout(() => setActiveToast(null), 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [notifications]);
 
   useEffect(() => {
     if (hasInitialized.current) return;
@@ -196,6 +252,7 @@ function App() {
             sendMessage={() => handleSendMessage()}
             onStop={stopGeneration}
             availableFiles={availableFiles}
+            availableDirs={availableDirs}
             handleFileClick={() => fileInputRef.current?.click()}
             fileInputRef={fileInputRef}
             inputRef={inputRef}
@@ -209,6 +266,14 @@ function App() {
           command={pendingApprovalData?.command} 
           onApprove={() => handleApproval(true)} 
           onCancel={() => handleApproval(false)} 
+        />
+      )}
+
+      {offloadProposal && (
+        <SovereignProposal 
+          proposal={offloadProposal}
+          onAccept={handleAcceptOffload}
+          onDecline={handleDeclineOffload}
         />
       )}
 
@@ -265,6 +330,16 @@ function App() {
         updateTargetPath={updateTargetPath}
         updateSelectedModel={updateSelectedModel}
       />
+
+      {activeToast && (
+        <div className="ghost-toast" onClick={() => setActiveToast(null)}>
+          <div className="ghost-toast-icon">👻</div>
+          <div className="ghost-toast-content">
+            <div className="ghost-toast-title">{activeToast.title}</div>
+            <div className="ghost-toast-msg">{activeToast.message}</div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -86,19 +86,25 @@ if [ ! -f ".env" ]; then
     echo -e "Vibrisse works out-of-the-box with Ollama, but you can add Cloud keys now."
     echo -e "(Press Enter to skip any of these)"
     
+    # Portabilité sed (macOS vs Linux)
+    SED_CMD="sed -i"
+    if [ "$OS" == "Darwin" ]; then
+        SED_CMD="sed -i ''"
+    fi
+
     read -p "Enter your GROQ API Key: " groq_key
     if [ ! -z "$groq_key" ]; then
-        sed -i '' "s/GROQ_API_KEY=.*/GROQ_API_KEY=$groq_key/" .env 2>/dev/null || echo "GROQ_API_KEY=$groq_key" >> .env
+        eval $SED_CMD "s/GROQ_API_KEY=.*/GROQ_API_KEY=$groq_key/" .env 2>/dev/null || echo "GROQ_API_KEY=$groq_key" >> .env
     fi
 
     read -p "Enter your OPENROUTER API Key: " or_key
     if [ ! -z "$or_key" ]; then
-        sed -i '' "s/OPENROUTER_API_KEY=.*/OPENROUTER_API_KEY=$or_key/" .env 2>/dev/null || echo "OPENROUTER_API_KEY=$or_key" >> .env
+        eval $SED_CMD "s/OPENROUTER_API_KEY=.*/OPENROUTER_API_KEY=$or_key/" .env 2>/dev/null || echo "OPENROUTER_API_KEY=$or_key" >> .env
     fi
 
     read -p "Enter your TAVILY API Key (Web Search): " tav_key
     if [ ! -z "$tav_key" ]; then
-        sed -i '' "s/TAVILY_API_KEY=.*/TAVILY_API_KEY=$tav_key/" .env 2>/dev/null || echo "TAVILY_API_KEY=$tav_key" >> .env
+        eval $SED_CMD "s/TAVILY_API_KEY=.*/TAVILY_API_KEY=$tav_key/" .env 2>/dev/null || echo "TAVILY_API_KEY=$tav_key" >> .env
     fi
 fi
 

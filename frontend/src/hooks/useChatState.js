@@ -10,6 +10,7 @@ export const useChatState = () => {
   const [contextUsage, setContextUsage] = useState(0);
   const [isWaitingForApproval, setIsWaitingForApproval] = useState(false);
   const [pendingApprovalData, setPendingApprovalData] = useState(null);
+  const [offloadProposal, setOffloadProposal] = useState(null);
   const [isHistoryLoading, setIsHistoryLoading] = useState(false);
 
   const fetchThreads = useCallback(async () => {
@@ -66,6 +67,7 @@ export const useChatState = () => {
     contextUsage, setContextUsage,
     isWaitingForApproval, setIsWaitingForApproval,
     pendingApprovalData, setPendingApprovalData,
+    offloadProposal, setOffloadProposal,
     fetchThreads,
     fetchThreadHistory,
     deleteThread

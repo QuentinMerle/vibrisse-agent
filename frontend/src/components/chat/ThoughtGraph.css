@@ -1,0 +1,84 @@
+.thought-graph-container {
+    width: 100%;
+    height: 300px;
+    min-height: 300px;
+    flex-shrink: 0;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    overflow: hidden;
+    margin: 16px 0;
+    backdrop-filter: blur(10px);
+}
+
+.tg-node {
+    padding: 10px 16px;
+    border-radius: 12px;
+    background: rgba(30, 30, 35, 0.8);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    min-width: 120px;
+    transition: all 0.3s ease;
+}
+
+.tg-node.supervisor {
+    border-color: #a855f7;
+    box-shadow: 0 0 15px rgba(168, 85, 247, 0.2);
+}
+
+.tg-node.worker {
+    border-color: #6366f1;
+    box-shadow: 0 0 15px rgba(99, 102, 241, 0.2);
+}
+
+.tg-node.tool {
+    border-color: #10b981;
+    font-size: 0.8rem;
+}
+
+.tg-node-icon {
+    font-size: 1.2rem;
+}
+
+.react-flow__edge-path {
+    stroke: rgba(255, 255, 255, 0.2);
+    stroke-width: 2;
+}
+
+.react-flow__controls {
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.react-flow__controls-button {
+    background: transparent;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    color: #fff;
+    fill: #fff;
+}
+
+.react-flow__controls-button:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+@keyframes pulse-glow {
+    0% { box-shadow: 0 0 5px rgba(99, 102, 241, 0.2); }
+    50% { box-shadow: 0 0 20px rgba(99, 102, 241, 0.6); }
+    100% { box-shadow: 0 0 5px rgba(99, 102, 241, 0.2); }
+}
+
+.tg-node.active {
+    animation: pulse-glow 2s infinite;
+    border-color: #6366f1;
+}
+

@@ -95,7 +95,9 @@ const ChatHeader = ({ config, availableModels, selectedModel, contextUsage, cont
           {/* Model Selector / Display */}
           {llmSettings?.provider && llmSettings.provider !== 'ollama' ? (
             <div className="model-display-static">
-              <span className="current-model">{llmSettings.provider.toUpperCase()} : {displayModel.toUpperCase()}</span>
+              <span className="current-model">
+                {(llmSettings.provider === 'vllm' ? 'CUSTOM' : llmSettings.provider.toUpperCase())} : {displayModel.toUpperCase()}
+              </span>
             </div>
           ) : (
             <div className="custom-dropdown" ref={dropdownRef}>

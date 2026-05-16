@@ -40,6 +40,8 @@
     "tabs_llm": "AI Brains",
     "tabs_mcp": "MCP Extensions",
     "tabs_general": "General",
+    "section_features": "Features & Intelligence",
+    "section_api_keys": "API Keys & Services",
     "btn_test": "Test AI",
     "btn_save": "Save",
     "btn_cancel": "Cancel",

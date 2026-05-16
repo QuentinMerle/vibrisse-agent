@@ -40,6 +40,8 @@
     "tabs_llm": "Cerveaux IA",
     "tabs_mcp": "Extensions MCP",
     "tabs_general": "Général",
+    "section_features": "Fonctionnalités & IA",
+    "section_api_keys": "Clés API & Services",
     "btn_test": "Tester l'IA",
     "btn_save": "Sauvegarder",
     "btn_cancel": "Annuler",

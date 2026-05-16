@@ -1,7 +1,7 @@
 from langchain_core.messages import SystemMessage, HumanMessage
 from app.agents.state import AgentState
 from app.services.llm.llm_factory import get_llm
-from app.agents.nodes.utils import load_skill, calculate_context_usage
+from app.agents.nodes.utils import load_skill, calculate_context_usage, create_node, create_edge
 
 async def vision_node(state: AgentState):
     image_b64 = state.get("image")
@@ -14,8 +14,10 @@ async def vision_node(state: AgentState):
     
     llm = get_llm(
         provider=state.get("llm_provider", "ollama"),
-        model=model,
-        api_key=state.get("llm_api_key")
+        model=state.get("selected_model"),
+        api_key=state.get("llm_api_key"),
+        custom_url=state.get("llm_custom_url"),
+        temperature=0
     )
     
     skill_vision = load_skill("vision_analyst")
@@ -29,7 +31,12 @@ async def vision_node(state: AgentState):
     
     try:
         print(f"--- 👁️ VISION: Analysis in progress with {model} ---", flush=True)
-        yield {"detail": "Visual analysis of image (composition, style, components)...", "steps": ["vision_analysis_started"]}
+        yield {
+            "detail": "Visual analysis of image (composition, style, components)...", 
+            "steps": ["vision_analysis_started"],
+            "graph_nodes": [create_node("vision", "Vision", "WORKER", "👁️")],
+            "graph_edges": [create_edge("supervisor", "vision")]
+        }
         
         response = await llm.ainvoke(prompt)
         print(f"--- 👁️ VISION : Résultat : {response.content[:100]}...", flush=True)
@@ -40,6 +47,8 @@ async def vision_node(state: AgentState):
         new_state["context_usage"] = calculate_context_usage(temp_state)
         new_state["detail"] = "Vision: Analysis completed."
         new_state["thoughts"] = ["__RESET__", f"**Visual Analysis:** {response.content}"]
+        new_state["graph_nodes"] = [create_node("vision", "Vision", "WORKER", "👁️")]
+        new_state["graph_edges"] = [create_edge("supervisor", "vision")]
         yield new_state
     except Exception as e:
         print(f"⚠️ Vision Error: {e}")

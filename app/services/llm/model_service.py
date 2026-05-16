@@ -167,9 +167,9 @@ async def fetch_model_context_limit(model_name: str) -> int:
 # Cache pour les listes de modèles
 AVAILABLE_MODELS_CACHE = {}
 
-async def get_available_models(provider: str = "ollama", api_key: Optional[str] = None) -> List[str]:
+async def get_available_models(provider: str = "ollama", api_key: Optional[str] = None, custom_url: Optional[str] = None) -> List[str]:
     """Récupère la liste des modèles disponibles pour un provider donné."""
-    cache_key = f"list:{provider}"
+    cache_key = f"list:{provider}:{custom_url or 'default'}"
     if cache_key in AVAILABLE_MODELS_CACHE:
         return AVAILABLE_MODELS_CACHE[cache_key]
     
@@ -182,6 +182,21 @@ async def get_available_models(provider: str = "ollama", api_key: Optional[str] 
                 if response.status_code == 200:
                     data = response.json()
                     models = [m["name"] for m in data.get("models", []) if "embed" not in m["name"]]
+            
+            # 1c. CUSTOM OPENAI-COMPATIBLE SERVER (vLLM, LM Studio, etc.)
+            elif provider == "vllm":
+                url = custom_url or "http://localhost:8000/v1"
+                # On s'assure que l'URL finit par /v1/models ou /models
+                if not url.endswith("/models"):
+                    fetch_url = f"{url.rstrip('/')}/models"
+                else:
+                    fetch_url = url
+                
+                headers = {"Authorization": f"Bearer {api_key}"} if api_key else {}
+                response = await client.get(fetch_url, headers=headers, timeout=5.0)
+                if response.status_code == 200:
+                    data = response.json()
+                    models = [m["id"] for m in data.get("data", [])]
             
             # 1b. OLLAMA CLOUD
             elif provider == "ollama_cloud":

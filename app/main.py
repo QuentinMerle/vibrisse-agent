@@ -58,7 +58,12 @@ async def lifespan(app: FastAPI):
         try:
             await asyncio.sleep(1)
             await settings.load_manifest()
-            print("--- 🧠 ONBOARDING COMPLETED IN BACKGROUND ---", flush=True)
+            
+            # Reconnexion MCP persistante
+            from app.services.mcp.mcp_client import mcp_manager
+            await mcp_manager.load_persistent_servers()
+            
+            print("--- 🧠 ONBOARDING & MCP RECOVERY COMPLETED ---", flush=True)
         except Exception as e:
             logger.error(f"Background onboarding failed: {e}")
 

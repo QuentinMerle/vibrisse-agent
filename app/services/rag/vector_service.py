@@ -269,26 +269,34 @@ class VectorService:
         def _scan():
             try:
                 keys = list(self.store.yield_keys())
-                if not keys: return []
+                if not keys: return {"files": [], "dirs": []}
                 all_documents = [doc for doc in self.store.mget(keys) if doc]
                 from app.core.config import settings
                 
                 ignore_patterns = {".next/", "node_modules/", "dist/", "build/", ".venv/", "venv/", ".git/", "__pycache__/"}
                 
                 files = set()
+                dirs = set()
                 for doc in all_documents:
                     source = doc.metadata.get("source")
                     if not source: continue
                     
-                    # On ignore les fichiers de build même s'ils sont en base
                     if any(p in source for p in ignore_patterns):
                         continue
                         
                     rel_path = os.path.relpath(source, settings.TARGET_PROJECT_PATH)
                     files.add(rel_path)
+                    
+                    # Extraction des dossiers parents
+                    parts = rel_path.split(os.sep)
+                    for i in range(1, len(parts)):
+                        dirs.add(os.sep.join(parts[:i]))
                 
-                return sorted(list(files))
+                return {
+                    "files": sorted(list(files)),
+                    "dirs": sorted(list(dirs))
+                }
             except Exception as e: 
                 print(f"Error listing files: {e}")
-                return []
+                return {"files": [], "dirs": []}
         return await asyncio.to_thread(_scan)

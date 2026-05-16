@@ -22,9 +22,9 @@ export const api = {
     const res = await fetch(`${API_ROOT}/system/files`);
     return res.json();
   },
-  getModels: async (provider, apiKey) => {
+  getModels: async (provider, apiKey, customUrl) => {
     const prov = provider || 'ollama';
-    const cacheKey = `${prov}:${apiKey || 'default'}`;
+    const cacheKey = `${prov}:${apiKey || 'default'}:${customUrl || 'default'}`;
     
     if (modelCache.has(cacheKey)) {
       return { models: modelCache.get(cacheKey), fromCache: true };
@@ -32,6 +32,7 @@ export const api = {
 
     let url = `${API_ROOT}/system/models?provider=${prov}`;
     if (apiKey) url += `&api_key=${encodeURIComponent(apiKey)}`;
+    if (customUrl) url += `&custom_url=${encodeURIComponent(customUrl)}`;
     
     const res = await fetch(url);
     const data = await res.json();
@@ -60,6 +61,22 @@ export const api = {
   },
   clearCache: async () => {
     const res = await fetch(`${API_ROOT}/system/cache/clear`, { method: "POST" });
+    return res.json();
+  },
+  updateGlobalModel: async (data) => {
+    const res = await fetch(`${API_ROOT}/system/config/model`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data)
+    });
+    return res.json();
+  },
+  updateSettings: async (data) => {
+    const res = await fetch(`${API_ROOT}/system/config/settings`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data)
+    });
     return res.json();
   },
   updateTargetPath: async (path) => {
@@ -115,6 +132,9 @@ export const api = {
     if (llmSettings.provider) headers["X-Vibrisse-Provider"] = llmSettings.provider;
     if (apiKey) headers["X-Vibrisse-Api-Key"] = apiKey;
     
+    const customUrl = llmSettings.customUrls ? llmSettings.customUrls[llmSettings.provider] : llmSettings.customUrl;
+    if (customUrl) headers["X-Vibrisse-Custom-Url"] = customUrl;
+    
     // Le modèle dans le payload (choix manuel) est prioritaire sur le modèle des settings
     // SAUF si on est sur un provider cloud, où on veut le modèle configuré spécifiquement
     const finalModel = (llmSettings.provider && llmSettings.provider !== 'ollama') 
@@ -122,6 +142,7 @@ export const api = {
       : (payload.model || llmSettings.model);
 
     if (finalModel) headers["X-Vibrisse-Model"] = finalModel;
+    headers["X-Vibrisse-Sovereign-Routing"] = llmSettings.sovereignRouting ? "true" : "false";
 
     return fetch(`${API_ROOT}/chat/`, {
       method: "POST",
@@ -140,11 +161,12 @@ export const api = {
   validateLLM: async (payload) => {
     // Si l'objet settings est passé, on extrait la bonne clé
     const apiKey = payload.apiKeys ? payload.apiKeys[payload.provider] : payload.apiKey;
+    const customUrl = payload.customUrls ? payload.customUrls[payload.provider] : payload.customUrl;
     
     const res = await fetch(`${API_ROOT}/system/validate-llm`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...payload, apiKey })
+      body: JSON.stringify({ ...payload, apiKey, customUrl })
     });
     return res.json();
   },

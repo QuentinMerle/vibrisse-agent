@@ -8,6 +8,7 @@ from contextlib import AsyncExitStack
 from mcp.client.stdio import stdio_client, StdioServerParameters
 from mcp.client.session import ClientSession
 from langchain_core.tools import StructuredTool
+from app.services.mcp.persistence import mcp_persistence
 
 logger = logging.getLogger(__name__)
 
@@ -20,7 +21,7 @@ class MCPManager:
         self.sessions: Dict[str, ClientSession] = {}
         self._exit_stacks: Dict[str, AsyncExitStack] = {}
 
-    async def connect_stdio(self, server_id: str, command: str, args: List[str], env: Optional[Dict[str, str]] = None):
+    async def connect_stdio(self, server_id: str, command: str, args: List[str], env: Optional[Dict[str, str]] = None, persist: bool = True):
         """Connecte l'agent à un serveur MCP local via la ligne de commande (stdio)."""
         if server_id in self.sessions:
             logger.info(f"Le serveur MCP {server_id} est déjà connecté.")
@@ -53,6 +54,10 @@ class MCPManager:
             await session.initialize()
             self.sessions[server_id] = session
             
+            # 3. Sauvegarde persistante
+            if persist:
+                await mcp_persistence.save_server(server_id, command, args, env)
+            
             logger.info(f"✅ Serveur MCP '{server_id}' connecté avec succès.")
             
         except Exception as e:
@@ -61,6 +66,17 @@ class MCPManager:
                 await self._exit_stacks[server_id].aclose()
                 del self._exit_stacks[server_id]
             raise
+
+    async def load_persistent_servers(self):
+        """Recharge tous les serveurs sauvegardés au démarrage."""
+        logger.info("🔌 Reconnexion automatique des serveurs MCP...")
+        servers = await mcp_persistence.load_all_servers()
+        for s in servers:
+            try:
+                # On ne persiste pas à nouveau ce qu'on vient de charger
+                await self.connect_stdio(s["server_id"], s["command"], s["args"], s["env"], persist=False)
+            except Exception as e:
+                logger.error(f"Échec de reconnexion auto pour {s['server_id']}: {e}")
 
     async def get_langchain_tools(self, server_id: str) -> List[StructuredTool]:
         """Récupère les outils du serveur MCP et les traduit au format LangChain (@tool)."""
@@ -101,6 +117,10 @@ class MCPManager:
             del self._exit_stacks[server_id]
             if server_id in self.sessions:
                 del self.sessions[server_id]
+            
+            # Suppression persistante
+            await mcp_persistence.remove_server(server_id)
+            
             logger.info(f"Serveur MCP '{server_id}' déconnecté.")
 
 # Instance unique globale (Singleton) pour que toute l'application partage les mêmes connexions

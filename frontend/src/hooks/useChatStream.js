@@ -37,6 +37,13 @@ export const useChatStream = (state, settings) => {
           }
           try {
             const data = JSON.parse(dataStr);
+            
+            if (data.offload_proposal) {
+              console.log("⚖️ Offload Proposal Detected:", data.offload_proposal);
+              state.setOffloadProposal(data.offload_proposal);
+              setIsLoading(false);
+            }
+
             setMessages(prev => {
               const newMsgs = [...prev];
               let targetIdx = -1;
@@ -141,10 +148,36 @@ export const useChatStream = (state, settings) => {
               
               if (data.thoughts) {
                 const current = targetMsg.thoughts_history || [];
-                const newThoughts = data.thoughts.filter(t => !current.includes(t));
-                if (newThoughts.length > 0) {
-                  targetMsg.thoughts_history = [...current, ...newThoughts];
+                // Gestion du RESET comme au backend
+                if (data.thoughts[0] === "__RESET__") {
+                  targetMsg.thoughts_history = data.thoughts.slice(1);
+                } else {
+                  const newThoughts = data.thoughts.filter(t => !current.includes(t));
+                  if (newThoughts.length > 0) {
+                    targetMsg.thoughts_history = [...current, ...newThoughts];
+                  }
                 }
+              }
+
+              if (data.graph_nodes) {
+                const currentNodes = targetMsg.graph_nodes || [];
+                const nodeMap = new Map(currentNodes.map(n => [n.id, n]));
+                data.graph_nodes.forEach(n => nodeMap.set(n.id, n));
+                targetMsg.graph_nodes = Array.from(nodeMap.values());
+              }
+
+              if (data.graph_edges) {
+                const currentEdges = targetMsg.graph_edges || [];
+                const edgeMap = new Map(currentEdges.map(e => [e.id || `${e.source}-${e.target}`, e]));
+                data.graph_edges.forEach(e => {
+                  const id = e.id || `${e.source}-${e.target}`;
+                  edgeMap.set(id, { ...e, id });
+                });
+                targetMsg.graph_edges = Array.from(edgeMap.values());
+              }
+
+              if (data.active_worker) {
+                targetMsg.active_worker = data.active_worker;
               }
 
               newMsgs[targetIdx] = targetMsg;
@@ -170,17 +203,17 @@ export const useChatStream = (state, settings) => {
     if (!overrideContent) {
       setMessages(prev => [
         ...prev,
-        { role: "user", content: textToSend, image: image },
-        { role: "agent", content: "", steps: [], isLoading: true }
+        { role: "user", content: textToSend, image: image, timestamp: Date.now() },
+        { role: "agent", content: "", steps: [], isLoading: true, timestamp: Date.now() }
       ]);
     } else {
       setMessages(prev => {
         const newMsgs = [...prev];
         const lastIdx = newMsgs.length - 1;
         if (lastIdx >= 0 && newMsgs[lastIdx].role === 'agent') {
-          newMsgs[lastIdx] = { ...newMsgs[lastIdx], content: "", steps: [], isLoading: true, error: null };
+          newMsgs[lastIdx] = { ...newMsgs[lastIdx], content: "", steps: [], isLoading: true, error: null, timestamp: Date.now() };
         } else {
-          newMsgs.push({ role: "agent", content: "", steps: [], isLoading: true });
+          newMsgs.push({ role: "agent", content: "", steps: [], isLoading: true, timestamp: Date.now() });
         }
         return newMsgs;
       });

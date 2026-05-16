@@ -58,9 +58,15 @@ async def format_event(event: Dict[str, Any], thread_id: str) -> str:
             payload["steps"] = target_dict["steps"]
         if "thoughts" in target_dict:
             payload["thoughts"] = target_dict["thoughts"]
+        if "graph_nodes" in target_dict:
+            payload["graph_nodes"] = target_dict["graph_nodes"]
+        if "graph_edges" in target_dict:
+            payload["graph_edges"] = target_dict["graph_edges"]
+        if "offload_proposal" in target_dict:
+            payload["offload_proposal"] = target_dict["offload_proposal"]
         
-        # On ne continue que si on a quelque chose à envoyer (statut/pensée)
-        if any(k in payload for k in ["detail", "status", "steps", "thoughts"]):
+        # On ne continue que si on a quelque chose à envoyer (statut/pensée/graphe)
+        if any(k in payload for k in ["detail", "status", "steps", "thoughts", "graph_nodes", "graph_edges", "offload_proposal"]):
             return f"data: {json.dumps(payload)}\n\n"
 
     elif kind == "on_chain_end":
