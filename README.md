@@ -156,3 +156,5 @@ Explore the full potential of the Vibrisse ecosystem:
 
 ---
 *Vibrisse AI: Small models, Great tools.*
+
+_Proudly developed in Beauce, Québec 🇨🇦. Interested in local AI sovereignty? Let's connect!_
