@@ -131,7 +131,7 @@
         }
 
         .btn-primary {
-            display: flex;
+            display: inline-flex;
             align-items: center;
             justify-content: center;
             background: var(--primary);
@@ -179,7 +179,7 @@
         }
 
         .btn-secondary {
-            display: flex;
+            display: inline-flex;
             align-items: center;
             justify-content: center;
             gap: 12px;
@@ -246,7 +246,8 @@
 
         nav {
             display: flex;
-            gap: 40px;
+            align-items: center;
+            gap: 24px;
         }
 
         nav a {
@@ -926,16 +927,13 @@
                 Vibrisse Agent
             </a>
             <nav>
-                <a href="#features">Capabilities</a>
-                <a href="#personas">Personas</a>
                 <a href="#workflow">Workflow</a>
                 <a href="#interface">Interface</a>
                 <a href="https://github.com/QuentinMerle/vibrisse-agent" target="_blank">GitHub</a>
-                <a href="#install">Deploy</a>
+                <a href="https://github.com/QuentinMerle/vibrisse-agent/blob/main/CONTRIBUTING.md" target="_blank">Contribute</a>
+                <a href="#install" class="btn-primary" style="padding: 6px 14px; font-size: 0.7rem; height: auto; box-shadow: none; border-radius: 8px;">Deploy</a>
+                <span style="font-size: 0.6rem; opacity: 0.3; text-transform: uppercase; letter-spacing: 0.1em; margin-left: 8px; font-family: var(--font-mono);">v1.1.0 stable</span>
             </nav>
-            <div class="logo"
-                style="font-size: 0.7rem; opacity: 0.6; text-transform: uppercase; letter-spacing: 0.2em;">v1.1.0 stable
-            </div>
         </div>
     </header>
 
@@ -1243,6 +1241,7 @@
                 warranty. Users are responsible for organizational security compliance.</div>
             <div class="footer-links" style="margin-bottom: 32px; display: flex; gap: 24px; justify-content: center;">
                 <a href="https://github.com/QuentinMerle/vibrisse-agent" target="_blank" style="color: var(--text-muted); text-decoration: none; font-size: 0.9rem;">GitHub</a>
+                <a href="https://github.com/QuentinMerle/vibrisse-agent/blob/main/CONTRIBUTING.md" target="_blank" style="color: var(--text-muted); text-decoration: none; font-size: 0.9rem;">Contribute</a>
                 <a href="#personas" style="color: var(--text-muted); text-decoration: none; font-size: 0.9rem;">Personas</a>
                 <a href="#workflow" style="color: var(--text-muted); text-decoration: none; font-size: 0.9rem;">Workflow</a>
             </div>
