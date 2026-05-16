@@ -60,7 +60,7 @@
     "language_en": "Anglais"
   },
   "header": {
-    "brand": "Vibrisse",
+    "brand": "Vibrisse Agent",
     "help_tooltip": "Documentation et aide",
     "model_label": "Changer de modèle. Modèle actuel : {{model}}",
     "vision_active": "Vision active",
