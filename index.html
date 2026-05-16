@@ -521,7 +521,8 @@
         @media (max-width: 768px) {
 
             .features-grid,
-            .gallery-grid {
+            .gallery-grid,
+            .persona-grid {
                 grid-template-columns: 1fr;
             }
 
@@ -740,6 +741,7 @@
             </a>
             <nav>
                 <a href="#features">Capabilities</a>
+                <a href="#personas">Personas</a>
                 <a href="#interface">Interface</a>
                 <a href="https://github.com/QuentinMerle/vibrisse-agent">Source</a>
                 <a href="#install">Deploy</a>
@@ -808,6 +810,41 @@
                     <h3>MCP Hub</h3>
                     <p>Native Model Context Protocol support. Connect to GitHub, Linear, Slack, or Postgres with
                         persistent, auto-recovering links.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="personas" class="container" style="padding: 100px 0;">
+            <div style="text-align: center; max-width: 700px; margin: 0 auto 60px;">
+                <div class="os-badge" data-reveal style="margin: 0 auto 16px;"><i data-lucide="users"
+                        style="width: 14px;"></i> Target Personas</div>
+                <h2 data-reveal style="font-family: var(--font-display); font-size: 2.5rem; margin-bottom: 20px;">
+                    Built for every Engineering Profile.</h2>
+                <p data-reveal style="color: var(--text-muted); font-size: 1.1rem;">Vibrisse Agent adapts to your role,
+                    providing the right level of abstraction and technical depth.</p>
+            </div>
+
+            <div class="persona-grid">
+                <div class="persona-card" data-reveal>
+                    <div class="persona-tag">Creators</div>
+                    <div class="persona-icon"><i data-lucide="code-2"></i></div>
+                    <h3>Full-Stack Devs</h3>
+                    <p>Ship faster by mastering any codebase. From legacy PHP/WordPress to modern React/Next.js,
+                        get instant context and code generation.</p>
+                </div>
+                <div class="persona-card" data-reveal>
+                    <div class="persona-tag">Architects</div>
+                    <div class="persona-icon"><i data-lucide="component"></i></div>
+                    <h3>Backend Engineers</h3>
+                    <p>Navigate complex logic, enforce architectural patterns, and bridge systems with native MCP
+                        support. Your local engineering twin.</p>
+                </div>
+                <div class="persona-card" data-reveal>
+                    <div class="persona-tag">Leaders</div>
+                    <div class="persona-icon"><i data-lucide="briefcase"></i></div>
+                    <h3>Technical PMs</h3>
+                    <p>Audit codebases, generate precise documentation, and accelerate team onboarding with
+                        AI-driven architectural clarity.</p>
                 </div>
             </div>
         </section>
