@@ -15,4 +15,9 @@ docs/assets/*.png
 !docs/assets/vibrisse-agent-ui.png
 !docs/assets/vibrisse-agent-thinking.png
 !docs/assets/vibrisse-agent-hardware-discovery.png
+!docs/assets/vibrisse-agent-groq-example.png
+!docs/assets/vibrisse-agent-choose-your-persona.png
+!docs/assets/vibrisse-agent-mcp-ready.png
 !docs/assets/vibrisse-agent-model-configuration.png
+!docs/assets/vibrisse-agent-local-models.png
+
