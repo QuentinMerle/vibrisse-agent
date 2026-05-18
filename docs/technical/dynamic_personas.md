@@ -34,11 +34,11 @@ Inside `app/agents/nodes/generation.py`, instead of loading a static `code_exper
 
 | Wizard Persona | Default Model | System Prompt File | Persona Guidelines & Tone |
 | :--- | :--- | :--- | :--- |
-| 🧭 **Généraliste** | `llama3.1` or `phi3` | `generalist_expert.md` | Polyvalent, synthetic, balanced writing. |
-| 💻 **Expert Coder** | `qwen2.5-coder` | `code_expert.md` | Dev-oriented, deep refactoring, code quality. |
-| 📚 **Tech Writer** | `mistral-nemo` | `technical_writer.md` | Structure, high readability, documentation focus. |
-| 🏗️ **System Architect** | `command-r` | `system_architect.md` | System design, components relationships, scaling. |
-| 📊 **Data Scientist** | `gemma2` | `data_analyst.md` | Mathematical rigor, SQL, data structures, tables. |
+| 🧭 **Généraliste** | `qwen3-8b` or `llama3.1-8b` | `generalist_expert.md` | Polyvalent, synthetic, balanced writing. |
+| 💻 **Expert Coder** | `qwen3.6-27b` or `qwen2.5-coder` | `code_expert.md` | Dev-oriented, deep refactoring, code quality. |
+| 📚 **Tech Writer** | `mistral-nemo` or `phi4` | `technical_writer.md` | Structure, high readability, documentation focus. |
+| 🏗️ **System Architect** | `command-r` or `llama3.3` | `system_architect.md` | System design, components relationships, scaling. |
+| 📊 **Data Scientist** | `gemma2` or `glm-z1-9b` | `data_analyst.md` | Mathematical rigor, SQL, data structures, tables. |
 
 ---
 
