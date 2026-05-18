@@ -51,6 +51,7 @@ async def chat(request: Request, chat_req: ChatRequest):
             "llm_custom_url": llm_custom_url,
             "sovereign_routing": sovereign_routing
         }
+        
         try:
             async for event in agent_app.astream_events(initial_state, config, version="v2"):
                 formatted = await format_event(event, thread_id)

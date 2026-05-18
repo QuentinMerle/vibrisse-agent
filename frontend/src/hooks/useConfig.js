@@ -81,10 +81,11 @@ export const useConfig = () => {
     setSelectedModel(model);
     localStorage.setItem("vibrisse_selected_model", model);
     try {
+      await api.updateGlobalModel({ model, provider: 'ollama' });
       const data = await api.getModelLimit(model);
       if (data.limit) setContextLimit(data.limit);
     } catch (e) {
-      console.error("Erreur récup limite:", e);
+      console.error("Erreur récup limite ou mise à jour modèle:", e);
     }
   };
 

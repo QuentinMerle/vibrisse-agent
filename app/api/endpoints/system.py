@@ -97,6 +97,8 @@ async def get_config():
     session = session_service.load_session()
     return {
         "model": settings.clean_orchestrator_model,
+        "provider": settings.LLM_PROVIDER,
+        "active_persona": getattr(settings, "LLM_ACTIVE_PERSONA", "generalist"),
         "target_path": settings.TARGET_PROJECT_PATH,
         "onboarded": session.get("onboarded", False),
         "context_limit": limit,
@@ -160,14 +162,42 @@ from pathlib import Path
 class ModelUpdateRequest(BaseModel):
     model: str
     provider: Optional[str] = "ollama"
+    active_persona: Optional[str] = None
 
 @router.post("/config/model")
 async def update_global_model(req: ModelUpdateRequest):
-    """Change le modèle par défaut de l'agent."""
+    """Change le modèle par défaut de l'agent et sa persona globale."""
+    from app.services.core.session_service import session_service
+    
     settings.LLM_MODEL = req.model
     if req.provider:
         settings.LLM_PROVIDER = req.provider
-    return {"status": "success", "new_model": settings.LLM_MODEL, "provider": settings.LLM_PROVIDER}
+    if req.active_persona:
+        settings.LLM_ACTIVE_PERSONA = req.active_persona
+        
+    # Enregistrer de manière persistante en base de données de session
+    session_service.save_session(settings={
+        "llm_model": settings.LLM_MODEL,
+        "llm_provider": settings.LLM_PROVIDER,
+        "active_persona": settings.LLM_ACTIVE_PERSONA,
+        # On conserve les clés et features existantes
+        "tavily_api_key": settings.TAVILY_API_KEY,
+        "groq_api_key": settings.GROQ_API_KEY,
+        "openrouter_api_key": settings.OPENROUTER_API_KEY,
+        "google_api_key": settings.GOOGLE_API_KEY,
+        "github_token": settings.GITHUB_TOKEN,
+        "enable_web_search": settings.ENABLE_WEB_SEARCH,
+        "enable_vision": settings.ENABLE_VISION,
+        "enable_expert_review": settings.ENABLE_EXPERT_REVIEW
+    })
+    
+    print(f"--- ⚙️ LLM CONFIG UPDATED: Model: {settings.LLM_MODEL}, Persona: {settings.LLM_ACTIVE_PERSONA} ---", flush=True)
+    return {
+        "status": "success", 
+        "new_model": settings.LLM_MODEL, 
+        "provider": settings.LLM_PROVIDER,
+        "active_persona": settings.LLM_ACTIVE_PERSONA
+    }
 
 class TargetPathRequest(BaseModel):
     path: str

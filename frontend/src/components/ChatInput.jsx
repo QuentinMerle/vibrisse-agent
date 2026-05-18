@@ -60,7 +60,7 @@ const mentionsStyle = {
 
 const ChatInput = ({ 
   input, setInput, image, setImage, isLoading, sendMessage, onStop,
-  availableFiles, availableDirs, handleFileClick, fileInputRef, inputRef, handleFileUpload 
+  availableFiles, availableDirs, handleFileClick, fileInputRef, inputRef, handleFileUpload
 }) => {
   const { t } = useTranslation();
   const [isListening, setIsListening] = useState(false);
@@ -98,28 +98,30 @@ const ChatInput = ({
 
   return (
     <div className="input-area">
-      {image && (
-        <div className="image-preview-container">
-          <div className="image-preview-badge">
-            <ImageIcon size={12} />
-            <span>{t('input.image_attached')}</span>
-            <button 
-              className="remove-image-btn"
-              type="button"
-              onMouseDown={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                setImage(null);
-                if (fileInputRef.current) fileInputRef.current.value = "";
-              }} 
-              aria-label={t('input.remove_image')}
-              style={{ position: 'relative', zIndex: 100 }}
-            >
-              <X size={12} strokeWidth={3} />
-            </button>
+      <div className="input-top-bar">
+        {image && (
+          <div className="image-preview-container">
+            <div className="image-preview-badge">
+              <ImageIcon size={12} />
+              <span>{t('input.image_attached')}</span>
+              <button 
+                className="remove-image-btn"
+                type="button"
+                onMouseDown={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setImage(null);
+                  if (fileInputRef.current) fileInputRef.current.value = "";
+                }} 
+                aria-label={t('input.remove_image')}
+                style={{ position: 'relative', zIndex: 100 }}
+              >
+                <X size={12} strokeWidth={3} />
+              </button>
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
 
       <div className="input-wrapper">
         <input 

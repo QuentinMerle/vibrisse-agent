@@ -42,6 +42,10 @@ The **router** (`app/agents/nodes/router.py`) has been hardened.
 - Thoughts are streamed live via `extract_thought` on the active buffer.
 - The UI uses `ThinkingConsole` to render these thoughts separately.
 
+### 👤 Dynamic Persona & Prompt Alignment
+- **Concept**: Vibrisse aligns the onboarding persona selection directly with specialized system prompts (`generalist_expert`, `code_expert`, `technical_writer`, `system_architect`, `data_analyst`) to optimize local model performance without CPU/GPU model swapping latency.
+- **Spec**: Details can be found in the [Dynamic Persona Feature Specification](docs/technical/dynamic_personas.md).
+
 ### 🛠️ Runtime & Dependencies
 - **Python**: Enforced version **3.12** for stability.
 - **Node.js**: Only required for development (compiling `frontend/dist`).
@@ -65,6 +69,7 @@ The **router** (`app/agents/nodes/router.py`) has been hardened.
 - [x] **Architecture Mapping** (Completed).
 - [x] **Vibrisse Update CLI** (Completed).
 - [x] **Multi-Node & Custom LLM Support** (Completed).
+- [x] **Dynamic Persona & Prompt Alignment** (Completed).
 - [ ] **VSCode Extension** (IDE Integration).
 - [ ] **Multi-Node Support** (Enterprise).
 

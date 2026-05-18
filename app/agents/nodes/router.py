@@ -9,6 +9,7 @@ import json
 async def router_node(state: AgentState):
     question = state.get("question", "").lower()
     vision_desc = state.get("vision_description")
+    forced_worker = state.get("active_worker")
     
     # 1. Sovereign Routing (Smart Offloading) Sentinel
     provider = state.get("llm_provider", "ollama")
@@ -41,14 +42,15 @@ async def router_node(state: AgentState):
         "ajoute", "add", "souvenir", "memory", "mcp", "outil"
     ]
     if question.startswith("/") or any(k in question for k in tech_triggers):
+        worker = forced_worker if forced_worker in ["coder", "writer", "architect", "general"] else "coder"
         yield {
             "decision": "web_and_tools", 
-            "active_worker": "coder",
+            "active_worker": worker,
             "steps": ["router: technical fast-track"],
-            "thoughts": ["__RESET__", "**Intent:** Technical command detected. Routing to Coder Expert with tool access."],
+            "thoughts": ["__RESET__", f"**Intent:** Technical command detected. Routing to {worker.capitalize()} with tool access."],
             "graph_nodes": [
                 create_node("supervisor", "Supervisor", "SUPERVISOR", "🧠"),
-                create_node("worker", "Coder", "WORKER", "👷")
+                create_node("worker", worker.capitalize(), "WORKER", "👷")
             ],
             "graph_edges": [create_edge("supervisor", "worker")]
         }
@@ -139,6 +141,11 @@ async def router_node(state: AgentState):
         if datasource not in ALLOWED_DATASOURCES:
             print(f"⚠️ Router hallucination: '{datasource}' is not allowed. Falling back to direct_response.", flush=True)
             datasource = "direct_response"
+
+        # Force user-selected persona/worker if manually chosen
+        if forced_worker and forced_worker in ["coder", "writer", "architect", "general"]:
+            worker = forced_worker
+            reasoning = f"Enforced {worker.capitalize()} persona by user request"
 
         yield {
             "decision": datasource, 

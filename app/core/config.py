@@ -28,8 +28,16 @@ class Settings(BaseSettings):
                 self.PROJECT_MANIFEST = session["last_manifest"]
                 print(f"--- 🧠 SESSION: Restored manifest from cache ---", flush=True)
             
-            # Restauration des clés API
+            # Restauration des clés API et de la configuration du modèle
             saved_settings = session.get("settings", {})
+            if saved_settings.get("llm_model"):
+                self.LLM_MODEL = saved_settings["llm_model"]
+            if saved_settings.get("llm_provider"):
+                self.LLM_PROVIDER = saved_settings["llm_provider"]
+            if saved_settings.get("active_persona"):
+                self.LLM_ACTIVE_PERSONA = saved_settings["active_persona"]
+                print(f"--- 👤 PERSONA: Restored active persona: {self.LLM_ACTIVE_PERSONA} ---", flush=True)
+
             if saved_settings.get("tavily_api_key"):
                 self.TAVILY_API_KEY = saved_settings["tavily_api_key"]
             if saved_settings.get("groq_api_key"):
@@ -54,6 +62,7 @@ class Settings(BaseSettings):
     # LLM Config
     LLM_PROVIDER: str = "ollama" # ollama, openai, google
     LLM_MODEL: str = "ollama/gemma4:e2b"  # Modèle par défaut
+    LLM_ACTIVE_PERSONA: str = "generalist" # generalist, coder, analyst, writer, architect
     LLM_MODEL_ORCHESTRATOR: str = "ollama/gemma4:e2b"
     LLM_MODEL_CODER: str = "ollama/gemma4:e2b"
     LLM_MODEL_WRITER: str = "ollama/gemma4:e2b"

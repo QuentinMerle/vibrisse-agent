@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import VibrisseAvatar from '../chat/VibrisseAvatar';
 import PersonaCard from './PersonaCard';
 import { Zap } from 'lucide-react';
+import { api } from '../../services/api';
 import './OnboardingWizard.css';
 
 const OnboardingWizard = ({ isOpen, onClose, onComplete, updateSettings, updateTargetPath, updateSelectedModel }) => {
@@ -87,7 +88,13 @@ const OnboardingWizard = ({ isOpen, onClose, onComplete, updateSettings, updateT
     try {
       const profile = discovery.recommendations.profiles.find(p => p.id === selectedPersona);
       
-      // Sauvegarder les paramètres
+      // Sauvegarder les paramètres côté frontend et backend
+      await api.updateGlobalModel({
+        model: profile.model,
+        provider: 'ollama',
+        active_persona: selectedPersona
+      });
+
       await updateSettings({ 
         model: profile.model,
         provider: 'ollama'

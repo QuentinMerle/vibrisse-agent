@@ -43,14 +43,32 @@ async def generate_answer(state: AgentState):
         role=worker
     )
     
-    # On charge le skill correspondant au worker
+    # On charge le skill correspondant au worker, ou à la persona globale active si worker == "general"
     skill_map = {
         "coder": "code_expert",
         "writer": "technical_writer",
         "architect": "system_architect",
-        "general": "code_expert"
+        "analyst": "data_analyst",
+        "generalist": "generalist_expert"
     }
-    skill_name = skill_map.get(worker, "code_expert")
+    
+    if worker == "general":
+        persona = getattr(settings, "LLM_ACTIVE_PERSONA", "generalist").lower()
+        if persona == "hero":
+            # Le profil 'hero' (déjà installé) se comporte par défaut comme un généraliste
+            skill_name = "generalist_expert"
+        else:
+            # Fallback sur la persona active (coder, writer, architect, analyst, generalist)
+            # Si le nom correspond à un skill connu, on l'utilise, sinon fallback sur generalist_expert
+            skill_name = persona if persona in skill_map else "generalist_expert"
+            
+            # Ajustements de noms si nécessaire (ex: coder -> code_expert)
+            if persona == "coder":
+                skill_name = "code_expert"
+    else:
+        skill_name = skill_map.get(worker, "generalist_expert")
+        
+    print(f"--- 📖 SKILL LOADED: {skill_name} (Active Persona: {getattr(settings, 'LLM_ACTIVE_PERSONA', 'generalist')}) ---", flush=True)
     base_instruction = load_skill(skill_name)
     
     # Construction du prompt final

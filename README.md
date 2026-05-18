@@ -133,6 +133,7 @@ Explore the full potential of the Vibrisse ecosystem:
 
 ### 🏗️ Technical Deep Dives
 - **[Architecture Overview](docs/technical/architecture.md)**: DDD structure, LangGraph flow, and services.
+- **[Dynamic Personas](docs/technical/dynamic_personas.md)**: Alignment of Wizard-selected personas with specialized system prompts.
 - **[Inference Engines](docs/technical/inference_engines.md)**: Guide to Ollama, Custom (vLLM/LM Studio), and Cloud providers.
 - **[Hybrid Retrieval (RAG)](docs/technical/retrieval.md)**: How we achieve 100% precision with surgical grep.
 - **[Reasoning & Agents](docs/technical/reasoning.md)**: Supervisor/Worker patterns and robust parsing.
