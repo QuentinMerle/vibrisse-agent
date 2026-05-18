@@ -77,11 +77,12 @@ export const useConfig = () => {
     return () => clearInterval(interval);
   }, [fetchConfig, fetchFiles, fetchModels, checkHealth]);
 
-  const updateSelectedModel = async (model) => {
+  const updateSelectedModel = async (model, provider = null) => {
     setSelectedModel(model);
     localStorage.setItem("vibrisse_selected_model", model);
     try {
-      await api.updateGlobalModel({ model, provider: 'ollama' });
+      const activeProvider = provider || localStorage.getItem("vibrisse_provider") || 'ollama';
+      await api.updateGlobalModel({ model, provider: activeProvider });
       const data = await api.getModelLimit(model);
       if (data.limit) setContextLimit(data.limit);
     } catch (e) {

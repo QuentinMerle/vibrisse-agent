@@ -241,9 +241,13 @@ async def update_target_path(request: Request, req: TargetPathRequest, backgroun
         return {"status": "error", "message": str(e)}
 
 @router.post("/cache/clear")
-async def clear_cache(request: Request):
+async def clear_cache(request: Request, background_tasks: BackgroundTasks):
     request.app.state.vs.clear_cache()
+    # Relancer l'indexation automatique du projet actuel en arrière-plan
+    if settings.TARGET_PROJECT_PATH and os.path.exists(settings.TARGET_PROJECT_PATH):
+        background_tasks.add_task(request.app.state.vs.reindex_project, settings.TARGET_PROJECT_PATH)
     return {"status": "cleared"}
+
 
 @router.get("/files")
 async def list_files(request: Request):

@@ -61,6 +61,14 @@ export const useSettings = () => {
     if (newSettings.model) localStorage.setItem('vibrisse_model', newSettings.model);
     localStorage.setItem('vibrisse_sovereign_routing', newSettings.sovereignRouting);
     
+    // Persistance Backend pour le modèle global
+    if (newSettings.model || newSettings.provider) {
+      api.updateGlobalModel({
+        model: newSettings.model || '',
+        provider: newSettings.provider || 'ollama'
+      }).catch(err => console.error("Failed to update global model in backend:", err));
+    }
+
     // Persistance Backend pour les clés API sensibles (Tavily, etc.)
     api.updateSettings({
       tavily_api_key: newSettings.tavilyApiKey,

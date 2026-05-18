@@ -73,14 +73,11 @@ function App() {
     // On relance la requête mais en ignorant la proposition cette fois
     const lastUserMsg = messages.filter(m => m.role === 'user').pop();
     if (lastUserMsg) {
-      // On pourrait passer un flag pour forcer l'ignorer, 
-      // ou simplement l'état contiendra déjà 'offload_proposal' ce qui évitera de boucler
       sendMessage({
         content: lastUserMsg.content,
         image: lastUserMsg.image,
-        overrideContent: lastUserMsg.content,
-        // On force le provider actuel pour être sûr
-        provider: settings.provider 
+        model: settings.model,
+        overrideContent: lastUserMsg.content
       });
     }
     setOffloadProposal(null);

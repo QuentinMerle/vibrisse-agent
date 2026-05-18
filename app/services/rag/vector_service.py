@@ -144,6 +144,8 @@ class VectorService:
             print(f"❌ CRITICAL INDEX ERROR: {e}\n{error_details}", flush=True)
             raise e
 
+
+
     async def search(self, query: str):
         from app.services.rag.grep_service import GrepService
         from app.core.config import settings
@@ -200,16 +202,30 @@ class VectorService:
 
     def clear_cache(self):
         import shutil
+        # 1. Supprimer proprement la collection Chroma du projet (sans supprimer le fichier SQLite global)
         try:
-            if self._vectorstore: self._vectorstore.delete_collection()
-        except: pass
-        for path in [Path("./data/parent_documents"), Path("./data/chroma_db")]:
-            if path.exists():
-                shutil.rmtree(path)
-                path.mkdir(parents=True, exist_ok=True)
+            if self._vectorstore:
+                self._vectorstore.delete_collection()
+            else:
+                # Si non instancié, on tente de l'instancier pour la supprimer
+                self.vectorstore.delete_collection()
+        except Exception as e:
+            print(f"⚠️ Error deleting Chroma collection: {e}")
+            
+        # 2. Supprimer uniquement le sous-dossier de documents parents du projet
+        try:
+            base_dir = Path(__file__).parent.parent.parent.parent / "data"
+            store_dir = base_dir / "parent_documents" / self.project_id
+            if store_dir.exists():
+                shutil.rmtree(store_dir)
+        except Exception as e:
+            print(f"⚠️ Error deleting parent documents store directory: {e}")
+
+        # 3. Réinitialiser les instances en mémoire
         self._vectorstore = None
         self._store = None
         self._cached_hybrid_retriever = None
+
 
     def reindex_project(self, target_path: str):
         """Scan intelligent : traite les fichiers par batchs pour éviter l'explosion de RAM."""
