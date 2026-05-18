@@ -38,6 +38,7 @@ async def format_event(event: Dict[str, Any], thread_id: str) -> str:
         
         if content and isinstance(content, str):
             payload["chunk"] = content
+            payload["node"] = node
             return f"data: {json.dumps(payload)}\n\n"
 
     elif kind in ["on_node_stream", "on_chain_stream"]:

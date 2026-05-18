@@ -75,6 +75,16 @@ export const useChatStream = (state, settings) => {
                 if (targetMsg.content === "⏳ Vibrisse prépare sa réponse...") {
                   targetMsg.content = "";
                 }
+                
+                // Si on change de nœud de génération (ex: de generate_answer à expert_review_node),
+                // on vide le contenu précédent pour éviter la double réponse à l'écran !
+                if (data.node && targetMsg.lastActiveNode && targetMsg.lastActiveNode !== data.node) {
+                  targetMsg.content = "";
+                }
+                if (data.node) {
+                  targetMsg.lastActiveNode = data.node;
+                }
+
                 targetMsg.content = (targetMsg.content || "") + data.chunk;
                 targetMsg.isLoading = false;
               }
