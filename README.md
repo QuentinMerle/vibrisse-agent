@@ -2,8 +2,8 @@
 
 [![English](https://img.shields.io/badge/lang-English-blue)](#)
 [![Vibrisse - Studio Grade UI](https://img.shields.io/badge/UI-Studio--Grade-7b39ed)](#)
-[![Local First](https://img.shields.io/badge/Local--First-Ollama-10b981)](https://ollama.com)
-[![MCP Hub](https://img.shields.io/badge/MCP-Hub--First-orange)](https://modelcontextprotocol.io)
+[![Local First](https://img.shields.io/badge/Local--First-Ollama-10b981)](https://github.com/ollama/ollama)
+[![MCP Hub](https://img.shields.io/badge/MCP-Hub--First-orange)](https://github.com/modelcontextprotocol/spec)
 [![Multi-Agent](https://img.shields.io/badge/Architecture-Multi--Agent-ff69b4)](#)
 [![Privacy](https://img.shields.io/badge/Privacy-100%25--Local-green)](#)
 [![Zero-Build](https://img.shields.io/badge/Install-Zero--Build-00c1d4)](#)
@@ -136,7 +136,7 @@ Explore the full potential of the Vibrisse ecosystem:
 - **[Dynamic Personas](docs/technical/dynamic_personas.md)**: Alignment of Wizard-selected personas with specialized system prompts.
 - **[Inference Engines](docs/technical/inference_engines.md)**: Guide to Ollama, Custom (vLLM/LM Studio), and Cloud providers.
 - **[Hybrid Retrieval (RAG)](docs/technical/retrieval.md)**: How we achieve 100% precision with surgical grep.
-- **[Reasoning & Agents](docs/technical/reasoning.md)**: Supervisor/Worker patterns and robust parsing.
+- **[Reasoning & Agents](docs/technical/reasoning.md)**: Supervisor/Worker patterns via [**langchain-ai/langgraph**](https://github.com/langchain-ai/langgraph) and robust parsing.
 - **[Setup & Hardware](docs/technical/setup.md)**: Requirements for optimal performance.
 
 ### 🗺️ Project State
