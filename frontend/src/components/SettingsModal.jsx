@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { X, Cpu, ShieldCheck, Plug, Globe, Zap } from 'lucide-react';
+import { X, Cpu, ShieldCheck, Plug, Globe, Zap, User } from 'lucide-react';
 import { api } from '../services/api';
 import LLMTab from './settings/LLMTab';
 import MCPTab from './settings/MCPTab';
@@ -191,6 +191,33 @@ const SettingsModal = ({ isOpen, onClose, settings, onSave, onResetOnboarding })
                       <span className="slider round"></span>
                     </label>
                   </div>
+                </div>
+              </div>
+
+              <div className="settings-section">
+                <h3 className="section-title"><User size={14} /> {t('settings.persona_label') || 'Rôle Actif (Persona)'}</h3>
+                <p className="settings-description">{t('settings.persona_hint') || 'Configure le comportement global de l\'agent'}</p>
+                <div className="persona-selector-grid">
+                  {[
+                    { id: 'generalist', title: t('settings.persona_generalist') || 'Généraliste', icon: '🧭', desc: 'Polyvalent & rapide' },
+                    { id: 'coder', title: t('settings.persona_coder') || 'Expert Coder', icon: '💻', desc: 'Refactoring & debug' },
+                    { id: 'architect', title: t('settings.persona_architect') || 'System Architect', icon: '🏗️', desc: 'Design & plans' },
+                    { id: 'writer', title: t('settings.persona_writer') || 'Tech Writer', icon: '📚', desc: 'Documentation' },
+                    { id: 'analyst', title: t('settings.persona_analyst') || 'Data Scientist', icon: '📊', desc: 'Logique & données' }
+                  ].map(p => (
+                    <button
+                      key={p.id}
+                      type="button"
+                      className={`persona-setting-card ${localSettings.activePersona === p.id || (!localSettings.activePersona && p.id === 'generalist') ? 'active' : ''}`}
+                      onClick={() => setLocalSettings({ ...localSettings, activePersona: p.id })}
+                    >
+                      <span className="persona-card-icon">{p.icon}</span>
+                      <div className="persona-card-meta">
+                        <h4>{p.title.split(' (')[0]}</h4>
+                        <p>{p.desc}</p>
+                      </div>
+                    </button>
+                  ))}
                 </div>
               </div>
 

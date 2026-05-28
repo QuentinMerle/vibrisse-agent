@@ -14,7 +14,8 @@ export const useSettings = () => {
       githubToken: '',
       enableWebSearch: true,
       enableVision: true,
-      enableExpertReview: true
+      enableExpertReview: true,
+      activePersona: 'generalist'
     };
     
     // Migration: si on a une ancienne apiKey mais pas de apiKeys, on l'injecte
@@ -37,6 +38,7 @@ export const useSettings = () => {
       if (config.api_keys) {
         setSettings(prev => ({
           ...prev,
+          activePersona: config.active_persona || prev.activePersona || 'generalist',
           tavilyApiKey: config.api_keys.tavily || prev.tavilyApiKey,
           githubToken: config.api_keys.github || prev.githubToken,
           enableWebSearch: config.features?.search ?? prev.enableWebSearch,
@@ -62,10 +64,11 @@ export const useSettings = () => {
     localStorage.setItem('vibrisse_sovereign_routing', newSettings.sovereignRouting);
     
     // Persistance Backend pour le modèle global
-    if (newSettings.model || newSettings.provider) {
+    if (newSettings.model || newSettings.provider || newSettings.activePersona) {
       api.updateGlobalModel({
         model: newSettings.model || '',
-        provider: newSettings.provider || 'ollama'
+        provider: newSettings.provider || 'ollama',
+        active_persona: newSettings.activePersona
       }).catch(err => console.error("Failed to update global model in backend:", err));
     }
 

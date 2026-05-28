@@ -65,9 +65,13 @@ async def format_event(event: Dict[str, Any], thread_id: str) -> str:
             payload["graph_edges"] = target_dict["graph_edges"]
         if "offload_proposal" in target_dict:
             payload["offload_proposal"] = target_dict["offload_proposal"]
+        if "pending_plan" in target_dict:
+            payload["pending_plan"] = target_dict["pending_plan"]
+        if "current_plan" in target_dict:
+            payload["current_plan"] = target_dict["current_plan"]
         
         # On ne continue que si on a quelque chose à envoyer (statut/pensée/graphe)
-        if any(k in payload for k in ["detail", "status", "steps", "thoughts", "graph_nodes", "graph_edges", "offload_proposal"]):
+        if any(k in payload for k in ["detail", "status", "steps", "thoughts", "graph_nodes", "graph_edges", "offload_proposal", "pending_plan", "current_plan"]):
             return f"data: {json.dumps(payload)}\n\n"
 
     elif kind == "on_chain_end":
@@ -83,7 +87,7 @@ async def format_event(event: Dict[str, Any], thread_id: str) -> str:
                 payload["status"] = "completed"
 
         # On n'envoie le texte final que si on n'a pas déjà streamé (sécurité anti-doublon)
-        if node in ["generate_answer", "expert_review_node", "finalize_answer"]:
+        if node in ["generate_answer", "expert_review_node", "finalize_answer", "planning_node"]:
             data = event.get("data", {})
             output = data.get("output")
             if isinstance(output, dict) and "messages" in output:

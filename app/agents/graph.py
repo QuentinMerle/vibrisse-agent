@@ -6,7 +6,7 @@ from app.agents.state import AgentState
 from app.agents.nodes import (
     router_node, retrieve_code, generate_answer, 
     tool_agent_node, get_active_tools, expert_review_node, vision_node,
-    finalize_answer, create_node, create_edge
+    finalize_answer, planning_node, create_node, create_edge
 )
 from app.agents.tools import run_terminal_command
 from app.core.config import settings
@@ -101,6 +101,7 @@ workflow.add_node("generate_answer", generate_answer)
 workflow.add_node("tool_agent_node", tool_agent_node)
 workflow.add_node("expert_review_node", expert_review_node)
 workflow.add_node("finalize_answer", finalize_answer)
+workflow.add_node("planning_node", planning_node)
 workflow.add_node("safe_tools", call_safe_tools)
 workflow.add_node("sensitive_tools", call_sensitive_tools)
 
@@ -121,7 +122,11 @@ workflow.set_conditional_entry_point(
 workflow.add_edge("vision_node", "router_node")
 
 def router_decision(state: AgentState):
-    return state.get("decision", "direct_response")
+    decision = state.get("decision", "direct_response")
+    # Si le router a choisi l'expert 'architect', on force le planning mode
+    if state.get("active_worker") == "architect" and decision != "wait_for_offload_choice":
+        return "planning_node"
+    return decision
 
 workflow.add_conditional_edges(
     "router_node",
@@ -130,7 +135,22 @@ workflow.add_conditional_edges(
         "vectorstore": "retrieve_code",
         "direct_response": "generate_answer",
         "web_and_tools": "tool_agent_node",
+        "planning_node": "planning_node",
         "wait_for_offload_choice": END
+    }
+)
+
+def post_planning_decision(state: AgentState):
+    # Après le planning (et approbation), on continue le flux normal
+    return state.get("decision", "direct_response")
+
+workflow.add_conditional_edges(
+    "planning_node",
+    post_planning_decision,
+    {
+        "vectorstore": "retrieve_code",
+        "direct_response": "generate_answer",
+        "web_and_tools": "tool_agent_node"
     }
 )
 

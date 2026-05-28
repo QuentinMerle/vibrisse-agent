@@ -40,6 +40,7 @@ class NoNoiseFilter(logging.Filter):
         # On cache les pollings incessants et les fichiers statiques
         noise_patterns = [
             "/api/system/health", "/api/system/config", "/api/system/models",
+            "/api/system/notifications", "/api/system/files",
             "/api/threads/", "/assets/", "/fonts/", ".woff2", ".js", ".css", 
             "/vite.svg", "/favicon.ico", "GET / HTTP/1.1"
         ]
@@ -68,7 +69,7 @@ async def lifespan(app: FastAPI):
             logger.error(f"Background onboarding failed: {e}")
 
     async with get_checkpointer() as saver:
-        app.state.agent = workflow.compile(checkpointer=saver, interrupt_before=["sensitive_tools"])
+        app.state.agent = workflow.compile(checkpointer=saver, interrupt_before=["sensitive_tools"], interrupt_after=["planning_node"])
         app.state.saver = saver
         from app.services.rag.vs_instance import vs
         app.state.vs = vs

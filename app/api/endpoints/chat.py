@@ -49,7 +49,8 @@ async def chat(request: Request, chat_req: ChatRequest):
             "llm_provider": llm_provider,
             "llm_api_key": llm_api_key,
             "llm_custom_url": llm_custom_url,
-            "sovereign_routing": sovereign_routing
+            "sovereign_routing": sovereign_routing,
+            "active_worker": ""  # Reset active worker so the router re-evaluates dynamically
         }
         
         try:
@@ -61,6 +62,7 @@ async def chat(request: Request, chat_req: ChatRequest):
         except Exception as e:
             logger.error(f"Stream Error: {e}")
             yield f"data: {json.dumps({'error': str(e)})}\n\n"
+            yield "data: [DONE]\n\n"
 
     return StreamingResponse(
         event_generator(), 
@@ -82,28 +84,42 @@ async def approve_chat(request: Request, approval_req: ApprovalRequest):
     state = await agent_app.aget_state(config)
     messages = state.values.get("messages", [])
     last_message = messages[-1] if messages else None
+    is_planning = state.values.get("pending_plan", False)
     
     async def event_generator():
         try:
             if approval_req.approved:
-                print(f"--- ✅ COMMAND APPROVED FOR THREAD {thread_id} ---", flush=True)
+                print(f"--- ✅ APPROVED FOR THREAD {thread_id} ---", flush=True)
+                if is_planning:
+                    from langchain_core.messages import HumanMessage
+                    await agent_app.aupdate_state(config, {
+                        "pending_plan": False,
+                        "messages": [HumanMessage(content="Plan approuvé. Tu peux procéder à l'implémentation du code et aux modifications nécessaires.")]
+                    })
                 async for event in agent_app.astream_events(None, config, version="v2"):
                     yield await format_event(event, thread_id)
             else:
-                print(f"--- ❌ COMMAND REJECTED FOR THREAD {thread_id} ---", flush=True)
-                from langchain_core.messages import ToolMessage
-                
-                cancellation_messages = []
-                if last_message and hasattr(last_message, "tool_calls"):
-                    for tool_call in last_message.tool_calls:
-                        cancellation_messages.append(
-                            ToolMessage(
-                                tool_call_id=tool_call["id"],
-                                content="Action annulée par l'utilisateur pour des raisons de sécurité."
+                print(f"--- ❌ REJECTED FOR THREAD {thread_id} ---", flush=True)
+                if is_planning:
+                    from langchain_core.messages import HumanMessage
+                    await agent_app.aupdate_state(config, {
+                        "pending_plan": False,
+                        "decision": "direct_response",
+                        "messages": [HumanMessage(content="Plan rejeté. Revois ta proposition ou demande-moi des détails.")]
+                    })
+                else:
+                    from langchain_core.messages import ToolMessage
+                    cancellation_messages = []
+                    if last_message and hasattr(last_message, "tool_calls"):
+                        for tool_call in last_message.tool_calls:
+                            cancellation_messages.append(
+                                ToolMessage(
+                                    tool_call_id=tool_call["id"],
+                                    content="Action annulée par l'utilisateur pour des raisons de sécurité."
+                                )
                             )
-                        )
+                    await agent_app.aupdate_state(config, {"messages": cancellation_messages})
                 
-                await agent_app.aupdate_state(config, {"messages": cancellation_messages})
                 async for event in agent_app.astream_events(None, config, version="v2"):
                     yield await format_event(event, thread_id)
                     
@@ -111,6 +127,7 @@ async def approve_chat(request: Request, approval_req: ApprovalRequest):
         except Exception as e:
             logger.error(f"Approval Stream Error: {e}")
             yield f"data: {json.dumps({'error': str(e)})}\n\n"
+            yield "data: [DONE]\n\n"
 
     return StreamingResponse(
         event_generator(), 

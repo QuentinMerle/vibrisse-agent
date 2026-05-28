@@ -6,7 +6,8 @@ import MessageSkeleton from './chat/MessageSkeleton';
 
 const ChatMessages = ({ 
   messages, virtuosoRef, onRetry, onScroll, 
-  autoScrollEnabled, isHistoryLoading, onSuggestionClick 
+  autoScrollEnabled, isHistoryLoading, onPlanApproval, onSuggestionClick,
+  onOpenPlan
 }) => {
   if (isHistoryLoading) {
     return (
@@ -44,8 +45,8 @@ const ChatMessages = ({
         if (msg.role === "agent") {
           for (let i = idx - 1; i >= 0; i--) {
             if (messages[i].role === "user") {
-              question = messages[i].content;
-              break;
+               question = messages[i].content;
+               break;
             }
           }
         }
@@ -57,6 +58,8 @@ const ChatMessages = ({
             question={question}
             isLatest={isLatest} 
             onRetry={onRetry} 
+            onPlanApproval={onPlanApproval}
+            onOpenPlan={onOpenPlan}
           />
         );
       }}

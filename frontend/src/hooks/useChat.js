@@ -17,6 +17,7 @@ export const useChat = (settings) => {
     ...stream,
     ...actions,
     // Wrapper for handleApproval to pass the state's pendingApprovalData
-    handleApproval: (approved) => stream.handleApproval(approved, state.pendingApprovalData)
+    handleApproval: (approved) => stream.handleApproval(approved, state.pendingApprovalData),
+    handlePlanApproval: stream.handlePlanApproval
   };
 };

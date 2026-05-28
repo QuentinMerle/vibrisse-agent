@@ -16,6 +16,8 @@ Le backend suit une structure Domain-Driven Design (DDD) légère :
 ```mermaid
 graph TD
     User((User)) --> Router{🧠 Router}
+    Router -->|Planning Needed| Planning[🏛️ Planning Node]
+    Planning -->|Approval| Coder
     Router -->|Technical Task| Coder[👷 Coder Worker]
     Router -->|RAG Needed| RAG[Surgical Retrieval]
     RAG --> Coder

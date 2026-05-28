@@ -21,6 +21,13 @@ def thoughts_reducer(old: List[str], new: List[str]) -> List[str]:
         return new[1:]
     return (old or []) + (new or [])
 
+def dict_reducer(old: dict, new: dict) -> dict:
+    """Reducer pour mettre à jour un dictionnaire (ex: artifacts)."""
+    res = old.copy() if old else {}
+    if new:
+        res.update(new)
+    return res
+
 def unique_nodes_reducer(old: List[dict], new: List[dict]) -> List[dict]:
     """Combine les nœuds en évitant les doublons par ID."""
     node_map = {n['id']: n for n in (old or [])}
@@ -41,6 +48,9 @@ class AgentState(TypedDict):
     image: Optional[str] # Base64 de l'image (optionnel)
     vision_description: Optional[str]
     pending_review: bool
+    pending_plan: Optional[bool] # Attend l'approbation du plan
+    current_plan: Optional[str]  # Le plan proposé
+    artifacts: Annotated[dict, dict_reducer] # Stocke l'état des documents vivants
     selected_model: Optional[str]
     llm_provider: Optional[str]
     llm_api_key: Optional[str]

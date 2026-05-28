@@ -32,6 +32,8 @@
     "discussions": "DISCUSSIONS",
     "settings_btn": "Réglages",
     "reset_btn": "Réinitialiser",
+    "confirm_delete_title": "Supprimer la discussion",
+    "confirm_delete_msg": "Êtes-vous sûr de vouloir supprimer cette discussion ? Cette action est irréversible.",
     "toast_indexed": "Projet indexé !",
     "wipe_confirm": "Voulez-vous vraiment vider l'indexation (RAG) et tout l'historique ? Cette action est irréversible."
   },
@@ -57,7 +59,14 @@
     "target_project": "Chemin du Projet Cible",
     "appearance": "Apparence",
     "language_fr": "Français",
-    "language_en": "Anglais"
+    "language_en": "Anglais",
+    "persona_label": "Rôle Actif (Persona)",
+    "persona_hint": "Ajuste le prompt système et le comportement global",
+    "persona_generalist": "Généraliste (Polyvalent)",
+    "persona_coder": "Expert Codeur (Refactor & Debug)",
+    "persona_architect": "System Architect (Design & Plans)",
+    "persona_writer": "Tech Writer (Documentation)",
+    "persona_analyst": "Data Scientist (Logique & Données)"
   },
   "header": {
     "brand": "Vibrisse Agent",

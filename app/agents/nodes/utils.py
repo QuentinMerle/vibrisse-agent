@@ -92,6 +92,37 @@ def clean_mentions(text: str) -> str:
         
     return re.sub(r"[@/]\[(.*?)\]\((.*?)\)", replace_with_id, text)
 
+def clean_messages_for_llm(messages: list) -> list:
+    """Nettoie les messages de l'historique pour le LLM en enlevant les images et en déséchappant les mentions."""
+    from langchain_core.messages import HumanMessage, AIMessage, SystemMessage, ToolMessage
+    cleaned_messages = []
+    for m in messages:
+        if hasattr(m, "content"):
+            content = m.content
+            if isinstance(content, str):
+                new_content = clean_mentions(content)
+                if isinstance(m, HumanMessage): cleaned_messages.append(HumanMessage(content=new_content))
+                elif isinstance(m, AIMessage): cleaned_messages.append(AIMessage(content=new_content, tool_calls=getattr(m, "tool_calls", [])))
+                elif isinstance(m, ToolMessage): cleaned_messages.append(m)
+                else: cleaned_messages.append(m)
+            elif isinstance(content, list):
+                # Extraction du texte uniquement pour supprimer l'image
+                text_parts = []
+                for part in content:
+                    if isinstance(part, dict) and part.get("type") == "text":
+                        text_parts.append(part.get("text", ""))
+                    elif isinstance(part, str):
+                        text_parts.append(part)
+                content_str = "\n".join(text_parts)
+                new_content = clean_mentions(content_str)
+                if isinstance(m, HumanMessage): cleaned_messages.append(HumanMessage(content=new_content))
+                else: cleaned_messages.append(m)
+            else:
+                cleaned_messages.append(m)
+        else:
+            cleaned_messages.append(m)
+    return cleaned_messages
+
 def create_node(node_id: str, label: str, node_type: str, icon: str) -> dict:
     return {
         "id": node_id,

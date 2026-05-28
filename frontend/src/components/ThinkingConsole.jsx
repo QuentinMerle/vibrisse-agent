@@ -11,7 +11,8 @@ export default function ThinkingConsole({
   steps = [], 
   activeWorker = 'General',
   graphNodes = [],
-  graphEdges = []
+  graphEdges = [],
+  onOpenPlan
 }) {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(true);
@@ -80,7 +81,38 @@ export default function ThinkingConsole({
           />
 
           <div className="console-text">
-            <ReactMarkdown>{cleanContent}</ReactMarkdown>
+            <ReactMarkdown
+              components={{
+                a({node, href, children, ...props}) {
+                  if (href === "vibrisse://plan" && onOpenPlan) {
+                    return (
+                      <button 
+                        className="plan-link-btn"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          onOpenPlan();
+                        }}
+                        style={{
+                          background: 'none',
+                          border: 'none',
+                          color: 'var(--primary, #a855f7)',
+                          textDecoration: 'underline',
+                          cursor: 'pointer',
+                          padding: 0,
+                          font: 'inherit',
+                          display: 'inline'
+                        }}
+                      >
+                        {children}
+                      </button>
+                    );
+                  }
+                  return <a href={href} target="_blank" rel="noopener noreferrer" {...props}>{children}</a>;
+                }
+              }}
+            >
+              {cleanContent}
+            </ReactMarkdown>
             {!isComplete && <span className="cursor-blink" aria-hidden="true" />}
           </div>
         </div>

@@ -161,6 +161,39 @@ font-family: var(--font-mono);
 }
 ```
 
+### Interactive Artifacts & Planning UI
+
+```css
+/* Artifact Container */
+.artifact-view {
+  background: rgba(18, 18, 20, 0.5); /* Slightly more opaque than pure glass */
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  overflow: hidden; /* Contains the header and content */
+}
+
+/* Artifact Header */
+.artifact-header {
+  background: rgba(0, 0, 0, 0.2);
+  border-bottom: 1px solid var(--glass-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 16px;
+  /* Font should be mono or display based on the context, but keep it technical */
+}
+
+/* Inline Approval Block */
+.plan-approval-block {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  padding: 12px 16px;
+  background: rgba(123, 57, 237, 0.05); /* Subtle primary tint */
+  border-top: 1px dashed var(--glass-border);
+}
+```
+
 ---
 
 ## 🖥️ Application Layout

@@ -144,6 +144,13 @@ export const useChatStream = (state, settings) => {
                 }
               }
 
+              if (data.pending_plan !== undefined) {
+                targetMsg.pending_plan = data.pending_plan;
+              }
+              if (data.current_plan) {
+                targetMsg.current_plan = data.current_plan;
+              }
+
               if (data.context_usage !== undefined) {
                 setContextUsage(data.context_usage);
               }
@@ -279,6 +286,28 @@ export const useChatStream = (state, settings) => {
     }
   };
 
+  const handlePlanApproval = async (approved) => {
+    setIsLoading(true);
+    setMessages(prev => {
+      const newMsgs = [...prev];
+      if (newMsgs.length > 0) {
+        newMsgs[newMsgs.length - 1].pending_plan = false;
+      }
+      return [
+        ...newMsgs,
+        { id: Date.now(), role: 'agent', content: "⏳ Vibrisse prépare sa réponse...", isLoading: true }
+      ];
+    });
+
+    try {
+      const response = await api.approveCommand({ thread_id: currentThread, approved });
+      await processStream(response, false);
+    } catch (error) {
+      console.error("Erreur Plan Approval API:", error);
+      setIsLoading(false);
+    }
+  };
+
   const stopGeneration = () => {
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
@@ -286,5 +315,5 @@ export const useChatStream = (state, settings) => {
     }
   };
 
-  return { sendMessage, handleApproval, stopGeneration };
+  return { sendMessage, handleApproval, handlePlanApproval, stopGeneration };
 };

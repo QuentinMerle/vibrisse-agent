@@ -85,4 +85,10 @@ async def tool_agent_node(state: AgentState):
                 content=f"Désolé, j'ai tenté d'utiliser un outil mais j'ai généré une requête mal formatée qui a été rejetée par le système ({str(e)[:50]})."
             )
         
-    yield {"messages": [response], "steps": ["tool_agent_execution"]}
+    if hasattr(response, "tool_calls") and response.tool_calls:
+        yield {"messages": [response], "steps": ["tool_agent_execution"]}
+    else:
+        yield {
+            "generation": response.content,
+            "steps": ["tool_agent_execution"]
+        }

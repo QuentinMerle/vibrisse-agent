@@ -3,34 +3,24 @@ from langchain_core.messages import SystemMessage, HumanMessage, AIMessage
 from app.agents.state import AgentState
 from app.core.config import settings
 from app.services.llm.llm_factory import get_llm
-from app.agents.nodes.utils import extract_thought, clean_mentions, load_skill, create_node, create_edge
+from app.agents.nodes.utils import extract_thought, clean_mentions, clean_messages_for_llm, load_skill, create_node, create_edge
 
 async def generate_answer(state: AgentState):
+    if state.get("generation"):
+        yield {
+            "thoughts": ["**Analysis:** Réponse déjà générée par le tool agent."],
+            "steps": ["generation_complete"]
+        }
+        return
+
     context = state.get("context", "")
     messages = state.get("messages", [])
     vision_desc = state.get("vision_description")
     
     print(f"--- 📝 GENERATION: Processing {len(messages)} messages ---", flush=True)
     
-    # On nettoie les messages pour le LLM (mentions @[display](id) -> @display)
-    cleaned_messages = []
-    for m in messages:
-        # On vérifie si c'est un objet message LangChain
-        if hasattr(m, "content"):
-            content = m.content
-            if isinstance(content, str):
-                # On utilise une approche plus simple pour copier le message
-                from langchain_core.messages import HumanMessage, AIMessage, SystemMessage, ToolMessage
-                new_content = clean_mentions(content)
-                if isinstance(m, HumanMessage): cleaned_messages.append(HumanMessage(content=new_content))
-                elif isinstance(m, AIMessage): cleaned_messages.append(AIMessage(content=new_content, tool_calls=getattr(m, "tool_calls", [])))
-                elif isinstance(m, ToolMessage): cleaned_messages.append(m) # On ne touche pas aux résultats d'outils
-                else: cleaned_messages.append(m)
-            else:
-                cleaned_messages.append(m)
-        else:
-            # Fallback si c'est un tuple ou autre
-            cleaned_messages.append(m)
+    # On nettoie les messages pour le LLM (mentions @[display](id) -> @display et suppression des images)
+    cleaned_messages = clean_messages_for_llm(messages)
  
     worker = state.get("active_worker", "general")
     print(f"--- 👷 WORKER: {worker} ---", flush=True)
@@ -75,11 +65,13 @@ async def generate_answer(state: AgentState):
     vision_context = f"\n\n[CONTEXTE VISUEL FOURNI PAR LE SYSTÈME]\n{vision_desc}\n(Note: Utilise cette description comme si tu voyais l'image toi-même.)" if vision_desc else ""
     project_profile = settings.get_project_profile()
     
-    # Injection AGRESSIVE de la vision dans le dernier message de l'utilisateur
-    if vision_desc and cleaned_messages and isinstance(cleaned_messages[-1], HumanMessage):
-        last_msg = cleaned_messages[-1]
-        cleaned_messages[-1] = HumanMessage(content=last_msg.content + vision_context)
-        print("--- 👁️ VISION INJECTED into last HumanMessage ---", flush=True)
+    # Injection de la vision dans le premier HumanMessage de la conversation (celui qui a fourni l'image)
+    if vision_desc and cleaned_messages:
+        for i, m in enumerate(cleaned_messages):
+            if isinstance(m, HumanMessage):
+                cleaned_messages[i] = HumanMessage(content=m.content + vision_context)
+                print(f"--- 👁️ VISION INJECTED into HumanMessage at index {i} ---", flush=True)
+                break
 
     # Extraction explicite des résultats d'outils
     tool_results = []
@@ -174,7 +166,7 @@ async def finalize_answer(state: AgentState):
         
     # Si après nettoyage il ne reste rien, on tente de récupérer le contenu des balises thought
     # (Cas fréquent où le petit modèle met TOUTE sa réponse dans <thought>)
-    if not clean_content or len(clean_content) < 150:
+    if not clean_content or len(clean_content) < 10:
         # On cherche à extraire les pensées brutes du contenu original si possible
         raw_thought = extract_thought(content)
         if raw_thought and len(raw_thought) > len(clean_content):

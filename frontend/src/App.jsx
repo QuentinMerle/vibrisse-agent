@@ -14,6 +14,7 @@ import SettingsModal from './components/SettingsModal';
 import ConfirmModal from './components/layout/ConfirmModal';
 import OnboardingWizard from './components/onboarding/OnboardingWizard';
 import SovereignProposal from './components/SovereignProposal';
+import PlanModal from './components/chat/PlanModal';
 import { processImageFile } from './utils/fileUtils';
 import './App.css';
 
@@ -43,6 +44,7 @@ function App() {
     sendMessage,
     stopGeneration,
     handleApproval,
+    handlePlanApproval,
     deleteThread,
     offloadProposal,
     setOffloadProposal
@@ -112,6 +114,48 @@ function App() {
   const [confirmModal, setConfirmModal] = useState({ isOpen: false, threadId: null });
   const [resetOnboardingConfirm, setResetOnboardingConfirm] = useState({ isOpen: false });
   const [wipeIndexConfirm, setWipeIndexConfirm] = useState({ isOpen: false });
+  
+  const [activePlanMessage, setActivePlanMessage] = useState(null);
+  const [isPlanOpen, setIsPlanOpen] = useState(false);
+  const lastAutoOpenedPlanMsgId = useRef(null);
+
+  // Auto-open plan modal when a pending plan is detected
+  useEffect(() => {
+    const pendingMsg = messages.find(m => m.pending_plan);
+    if (pendingMsg) {
+      const msgId = pendingMsg.id || messages.indexOf(pendingMsg);
+      if (lastAutoOpenedPlanMsgId.current !== msgId) {
+        lastAutoOpenedPlanMsgId.current = msgId;
+        setActivePlanMessage(pendingMsg);
+        setIsPlanOpen(true);
+      }
+    }
+  }, [messages]);
+
+  // Helper to extract plan content from message
+  const getPlanContent = (msg) => {
+    if (!msg) return "";
+    if (msg.current_plan) return msg.current_plan;
+    
+    const extractFromContent = (content) => {
+      const artifactRegex = /<artifact id=['"]plan['"]>([\s\S]*?)<\/artifact>/;
+      const match = (content || "").match(artifactRegex);
+      return match ? match[1] : null;
+    };
+
+    let plan = extractFromContent(msg.content);
+    if (plan) return plan;
+
+    // Fallback: chercher dans les messages précédents
+    for (let i = messages.length - 1; i >= 0; i--) {
+      const m = messages[i];
+      if (m.current_plan) return m.current_plan;
+      plan = extractFromContent(m.content);
+      if (plan) return plan;
+    }
+
+    return "";
+  };
   
   const fileInputRef = useRef(null);
   const inputRef = useRef(null);
@@ -237,6 +281,11 @@ function App() {
             onScroll={handleScroll}
             autoScrollEnabled={autoScrollEnabled}
             isHistoryLoading={isHistoryLoading}
+            onPlanApproval={handlePlanApproval}
+            onOpenPlan={(msg) => {
+              setActivePlanMessage(msg);
+              setIsPlanOpen(true);
+            }}
             onSuggestionClick={(text) => {
               setInput(text);
               setTimeout(() => inputRef.current?.focus(), 50);
@@ -337,6 +386,14 @@ function App() {
           </div>
         </div>
       )}
+
+      <PlanModal 
+        isOpen={isPlanOpen}
+        onClose={() => setIsPlanOpen(false)}
+        plan={getPlanContent(activePlanMessage)}
+        pendingPlan={activePlanMessage ? activePlanMessage.pending_plan : false}
+        onPlanApproval={handlePlanApproval}
+      />
     </div>
   );
 }

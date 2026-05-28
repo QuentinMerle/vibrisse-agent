@@ -22,5 +22,14 @@ Vibrisse is an action-oriented agent. Beyond simple chat, it can interact with y
 ## 🌐 Web Access
 - **`web_search`**: Accesses real-time data via Tavily or DuckDuckGo (Weather, latest tech documentation, news).
 
+## 🏛️ Planning & Architect Mode
+- **Interactive Artifacts**: Drafts complex execution plans in a dedicated, interactive UI component (`<artifact>`). Supports multiple rich formats:
+  - `Plan`: Detailed execution plan with inline approval buttons.
+  - `CodeDiff`: Visual side-by-side code review.
+  - `Architecture`: Interactive Mermaid diagrams.
+  - `TaskBoard`: Living checklists.
+  - `APISpecs`: Interactive API testing panels.
+- **Execution Pause (`interrupt_after`)**: Halts execution to allow for human review and inline approval before proceeding with significant changes.
+
 ---
 *Vibrisse AI: Small models, Great tools.*

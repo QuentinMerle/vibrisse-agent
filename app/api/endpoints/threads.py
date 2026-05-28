@@ -70,6 +70,8 @@ async def get_thread_history(request: Request, thread_id: str):
         values = state.values or {}
         messages = values.get("messages", [])
         usage = calculate_context_usage(values)
+        is_planning = values.get("pending_plan", False)
+        current_plan = values.get("current_plan")
         
         from langchain_core.messages import ToolMessage
         
@@ -119,6 +121,15 @@ async def get_thread_history(request: Request, thread_id: str):
                 "active_worker": active_worker,
                 "timestamp": state.metadata.get("ts", "") if state.metadata else ""
             })
+        
+        # Injection de l'état de planification pour le rétablissement après recharge
+        if history and is_planning:
+            for msg in reversed(history):
+                if msg["role"] == "agent":
+                    msg["pending_plan"] = True
+                    if current_plan:
+                        msg["current_plan"] = current_plan
+                    break
                 
         return {"messages": history, "context_usage": usage}
     except Exception as e:

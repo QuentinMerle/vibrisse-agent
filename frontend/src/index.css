@@ -155,3 +155,84 @@ code, pre, .mono-font, .inline-code {
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
+
+/* GitHub-style Alerts */
+.markdown-body blockquote {
+  padding: 0 1em;
+  color: var(--text-muted);
+  border-left: 0.25em solid rgba(255, 255, 255, 0.1);
+  margin-top: 0;
+  margin-bottom: 16px;
+  background: transparent;
+}
+
+.markdown-body .markdown-alert {
+  padding: 8px 16px;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: 0.25em solid;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.markdown-body .markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+
+.markdown-body .markdown-alert .markdown-alert-title svg {
+  margin-right: 8px;
+}
+
+.markdown-alert-note {
+  border-left-color: #0969da !important;
+}
+.markdown-alert-note .markdown-alert-title {
+  color: #2f81f7;
+}
+
+.markdown-alert-tip {
+  border-left-color: #238636 !important;
+}
+.markdown-alert-tip .markdown-alert-title {
+  color: #3fb950;
+}
+
+.markdown-alert-important {
+  border-left-color: #8957e5 !important;
+}
+.markdown-alert-important .markdown-alert-title {
+  color: #a371f7;
+}
+
+.markdown-alert-warning {
+  border-left-color: #d29922 !important;
+}
+.markdown-alert-warning .markdown-alert-title {
+  color: #d29922;
+}
+
+.markdown-alert-caution {
+  border-left-color: rgba(248, 81, 73, 0.4) !important;
+}
+.markdown-alert-caution .markdown-alert-title {
+  color: #f85149;
+}
+
+/* Quick Wins Animations */
+.message-bubble-wrapper {
+  animation: fadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+button {
+  transition: all 0.2s ease;
+}
+button:hover {
+  transform: translateY(-1px);
+}
+button:active {
+  transform: translateY(0);
+}

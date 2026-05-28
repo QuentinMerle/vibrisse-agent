@@ -63,6 +63,7 @@ The **router** (`app/agents/nodes/router.py`) has been hardened.
 - [x] **Sovereign Routing** (Industrialized & Bi-directional).
 - [x] **Workspace Management** (Completed).
 - [x] **Human-in-the-Loop** (Completed).
+- [x] **Planning Mode & Interactive Artifacts** (Completed).
 - [x] **Ghost Mode** (#ghost-mode). In-file directives for background tasks.
 - [x] **Sovereign Routing** (Cloud-to-Local Savings).
 - [x] **Thought Graph UI** (Completed).
@@ -91,6 +92,19 @@ Add a comment containing the `@vibrisse:` tag followed by your instruction.
 2. **Execution**: A dedicated "Ghost Worker" processes the file and generates the modification.
 3. **Applied**: The code is injected directly into the file, replacing the tag line.
 4. **Notification**: You receive a system notification (macOS/Linux/Windows) once the task is done.
+
+---
+
+## 🏛️ Planning Mode & Interactive Artifacts
+Vibrisse Agent can pause execution when complex architectural tasks are requested, and use interactive artifacts to present rich content.
+- **Planning Node**: The Architect worker drafts a detailed Markdown plan wrapped in `<artifact>` tags.
+- **Human-in-the-Loop**: The LangGraph execution is suspended (`interrupt_after`).
+- **Inline Approval**: The UI renders a dedicated `ArtifactView` and inline buttons to allow the user to approve or reject the plan before the agent proceeds with execution.
+- **Rich Interactive Artifacts**: The system supports multiple artifact types to enhance UX:
+  - `CodeDiff`: Visual side-by-side comparison of code changes before writing.
+  - `Architecture`: Mermaid-based interactive diagrams.
+  - `TaskBoard`: Living checklists for long-running tasks.
+  - `APISpecs`: Interactive API testing panels for backend routes.
 
 ---
 *Vibrisse AI: Small models, Great tools.*

@@ -21,3 +21,9 @@ Les nœuds de décision implémentent un parsing multi-couches :
 - **SSE Protocol** : Communication temps-réel avec le client.
 - **SQLite Persistence** : Les conversations sont stockées de manière permanente dans `checkpoints.db`.
 - **History Merging** : Fusion des messages consécutifs de l'agent pour une interface propre.
+
+## 🏛️ Planning Mode (Human-in-the-Loop)
+Vibrisse Agent intègre un mode de planification pour les tâches complexes, permettant à l'utilisateur de valider l'approche avant l'exécution :
+- **`planning_node`** : Génère un plan détaillé enveloppé dans des balises `<artifact>`.
+- **Interruption** : Utilise la fonctionnalité `interrupt_after` de LangGraph pour mettre l'exécution en pause.
+- **Frontend Approval** : L'UI affiche une demande d'approbation et reprend l'exécution dynamiquement (`resume`).

@@ -1,0 +1,39 @@
+.artifact-container {
+  margin: 16px 0;
+  border: 1px solid var(--glass-border);
+  border-radius: 8px;
+  background: rgba(18, 18, 20, 0.4);
+  overflow: hidden;
+  animation: fadeIn 0.3s ease;
+}
+
+.artifact-header {
+  display: flex;
+  align-items: center;
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid var(--glass-border);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.artifact-icon {
+  margin-right: 8px;
+  color: var(--primary);
+}
+
+.artifact-body {
+  padding: 16px;
+  max-height: 400px;
+  overflow-y: auto;
+  font-size: 0.9rem;
+}
+
+.artifact-body::-webkit-scrollbar {
+  width: 4px;
+}
+.artifact-body::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}

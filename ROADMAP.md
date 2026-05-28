@@ -81,6 +81,20 @@ Pour l'ouverture au public, nous nous concentrons sur ces 4 piliers :
 
 ---
 
+## 🖼️ Future Vision: Multimodal & Specialized Workers
+
+### 1. The Designer Worker (Local Image Generation)
+- **Goal**: Generate high-fidelity visual mockups using local diffusion models without bloating the core agent.
+- **Concept**: Use an MCP server connected to local rendering engines (ComfyUI, DrawThings) running models like **Flux.1** combined with a specialized **"UI/UX Web Design" LoRA** (Low-Rank Adaptation) to ensure professional, pixel-perfect UI generation.
+- **Workflow**: The `Router` delegates visual requests to a specialized `Designer` LLM, which crafts technical image prompts and calls the MCP server. The result is seamlessly displayed in the chat via Markdown.
+
+### 2. The Stitch Worker (UI/UX Mockup & Wireframing)
+- **Goal**: Generate conceptual wireframes and UI/UX mockups *before* writing any production code (acting as a Figma/Sketch alternative).
+- **Concept**: A specialized LLM that translates user needs into visual architectures (using Mermaid, Excalidraw JSON, SVG, or interacting with a Figma MCP).
+- **UI Integration**: The conceptual mockup is intercepted and rendered live in the chat, allowing the user to validate the information architecture before handing it off to the Coder Worker.
+
+---
+
 ## 🎨 Visual & UX Excellence
 
 ### 1. Thought Graph UI (Completed ✅)

@@ -39,11 +39,22 @@ Stop rebuilding what already exists. Vibrisse acts as a **centralized MCP Client
 - **Persistent Hub**: Connect GitHub, Linear, Slack, or Postgres once; use them across every session.
 - **Dynamic Tooling**: Your agent gains "muscles" in real-time as you add new servers.
 
+### 🏛️ Planning Mode & Interactive Artifacts
+For complex tasks, Vibrisse doesn't just output code blindly. It acts as an Architect:
+- **Human-in-the-Loop**: The agent drafts a detailed execution plan and pauses its reasoning graph.
+- **Interactive UI**: The plan is rendered as a clean, interactive `<Artifact>` with inline approval buttons. You stay in full control before any destructive action is taken.
+- **Rich Interactive Artifacts**: Beyond plans, Vibrisse generates multiple artifact types to enhance UX:
+  - `CodeDiff`: Visual side-by-side comparison of code changes before writing.
+  - `Architecture`: Mermaid-based interactive diagrams.
+  - `TaskBoard`: Living checklists for long-running tasks.
+  - `APISpecs`: Interactive API testing panels for backend routes.
+
 ### 🌊 Obsidian Glass Interface
 A premium, immersive Studio experience designed for deep work:
 - **Thought Graph**: Real-time visualization of the agent's reasoning path.
 - **Thinking Console**: Live thought streaming to understand the *why* behind every action.
 - **Surgical RAG**: Triple-layer retrieval combining Semantic Search, BM25, and high-precision Ripgrep.
+- **GitHub Alerts**: Rich Markdown rendering with warning/info badges (`> [!WARNING]`).
 
 ---
 

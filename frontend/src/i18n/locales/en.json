@@ -32,6 +32,8 @@
     "discussions": "DISCUSSIONS",
     "settings_btn": "Settings",
     "reset_btn": "Reset Index",
+    "confirm_delete_title": "Delete Discussion",
+    "confirm_delete_msg": "Are you sure you want to delete this discussion? This action is irreversible.",
     "toast_indexed": "Project indexed!",
     "wipe_confirm": "Are you sure you want to clear the indexing (RAG) and all history? This action is irreversible."
   },
@@ -57,7 +59,14 @@
     "target_project": "Target Project Path",
     "appearance": "Appearance",
     "language_fr": "French",
-    "language_en": "English"
+    "language_en": "English",
+    "persona_label": "Active Persona",
+    "persona_hint": "Adjusts the system prompt and agent behavior",
+    "persona_generalist": "Generalist (Balanced)",
+    "persona_coder": "Expert Coder (Refactor & Debug)",
+    "persona_architect": "System Architect (Design & Plans)",
+    "persona_writer": "Tech Writer (Documentation)",
+    "persona_analyst": "Data Scientist (Logic & Data)"
   },
   "header": {
     "brand": "Vibrisse Agent",

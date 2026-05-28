@@ -572,3 +572,56 @@ pre {
 .retry-btn:hover svg {
   transform: rotate(-180deg);
 }
+
+/* Plan Approval Inline */
+.plan-approval-inline {
+  margin: 16px 0;
+  padding: 16px;
+  background: rgba(123, 57, 237, 0.08);
+  border: 1px solid rgba(123, 57, 237, 0.3);
+  border-radius: 12px;
+  animation: fadeIn 0.4s ease;
+}
+
+.plan-approval-inline p {
+  margin: 0 0 12px 0;
+  font-weight: 500;
+  color: #fff;
+  font-size: 0.95rem;
+}
+
+.plan-approval-buttons {
+  display: flex;
+  gap: 12px;
+}
+
+.plan-approval-buttons button {
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  font-family: var(--font-body);
+}
+
+.plan-approval-buttons .approve-btn {
+  background: var(--primary);
+  color: #fff;
+  box-shadow: 0 4px 15px rgba(123, 57, 237, 0.3);
+}
+
+.plan-approval-buttons .approve-btn:hover {
+  background: #6d28d9;
+  box-shadow: 0 6px 20px rgba(123, 57, 237, 0.5);
+}
+
+.plan-approval-buttons .reject-btn {
+  background: rgba(244, 63, 94, 0.1);
+  color: #f43f5e;
+  border: 1px solid rgba(244, 63, 94, 0.3);
+}
+
+.plan-approval-buttons .reject-btn:hover {
+  background: rgba(244, 63, 94, 0.2);
+}

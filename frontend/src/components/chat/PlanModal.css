@@ -1,0 +1,168 @@
+/* PlanModal.css - Plan Sidebar Drawer Styles */
+
+.plan-sidebar {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 520px;
+  max-width: 85vw;
+  max-height: calc(100vh - 40px);
+  height: auto;
+  background: var(--glass-bg, rgba(20, 20, 25, 0.98));
+  color: var(--text-main, #f1f5f9);
+  border: 1px solid var(--glass-border, rgba(255, 255, 255, 0.12));
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: -12px 0 40px rgba(0, 0, 0, 0.6);
+  z-index: 11000;
+  transform: translateX(calc(100% + 40px));
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.plan-sidebar.open {
+  transform: translateX(0);
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+/* --- HEADER & CLOSE BUTTON --- */
+.plan-sidebar .modal-header {
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(255, 255, 255, 0.02);
+  border-bottom: 1px solid var(--glass-border-light, rgba(255, 255, 255, 0.06));
+}
+
+.plan-sidebar .header-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.plan-sidebar .header-icon {
+  color: var(--primary, #a855f7);
+  filter: drop-shadow(0 0 8px rgba(168, 85, 247, 0.4));
+}
+
+.plan-sidebar .modal-header h2 {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-main, #f1f5f9);
+}
+
+.plan-sidebar .close-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-dim, #94a3b8);
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.plan-sidebar .close-btn:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-main, #f1f5f9);
+}
+
+.sidebar-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+  z-index: 10500;
+  animation: sidebarFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.plan-sidebar .modal-body {
+  padding: 24px;
+  flex: 1;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--glass-border-light, rgba(255, 255, 255, 0.06)) transparent;
+}
+
+.plan-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 20px 32px;
+  background: rgba(0, 0, 0, 0.2);
+  border-top: 1px solid var(--glass-border-light, rgba(255, 255, 255, 0.06));
+}
+
+.plan-modal-footer .reject-btn {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  color: #fca5a5;
+  padding: 12px 28px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.plan-modal-footer .reject-btn:hover {
+  background: rgba(239, 68, 68, 0.2);
+  transform: translateY(-1px);
+}
+
+.plan-modal-footer .approve-btn {
+  padding: 12px 28px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: var(--primary, #a855f7);
+  border: none;
+  color: white;
+  box-shadow: 0 8px 24px rgba(168, 85, 247, 0.3);
+}
+
+.plan-modal-footer .approve-btn:hover {
+  background: var(--primary-hover, #9333ea);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(168, 85, 247, 0.4);
+}
+
+@keyframes sidebarFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* --- CODE STYLING IN MODAL --- */
+.plan-sidebar .inline-code {
+  background: rgba(168, 85, 247, 0.15);
+  color: var(--primary-light, #d8b4fe);
+  padding: 3px 6px;
+  border-radius: 6px;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.85em;
+  border: 1px solid rgba(168, 85, 247, 0.3);
+}
+
+.plan-sidebar .markdown-body pre {
+  background: #121214 !important;
+  border-radius: 12px;
+  border: 1px solid var(--glass-border, rgba(255, 255, 255, 0.1));
+  padding: 16px;
+  overflow-x: auto;
+  margin: 16px 0;
+}
