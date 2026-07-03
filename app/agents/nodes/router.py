@@ -59,7 +59,7 @@ async def router_node(state: AgentState):
     # 3. Appel LLM pour une décision sémantique fine
     llm = get_llm(
         provider=state.get("llm_provider", "ollama"),
-        model=state.get("selected_model"),
+        model=state.get("orchestrator_model"),
         api_key=state.get("llm_api_key"),
         custom_url=state.get("llm_custom_url"),
         temperature=0,
@@ -88,53 +88,92 @@ async def router_node(state: AgentState):
             content = f"VISUAL ANALYSIS OF CURRENT IMAGE: {vision_desc}\n\n{history_context}\nCURRENT QUESTION: {question}"
 
         # We request raw text with a strict format to avoid JSON hallucination on small models
-        response = await llm.ainvoke([
-            SystemMessage(content=skill_prompt + "\n\nIMPORTANT: RESPOND ONLY IN JSON FORMAT. NO TEXT BEFORE OR AFTER."),
-            HumanMessage(content=content)
-        ])
-        
-        # Extraction robuste du JSON (même s'il y a du texte autour ou s'il est tronqué)
-        text = response.content
-        
-        # Tentative 1 : Regex pour trouver un bloc JSON
-        match = re.search(r'\{.*\}', text, re.DOTALL)
+        # --- NOUVEAU: Fast-Path avec Structured Output (FunctionGemma & models modernes) ---
+        structured_success = False
         datasource = None
         worker = None
         reasoning = None
-        
-        if match:
-            try:
-                data = json.loads(match.group(0))
-                datasource = data.get("datasource")
-                worker = data.get("worker")
-                reasoning = data.get("reasoning")
-            except:
-                pass # On tente le fallback XML si le JSON est corrompu
-        
-        # Tentative 1.5 : Regex pour XML (Fallback pour modèles type 7B/8B instables sur JSON)
-        if not datasource:
-            match_ds = re.search(r'<datasource>(.*?)</datasource>', text, re.IGNORECASE | re.DOTALL)
-            match_wk = re.search(r'<worker>(.*?)</worker>', text, re.IGNORECASE | re.DOTALL)
-            match_rs = re.search(r'<reasoning>(.*?)</reasoning>', text, re.IGNORECASE | re.DOTALL)
+
+        try:
+            # On tente d'utiliser la fonction native de LangChain pour forcer le JSON Schema
+            structured_llm = llm.with_structured_output(RouteQuery)
+            response = await structured_llm.ainvoke([
+                SystemMessage(content=skill_prompt + "\n\nIMPORTANT: RESPOND ONLY IN JSON FORMAT. NO TEXT BEFORE OR AFTER."),
+                HumanMessage(content=content)
+            ])
             
-            if match_ds: datasource = match_ds.group(1).strip()
-            if match_wk: worker = match_wk.group(1).strip()
-            if match_rs: reasoning = match_rs.group(1).strip()
+            # Si on arrive ici sans erreur, c'est que le modèle a parfaitement respecté le schéma !
+            datasource = response.datasource
+            worker = response.worker
+            reasoning = response.reasoning
+            structured_success = True
+            print("🚀 Routeur : Structured Output réussi avec succès !", flush=True)
+            
+        except Exception as e:
+            print(f"⚠️ Routeur : Structured Output non supporté ou échoué ({e}). Fallback au parsing robuste.", flush=True)
+            # --- FIN NOUVEAU ---
 
-        # Tentative 2 : Fallback par mots-clés si tout a échoué
-        if not datasource:
-            if "web_and_tools" in text.lower(): datasource = "web_and_tools"
-            elif "vectorstore" in text.lower(): datasource = "vectorstore"
-            else: datasource = "direct_response"
-            reasoning = "Keyword fallback"
+        if not structured_success:
+            # --- ANCIENNE LOGIQUE DE FALLBACK ---
+            try:
+                response = await llm.ainvoke([
+                    SystemMessage(content=skill_prompt + "\n\nIMPORTANT: RESPOND ONLY IN JSON FORMAT. NO TEXT BEFORE OR AFTER."),
+                    HumanMessage(content=content)
+                ])
+            except Exception as fallback_err:
+                print(f"⚠️ Orchestrator failed completely ({fallback_err}). Retrying with main model.", flush=True)
+                llm_retry = get_llm(
+                    provider=state.get("llm_provider", "ollama"),
+                    model=state.get("selected_model"),
+                    api_key=state.get("llm_api_key"),
+                    custom_url=state.get("llm_custom_url"),
+                    temperature=0,
+                    role="supervisor"
+                )
+                response = await llm_retry.ainvoke([
+                    SystemMessage(content=skill_prompt + "\n\nIMPORTANT: RESPOND ONLY IN JSON FORMAT. NO TEXT BEFORE OR AFTER."),
+                    HumanMessage(content=content)
+                ])
+            
+            # Extraction robuste du JSON (même s'il y a du texte autour ou s'il est tronqué)
+            text = response.content
+            
+            # Tentative 1 : Regex pour trouver un bloc JSON
+            match = re.search(r'\{.*\}', text, re.DOTALL)
+            
+            if match:
+                try:
+                    data = json.loads(match.group(0))
+                    datasource = data.get("datasource")
+                    worker = data.get("worker")
+                    reasoning = data.get("reasoning")
+                except:
+                    pass # On tente le fallback XML si le JSON est corrompu
+            
+            # Tentative 1.5 : Regex pour XML (Fallback pour modèles type 7B/8B instables sur JSON)
+            if not datasource:
+                match_ds = re.search(r'<datasource>(.*?)</datasource>', text, re.IGNORECASE | re.DOTALL)
+                match_wk = re.search(r'<worker>(.*?)</worker>', text, re.IGNORECASE | re.DOTALL)
+                match_rs = re.search(r'<reasoning>(.*?)</reasoning>', text, re.IGNORECASE | re.DOTALL)
+                
+                if match_ds: datasource = match_ds.group(1).strip()
+                if match_wk: worker = match_wk.group(1).strip()
+                if match_rs: reasoning = match_rs.group(1).strip()
 
-        if not worker:
-            if "coder" in text.lower(): worker = "coder"
-            elif "writer" in text.lower(): worker = "writer"
-            elif "architect" in text.lower(): worker = "architect"
-            else: worker = "general"
-        
-        if not reasoning: reasoning = "Inferred intent"
+            # Tentative 2 : Fallback par mots-clés si tout a échoué
+            if not datasource:
+                if "web_and_tools" in text.lower(): datasource = "web_and_tools"
+                elif "vectorstore" in text.lower(): datasource = "vectorstore"
+                else: datasource = "direct_response"
+                reasoning = "Keyword fallback"
+
+            if not worker:
+                if "coder" in text.lower(): worker = "coder"
+                elif "writer" in text.lower(): worker = "writer"
+                elif "architect" in text.lower(): worker = "architect"
+                else: worker = "general"
+            
+            if not reasoning: reasoning = "Inferred intent"
 
         # Validation du datasource pour éviter de casser le graphe LangGraph
         ALLOWED_DATASOURCES = ["vectorstore", "direct_response", "web_and_tools"]

@@ -33,6 +33,7 @@ Vibrisse is not just another LLM wrapper. It's a **Sovereign Agent Framework** d
 Vibrisse is a **Hybrid Intelligence** orchestrator. It intelligently arbitrates between local-first execution (Ollama) and high-capacity cloud models (Groq, OpenRouter) based on task complexity. 
 - **Cost Efficiency**: Automatically offloads routine technical tasks (file listing, grep) to local models.
 - **Privacy Control**: You decide exactly when data leaves your machine via a dedicated Sovereign Toggle.
+- **Heterogeneous Architecture**: Decouples the "Router" from the "Worker". Use ultra-fast 270M models (like `functiongemma`) for instant intent analysis, reserving heavy 8B/70B models for code generation.
 
 ### 🔌 MCP-Native Hub
 Stop rebuilding what already exists. Vibrisse acts as a **centralized MCP Client**, allowing you to plug in any tool from the global Model Context Protocol ecosystem:
